@@ -1,7 +1,7 @@
 const Desktop = () => {
   return (
     <div className="flex flex-row gap-12">
-      <div className="w-full rounded-2xl flex flex-col justify-between items-center">
+      <div className="flex w-full flex-col items-center justify-between rounded-2xl">
         <img src="/assets/cw_layout_1.png" />
       </div>
     </div>
