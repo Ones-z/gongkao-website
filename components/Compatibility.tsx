@@ -26,7 +26,7 @@ const Personalization = () => {
   }, [screenshots.length]);
 
   return (
-    <div className="grid gap-12 lg:grid-cols-2">
+    <div className="grid gap-12 lg:grid-cols-[1.5fr_1fr]">
       <div className="order-2 aspect-video overflow-hidden rounded-lg border-2 border-[#303640] lg:order-1">
         <img
           src={screenshots[currentImageIndex]}

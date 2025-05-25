@@ -2,7 +2,7 @@ import Theme_Plugin_1 from "@/assets/theme&plugin_1.png";
 
 const Personalization = () => {
   return (
-    <div className="grid gap-12 lg:grid-cols-2">
+    <div className="grid gap-12 lg:grid-cols-[1fr_1.5fr]">
       <div className="flex flex-col justify-center gap-6">
         <p className="bg-gradient-to-r from-[#8e82ff] to-[#16e647] bg-clip-text text-lg font-semibold text-transparent">
           # 个性化
@@ -16,11 +16,13 @@ const Personalization = () => {
           Class Widgets。
         </p>
       </div>
-      <img
-        src={Theme_Plugin_1.src}
-        alt="theme&plugin"
-        className="h-fit w-full"
-      />
+      <div className="rounded-lg border-2 border-[#303640]">
+        <img
+          src={Theme_Plugin_1.src}
+          alt="theme&plugin"
+          className="h-fit w-full"
+        />
+      </div>
     </div>
   );
 };

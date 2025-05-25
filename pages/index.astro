@@ -14,16 +14,16 @@ import Test from "@/components/Test";
   <Hero />
   <div class="max-w-8xl mx-auto flex flex-col gap-16 py-16">
     <div
-      class="ease-mobai-bounce flex flex-col gap-16 px-8 transition-all duration-500 md:px-12 lg:px-16 xl:px-24"
+      class="ease-mobai-bounce flex flex-col gap-24 px-8 transition-all duration-500 md:px-12 lg:px-16 xl:px-24"
     >
       <Desktop />
-      <div class="flex flex-col gap-12">
+      <div class="flex flex-col gap-24">
         <Personalization />
         <Compatibility client:load />
       </div>
-    </div>
-    <div class="px-8 md:px-12 lg:px-16 xl:px-24">
-      <Test />
+      <div>
+        <Test />
+      </div>
     </div>
   </div>
 </Layout>
