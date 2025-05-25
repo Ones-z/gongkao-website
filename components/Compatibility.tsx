@@ -5,7 +5,7 @@ import Win from "@/assets/screenshots/win.png";
 import { useEffect, useState } from "react";
 
 const Personalization = () => {
-  const screenshots = [Win.src, Linux.src, Win7.src, MacOS.src];
+  const screenshots = [Win, Linux, Win7, MacOS].map((it) => it.src);
 
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
