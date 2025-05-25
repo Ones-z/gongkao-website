@@ -5,7 +5,7 @@ const Test = () => {
     <div className="max-w-8xl mx-auto flex flex-col gap-12">
       <div className="grid gap-16 md:grid-cols-2">
         <Block
-          title="高度的自定义设置"
+          title="高度的个性化"
           content="致力于提供高度的自定义选项，使每位用户能构建出独一无二的桌面课表。"
         />
         <Block
