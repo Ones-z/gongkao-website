@@ -1,4 +1,4 @@
-import Theme_Plugin_1 from "@/assets/theme&plugin_1.png";
+import personalizationImage from "@/assets/images/personalization.png";
 
 const Personalization = () => {
   return (
@@ -18,7 +18,7 @@ const Personalization = () => {
       </div>
       <div className="rounded-lg border-2 border-[#303640]">
         <img
-          src={Theme_Plugin_1.src}
+          src={personalizationImage.src}
           alt="theme&plugin"
           className="h-fit w-full"
         />

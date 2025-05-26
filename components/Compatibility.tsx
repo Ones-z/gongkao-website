@@ -1,11 +1,13 @@
-import Linux from "@/assets/screenshots/linux.png";
-import MacOS from "@/assets/screenshots/macos.png";
-import Win7 from "@/assets/screenshots/win7.png";
-import Win from "@/assets/screenshots/win.png";
+import linuxImage from "@/assets/images/screenshots/linux.png";
+import macosImage from "@/assets/images/screenshots/macos.png";
+import win7Image from "@/assets/images/screenshots/win7.png";
+import win11Image from "@/assets/images/screenshots/win11.png";
 import { useEffect, useState } from "preact/hooks";
 
 const Personalization = () => {
-  const screenshots = [Win, Linux, Win7, MacOS].map((it) => it.src);
+  const screenshots = [win11Image, linuxImage, win7Image, macosImage].map(
+    (it) => it.src,
+  );
 
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
