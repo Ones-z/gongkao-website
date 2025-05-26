@@ -8,7 +8,7 @@ const Test = () => {
           tag="通知"
           colorFrom="#ff6b9d"
           colorTo="#c44569"
-          title="增强的通知系统"
+          title="强大的通知系统"
           content="提供了强大的通知系统，能够在上下课等时间点推出提醒；此外，插件也可调用通知接口，使其更加实用。"
         />
         <Block

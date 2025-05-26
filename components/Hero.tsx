@@ -4,7 +4,7 @@ import Ubuntu from "@/components/icon/Ubuntu";
 import Windows from "@/components/icon/Windows";
 import { Button, TransparentButton } from "@/components/ui/Button";
 
-const Test = () => {
+const Hero = () => {
   return (
     <div className="h-screen w-full">
       <div className="relative h-full bg-[url('/assets/banner.svg')] bg-cover bg-center bg-no-repeat text-white">
@@ -55,4 +55,4 @@ const Test = () => {
   );
 };
 
-export default Test;
+export default Hero;

@@ -2,7 +2,7 @@ import Linux from "@/assets/screenshots/linux.png";
 import MacOS from "@/assets/screenshots/macos.png";
 import Win7 from "@/assets/screenshots/win7.png";
 import Win from "@/assets/screenshots/win.png";
-import { useEffect, useState } from "react";
+import { useEffect, useState } from "preact/hooks";
 
 const Personalization = () => {
   const screenshots = [Win, Linux, Win7, MacOS].map((it) => it.src);
