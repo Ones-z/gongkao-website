@@ -6,9 +6,9 @@ import { defineConfig } from "astro/config";
 
 // https://astro.build/config
 export default defineConfig({
+  
   srcDir: ".",
   integrations: [preact(), partytown()],
-
   vite: {
     // @ts-ignore
     plugins: [tailwindcss()],
