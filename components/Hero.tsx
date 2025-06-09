@@ -38,15 +38,15 @@ const Hero = () => {
             </div>
             <div className="ease-mobai-bounce flex flex-row gap-4 transition-all duration-500 md:gap-8">
               <Button
-                href="https://github.com/Class-Widgets/Class-Widgets/releases/latest/download/ClassWidgets-Windows-x64.zip"
-                className="hidden w-fit flex-row items-center gap-2 lg:flex"
+                href="/download"
+                className="w-fit flex-row items-center gap-2 flex"
                 data-aos="fade-left"
               >
                 <Windows className="size-6" />
                 <span className="text-lg lg:text-xl">下载 Class Widgets</span>
               </Button>
               <TransparentButton
-                href="https://github.com/Class-Widgets/Class-Widgets/releases/latest/"
+                href="/download"
                 className="hidden w-fit flex-row items-center gap-2 lg:flex"
                 data-aos="fade-left"
               >
@@ -55,7 +55,7 @@ const Hero = () => {
                 <span className="text-lg lg:text-xl">更多版本</span>
               </TransparentButton>
               <TransparentButton
-                href="https://www.yuque.com/rinlit/class-widgets_help"
+                href="/download"
                 className="flex w-fit flex-row items-center gap-2"
                 data-aos="fade-up"
               >

@@ -83,7 +83,7 @@ const Footer = () => {
         </div>
 
         <div className="mt-16 border-t border-[#1A1B26] pt-8 text-center text-[#87878A]">
-          <p>© {new Date().getFullYear()} Class Widgets. 保留所有权利。</p>
+          <p>© {new Date().getFullYear()} Class Widgets. 基于 GPL v3 协议发布。</p>
         </div>
       </div>
     </footer>
