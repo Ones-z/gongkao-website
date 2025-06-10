@@ -16,10 +16,10 @@ export default defineConfig({
       logo: { src: "./assets/images/favicon.png", alt: "Class Widgets Logo" },
       sidebar: [{
         label: "用户文档",
-        link: '/user_docs/' 
+        autogenerate: { directory: 'user_docs' },
       },{
         label: "开发者文档",
-        link: '/dev_docs/' 
+        autogenerate: { directory: 'dev_docs' },
       }],
     }),
   ],
