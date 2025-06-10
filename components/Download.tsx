@@ -1,6 +1,6 @@
 import { useState } from "preact/hooks";
 import Apple from "@/components/icon/Apple";
-import Ubuntu from "@/components/icon/Linux";
+import Linux from "@/components/icon/Linux";
 import Windows from "@/components/icon/Windows";
 import logoImage from "@/assets/images/icons/logo_square.png";
 
@@ -10,7 +10,7 @@ const Download = () => {
   const platforms = [
     { id: "macos", name: "macOS", icon: Apple },
     { id: "windows", name: "Windows", icon: Windows },
-    { id: "linux", name: "Linux", icon: Ubuntu },
+    { id: "linux", name: "Linux", icon: Linux },
   ];
 
   const downloadData = {

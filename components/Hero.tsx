@@ -1,7 +1,7 @@
 import bannerImage from "@/assets/images/backgrounds/banner.svg";
 import logoImage from "@/assets/images/icons/logo_square.png";
 import Apple from "@/components/icon/Apple";
-import Ubuntu from "@/components/icon/Linux";
+import Linux from "@/components/icon/Linux";
 import Windows from "@/components/icon/Windows";
 import { Button, TransparentButton } from "@/components/ui/Button";
 import "aos/dist/aos.css";
@@ -51,7 +51,7 @@ const Hero = () => {
                 data-aos="fade-left"
               >
                 <Apple className="size-6" />
-                <Ubuntu className="size-6" />
+                <Linux className="size-6" />
                 <span className="text-lg lg:text-xl">更多版本</span>
               </TransparentButton>
               <TransparentButton
