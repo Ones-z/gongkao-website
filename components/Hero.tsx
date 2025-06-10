@@ -1,7 +1,7 @@
 import bannerImage from "@/assets/images/backgrounds/banner.svg";
 import logoImage from "@/assets/images/icons/logo_square.png";
 import Apple from "@/components/icon/Apple";
-import Ubuntu from "@/components/icon/Ubuntu";
+import Ubuntu from "@/components/icon/Linux";
 import Windows from "@/components/icon/Windows";
 import { Button, TransparentButton } from "@/components/ui/Button";
 import "aos/dist/aos.css";

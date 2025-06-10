@@ -1,5 +1,5 @@
 import Apple from "../icon/Apple";
-import Ubuntu from "../icon/Ubuntu";
+import Ubuntu from "../icon/Linux";
 import Windows from "../icon/Windows";
 import { TransparentButton } from "../ui/Button";
 

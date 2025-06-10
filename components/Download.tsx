@@ -1,6 +1,6 @@
 import { useState } from "preact/hooks";
 import Apple from "@/components/icon/Apple";
-import Ubuntu from "@/components/icon/Ubuntu";
+import Ubuntu from "@/components/icon/Linux";
 import Windows from "@/components/icon/Windows";
 import logoImage from "@/assets/images/icons/logo_square.png";
 
