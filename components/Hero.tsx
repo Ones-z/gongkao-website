@@ -60,7 +60,7 @@ const Hero = () => {
                 <Linux className="size-6" />
               </TransparentButton>
               <TransparentButton
-                href="/download"
+                href="/user_docs"
                 className="flex w-fit flex-row items-center gap-2"
                 data-aos="fade-up"
               >
