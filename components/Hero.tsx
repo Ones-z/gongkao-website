@@ -38,7 +38,7 @@ const Hero = () => {
             </div>
             <div className="ease-mobai-bounce flex flex-row gap-4 transition-all duration-500 md:gap-8">
               <Button
-                href="/download"
+                href="/download#win"
                 className="w-fit flex-row items-center gap-2 flex"
                 data-aos="fade-left"
               >
@@ -46,13 +46,18 @@ const Hero = () => {
                 <span className="text-lg lg:text-xl">下载 Class Widgets</span>
               </Button>
               <TransparentButton
-                href="/download"
+                href="/download#macos"
                 className="hidden w-fit flex-row items-center gap-2 lg:flex"
                 data-aos="fade-left"
               >
                 <Apple className="size-6" />
+              </TransparentButton>
+              <TransparentButton
+                href="/download#linux"
+                className="hidden w-fit flex-row items-center gap-2 lg:flex"
+                data-aos="fade-left"
+              >
                 <Linux className="size-6" />
-                <span className="text-lg lg:text-xl">更多版本</span>
               </TransparentButton>
               <TransparentButton
                 href="/download"

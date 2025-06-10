@@ -1,7 +1,7 @@
 import Apple from "../icon/Apple";
 import Linux from "../icon/Linux";
 import Windows from "../icon/Windows";
-import { TransparentButton } from "../ui/Button";
+import { Button, TransparentButton } from "@/components/ui/Button";
 
 const Footer = () => {
   return (
@@ -65,18 +65,18 @@ const Footer = () => {
           <div>
             <h3 className="mb-6 text-lg font-semibold">平台支持</h3>
             <div className="flex flex-wrap gap-4">
-              <div className="flex items-center gap-2 rounded-lg bg-[#1A1B26] p-3">
+              <TransparentButton href="/download#win" className="flex">
                 <Windows className="h-6 w-6" />
                 <span>Windows</span>
-              </div>
-              <div className="flex items-center gap-2 rounded-lg bg-[#1A1B26] p-3">
+              </TransparentButton>
+              <TransparentButton href="/download#macos" className="flex">
                 <Apple className="h-6 w-6" />
                 <span>macOS</span>
-              </div>
-              <div className="flex items-center gap-2 rounded-lg bg-[#1A1B26] p-3">
+              </TransparentButton>
+              <TransparentButton href="/download#linux" className="flex">
                 <Linux className="h-6 w-6" />
                 <span>Linux</span>
-              </div>
+              </TransparentButton>
             </div>
           </div>
 

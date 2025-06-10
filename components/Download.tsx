@@ -1,15 +1,43 @@
-import { useState } from "preact/hooks";
+import { useState, useEffect } from "preact/hooks";
 import Apple from "@/components/icon/Apple";
 import Linux from "@/components/icon/Linux";
 import Windows from "@/components/icon/Windows";
 import logoImage from "@/assets/images/icons/logo_square.png";
 
 const Download = () => {
-  const [activeTab, setActiveTab] = useState("macos");
+  const [activeTab, setActiveTab] = useState("windows");
+
+  // 添加哈希值到平台ID的映射
+  const hashToPlatform: Record<string, string> = {
+    '#win': 'windows',
+    '#macos': 'macos',
+    '#linux': 'linux'
+  };
+
+  // 监听URL哈希变化
+  useEffect(() => {
+    const handleHashChange = () => {
+      const hash = window.location.hash;
+      const platformId = hashToPlatform[hash];
+      if (platformId) {
+        setActiveTab(platformId);
+      }
+    };
+
+    // 初始加载时检查哈希
+    handleHashChange();
+
+    // 添加哈希变化监听
+    window.addEventListener('hashchange', handleHashChange);
+
+    return () => {
+      window.removeEventListener('hashchange', handleHashChange);
+    };
+  }, []);
 
   const platforms = [
-    { id: "macos", name: "macOS", icon: Apple },
     { id: "windows", name: "Windows", icon: Windows },
+    { id: "macos", name: "macOS", icon: Apple },
     { id: "linux", name: "Linux", icon: Linux },
   ];
 
@@ -82,7 +110,12 @@ const Download = () => {
               return (
                 <button
                   key={platform.id}
-                  onClick={() => setActiveTab(platform.id)}
+                  onClick={() => {
+                    setActiveTab(platform.id);
+                    // 使用replaceState更新URL哈希，避免产生历史记录
+                    const hash = platform.id === 'windows' ? 'win' : platform.id;
+                    history.replaceState(null, '', `#${hash}`);
+                  }}
                   className={`flex items-center gap-2 px-6 py-3 rounded-lg transition-all duration-300 ${
                     activeTab === platform.id
                       ? "bg-white text-black"
