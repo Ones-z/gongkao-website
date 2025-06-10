@@ -6,6 +6,7 @@ import logoImage from "@/assets/images/icons/logo_square.png";
 
 const Download = () => {
   const [activeTab, setActiveTab] = useState("windows");
+  const [activeIndex, setActiveIndex] = useState(0); // 添加滑动索引状态
   const [sliderPosition, setSliderPosition] = useState({
     width: 0,
     left: 0,
@@ -71,6 +72,12 @@ const Download = () => {
     { id: "macos", name: "macOS", icon: Apple },
     { id: "linux", name: "Linux", icon: Linux },
   ];
+  
+  // 根据activeTab更新activeIndex
+  useEffect(() => {
+    const index = platforms.findIndex(p => p.id === activeTab);
+    setActiveIndex(index);
+  }, [activeTab]);
 
   const downloadData = {
     macos: {
@@ -171,51 +178,61 @@ const Download = () => {
           </div>
         </div>
 
-        {/* Download Section */}
+        {/* Download Section - 改为滑动切换 */}
         <div className="bg-white/5 rounded-2xl p-8 backdrop-blur-sm border border-white/10">
           <div className="flex items-start justify-between">
-            <div className="flex-1">
-              <div className="flex items-center gap-3 mb-4">
-                {(() => {
-                  const IconComponent = platforms.find(p => p.id === activeTab)?.icon || Apple;
-                  return <IconComponent className="size-8 text-white" />;
-                })()}
-                <h2 className="text-3xl font-semibold text-white">{currentPlatform.title}</h2>
-              </div>
-              
-              <p className="text-gray-300 mb-8 whitespace-pre-line leading-relaxed">
-                {currentPlatform.description}
-              </p>
+            <div className="flex-1 overflow-hidden">
+              {/* 滑动容器 */}
+              <div
+                className="flex transition-transform duration-300 ease-in-out"
+                style={{ transform: `translateX(-${activeIndex * 100}%)` }}
+              >
+                {platforms.map(platform => {
+                  const platformData = downloadData[platform.id as keyof typeof downloadData];
+                  return (
+                    <div key={platform.id} className="w-full flex-shrink-0">
+                      <div className="flex items-center gap-3 mb-4">
+                        <platform.icon className="size-8 text-white" />
+                        <h2 className="text-3xl font-semibold text-white">{platformData.title}</h2>
+                      </div>
+                      
+                      <p className="text-gray-300 mb-8 whitespace-pre-line leading-relaxed">
+                        {platformData.description}
+                      </p>
 
-              {/* Download Options */}
-              <div className="space-y-4">
-                {currentPlatform.downloads.map((download, index) => (
-                  <div key={index} className="flex items-center justify-between p-4 bg-white/5 rounded-xl border border-white/10 hover:bg-white/10 transition-all duration-300">
-                    <div className="flex items-center gap-4">
-                      <div>
-                        <div className="flex items-center gap-2">
-                          <span className="text-lg font-medium text-white">{download.name}</span>
-                          <span className={`px-2 py-1 rounded-md text-xs font-medium ${
-                            download.type === "Beta" 
-                              ? "bg-orange-500/20 text-orange-300 border border-orange-500/30" 
-                              : "bg-green-500/20 text-green-300 border border-green-500/30"
-                          }`}>
-                            {download.type}
-                          </span>
-                        </div>
+                      {/* Download Options */}
+                      <div className="space-y-4">
+                        {platformData.downloads.map((download, index) => (
+                          <div key={index} className="flex items-center justify-between p-4 bg-white/5 rounded-xl border border-white/10 hover:bg-white/10 transition-all duration-300">
+                            <div className="flex items-center gap-4">
+                              <div>
+                                <div className="flex items-center gap-2">
+                                  <span className="text-lg font-medium text-white">{download.name}</span>
+                                  <span className={`px-2 py-1 rounded-md text-xs font-medium ${
+                                    download.type === "Beta"
+                                      ? "bg-orange-500/20 text-orange-300 border border-orange-500/30"
+                                      : "bg-green-500/20 text-green-300 border border-green-500/30"
+                                  }`}>
+                                    {download.type}
+                                  </span>
+                                </div>
+                              </div>
+                            </div>
+                            <a
+                              href={download.url}
+                              className="flex items-center gap-2 bg-white text-black px-6 py-2 rounded-lg font-medium hover:bg-gray-100 transition-all duration-300"
+                            >
+                              <svg className="size-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                              </svg>
+                              下载
+                            </a>
+                          </div>
+                        ))}
                       </div>
                     </div>
-                    <a
-                      href={download.url}
-                      className="flex items-center gap-2 bg-white text-black px-6 py-2 rounded-lg font-medium hover:bg-gray-100 transition-all duration-300"
-                    >
-                      <svg className="size-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                      </svg>
-                      下载
-                    </a>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
 
