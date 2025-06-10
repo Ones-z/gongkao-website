@@ -3,7 +3,9 @@ import React from 'react';
 const Header = () => {
   const navItems = [
     { href: "/", label: "主页" },
-    { href: "/download", label: "下载" }
+    { href: "/download", label: "下载" },
+    { href: "/user_docs", label: "用户文档" },
+    { href: "/dev_docs", label: "开发者文档" },
   ];
   return (
     <header className="fixed top-0 left-0 w-full z-50 bg-opacity-10 backdrop-blur-md shadow-sm">

@@ -23,7 +23,7 @@ const Personalization = () => {
   const [isTransitioning, setIsTransitioning] = useState(false);
 
   useEffect(() => {
-    const interval = setInterval(() => {
+    const interval = window.setInterval(() => {
       setIsTransitioning(true);
 
       setTimeout(() => {
@@ -34,7 +34,7 @@ const Personalization = () => {
       }, 250);
     }, 3000);
 
-    return () => clearInterval(interval);
+    return () => window.clearInterval(interval);
   }, [screenshots.length]);
 
   return (

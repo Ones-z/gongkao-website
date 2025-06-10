@@ -1,18 +1,33 @@
 // @ts-check
 import partytown from "@astrojs/partytown";
 import preact from "@astrojs/preact";
+import starlight from "@astrojs/starlight";
 import tailwindcss from "@tailwindcss/vite";
 import { defineConfig } from "astro/config";
 
 // https://astro.build/config
 export default defineConfig({
   srcDir: ".",
-  integrations: [preact(), partytown()],
+  integrations: [
+    preact(),
+    partytown(),
+    starlight({
+      title: "Class Widgets",
+      logo: { src: "./assets/images/favicon.png", alt: "Class Widgets Logo" },
+      sidebar: [{
+        label: "用户文档",
+        link: '/user_docs/' 
+      },{
+        label: "开发者文档",
+        link: '/dev_docs/' 
+      }],
+    }),
+  ],
   vite: {
     server: {
       fs: {
-        allow: ['..']
-      }
+        allow: [".."],
+      },
     },
     // @ts-ignore
     plugins: [tailwindcss()],
