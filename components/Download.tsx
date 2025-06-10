@@ -1,4 +1,4 @@
-import { useState, useEffect } from "preact/hooks";
+import { useState, useEffect, useRef } from "preact/hooks";
 import Apple from "@/components/icon/Apple";
 import Linux from "@/components/icon/Linux";
 import Windows from "@/components/icon/Windows";
@@ -6,12 +6,35 @@ import logoImage from "@/assets/images/icons/logo_square.png";
 
 const Download = () => {
   const [activeTab, setActiveTab] = useState("windows");
+  const [sliderPosition, setSliderPosition] = useState({
+    width: 0,
+    left: 0,
+    top: 0,
+    height: 0
+  });
+  const tabsRef = useRef<HTMLDivElement>(null);
 
   // 添加哈希值到平台ID的映射
   const hashToPlatform: Record<string, string> = {
     '#win': 'windows',
     '#macos': 'macos',
     '#linux': 'linux'
+  };
+
+  // 更新滑块位置
+  const updateSliderPosition = (platformId: string) => {
+    if (!tabsRef.current) return;
+    
+    const activeButton = tabsRef.current.querySelector(`button[data-platform="${platformId}"]`);
+    if (!activeButton) return;
+    
+    const { offsetLeft, offsetTop, offsetWidth, offsetHeight } = activeButton as HTMLButtonElement;
+    setSliderPosition({
+      left: offsetLeft,
+      top: offsetTop,
+      width: offsetWidth,
+      height: offsetHeight
+    });
   };
 
   // 监听URL哈希变化
@@ -34,6 +57,14 @@ const Download = () => {
       window.removeEventListener('hashchange', handleHashChange);
     };
   }, []);
+
+  // 初始化滑块位置
+  useEffect(() => {
+    updateSliderPosition(activeTab);
+    const handleResize = () => updateSliderPosition(activeTab);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [activeTab]);
 
   const platforms = [
     { id: "windows", name: "Windows", icon: Windows },
@@ -104,7 +135,7 @@ const Download = () => {
 
         {/* Platform Tabs */}
         <div className="mb-12">
-          <div className="flex flex-wrap gap-2 bg-white/5 rounded-xl p-2 w-fit">
+          <div ref={tabsRef} className="flex flex-wrap gap-2 bg-white/5 rounded-xl p-2 w-fit relative">
             {platforms.map((platform) => {
               const IconComponent = platform.icon;
               return (
@@ -116,9 +147,10 @@ const Download = () => {
                     const hash = platform.id === 'windows' ? 'win' : platform.id;
                     history.replaceState(null, '', `#${hash}`);
                   }}
-                  className={`flex items-center gap-2 px-6 py-3 rounded-lg transition-all duration-300 ${
+                  data-platform={platform.id}
+                  className={`flex items-center gap-2 px-6 py-3 rounded-lg transition-all duration-300 relative z-10 ${
                     activeTab === platform.id
-                      ? "bg-white text-black"
+                      ? "text-black"
                       : "text-gray-300 hover:text-white hover:bg-white/10"
                   }`}
                 >
@@ -127,6 +159,15 @@ const Download = () => {
                 </button>
               );
             })}
+            <div
+              className="absolute rounded-lg bg-white transition-all duration-300 z-0"
+              style={{
+                left: `${sliderPosition.left}px`,
+                top: `${sliderPosition.top}px`,
+                width: `${sliderPosition.width}px`,
+                height: `${sliderPosition.height}px`
+              }}
+            />
           </div>
         </div>
 
