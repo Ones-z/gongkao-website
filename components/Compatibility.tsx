@@ -40,12 +40,12 @@ const Personalization = () => {
   return (
     <div className="grid gap-12 lg:grid-cols-[1.5fr_1fr]">
       <div
-        className="order-2 aspect-video overflow-hidden rounded-lg border-2 border-[#303640] lg:order-1"
+        className="order-2 aspect-video min-h-[200px] w-full overflow-hidden rounded-lg border-2 border-[#303640] lg:order-1"
         data-aos="fade-right"
       >
         <img
           src={screenshots[currentImageIndex]}
-          className={`ease-mobai-standard h-full w-full object-contain transition-opacity duration-500 ${
+          className={`ease-mobai-standard h-full w-full object-cover transition-opacity duration-500 ${
             isTransitioning ? "opacity-0" : "opacity-100"
           }`}
         />
