@@ -27,7 +27,7 @@ const Desktop = () => {
           data-aos="fade-down"
         >
           <span>向未来形态的课程表</span>
-          <span>说你好</span>
+          <span className="gradient-text">说你好</span>
         </p>
       </div>
     </div>

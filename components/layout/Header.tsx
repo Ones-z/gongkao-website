@@ -1,14 +1,13 @@
-import { useState } from 'preact/hooks';
+import { useState, useEffect } from 'preact/hooks';
+import { navItems } from 'Navs.ts';
 
 const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [currentPath, setCurrentPath] = useState('');
 
-  const navItems = [
-    { href: "/", label: "主页" },
-    { href: "/download", label: "下载" },
-    { href: "/user_docs", label: "用户文档" },
-    { href: "/dev_docs", label: "开发者文档" },
-  ];
+  useEffect(() => {
+    setCurrentPath(window.location.pathname);
+  }, []);
 
   return (
     <header className="fixed top-0 left-0 w-full z-50 bg-opacity-10 backdrop-blur-md shadow-sm">
@@ -24,7 +23,11 @@ const Header = () => {
             <a
               key={item.href}
               href={item.href}
-              className="text-gray-200 hover:text-blue-500 transition-colors"
+              className={`text-gray-200 hover:text-blue-500 transition-colors relative ${
+                currentPath === item.href
+                  ? "after:content-[''] after:absolute after:left-0 after:-bottom-1 after:w-full after:h-0.5 after:bg-[#7dd3fc] after:transition-all"
+                  : ""
+              }`}
             >
               {item.label}
             </a>
@@ -68,7 +71,11 @@ const Header = () => {
             <a
               key={item.href}
               href={item.href}
-              className="block text-gray-200 hover:text-blue-500 transition-colors py-2"
+              className={`block text-gray-200 hover:text-blue-500 transition-colors py-2 relative ${
+                currentPath === item.href
+                  ? "after:content-[''] after:absolute after:left-0 after:-bottom-1 after:w-full after:h-0.5 after:bg-[#7dd3fc] after:transition-all"
+                  : ""
+              }`}
               onClick={() => setIsOpen(false)}
             >
               {item.label}

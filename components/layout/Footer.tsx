@@ -2,6 +2,7 @@ import Apple from "../icon/Apple";
 import Linux from "../icon/Linux";
 import Windows from "../icon/Windows";
 import { Button, TransparentButton } from "@/components/ui/Button";
+import { navItems } from 'Navs.ts';
 
 const Footer = () => {
   return (
@@ -53,11 +54,15 @@ const Footer = () => {
           <div>
             <h3 className="mb-6 text-lg font-semibold">快速链接</h3>
             <ul className="space-y-4">
-              <li><a href="/" className="text-[#87878A] hover:text-white transition-colors">首页</a></li>
-              <li><a href="#" className="text-[#87878A] hover:text-white transition-colors">功能</a></li>
-              <li><a href="/download" className="text-[#87878A] hover:text-white transition-colors">下载</a></li>
-              <li><a href="#" className="text-[#87878A] hover:text-white transition-colors">文档</a></li>
-              <li><a href="#" className="text-[#87878A] hover:text-white transition-colors">支持</a></li>
+              {navItems.map((item) => (
+            <li><a
+              key={item.href}
+              href={item.href}
+              className="text-[#87878A] hover:text-white transition-colors"
+            >
+              {item.label}
+            </a></li>
+          ))}
             </ul>
           </div>
 
