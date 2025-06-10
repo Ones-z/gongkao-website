@@ -5,7 +5,7 @@ import win11Image from "@/assets/images/screenshots/win11.png";
 import "aos/dist/aos.css";
 import { useEffect, useState, useRef } from "preact/hooks";
 
-const Personalization = () => {
+const Compatibility = () => {
   useEffect(() => {
     import("aos").then((AOS) => {
       AOS.init({
@@ -15,13 +15,22 @@ const Personalization = () => {
     });
   }, []);
 
-  const screenshots = [win11Image, linuxImage, win7Image, macosImage].map(
+  const rawScreenshots = [win11Image, linuxImage, win7Image, macosImage].map(
     (it) => it.src,
   );
+  const screenshots = [
+    rawScreenshots[rawScreenshots.length - 1], // Last image
+    ...rawScreenshots,
+    rawScreenshots[0], // First image
+  ];
 
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [currentImageIndex, setCurrentImageIndex] = useState(1); // Start at the first real image
   const intervalRef = useRef<number | null>(null);
   const isHoveringRef = useRef(false);
+  const [isJumping, setIsJumping] = useState(false); // State to control instant jump
+  const [isAnimating, setIsAnimating] = useState(false); // New state to prevent rapid clicks
+
+  const transitionDuration = 500; // Must match CSS transition duration
 
   // 启动自动轮播
   const startAutoPlay = () => {
@@ -43,16 +52,16 @@ const Personalization = () => {
 
   // 切换到下一张
   const goToNext = () => {
-    setCurrentImageIndex(
-      (prevIndex) => (prevIndex + 1) % screenshots.length
-    );
+    if (isAnimating) return; // Prevent rapid clicks
+    setIsAnimating(true); // Start animation
+    setCurrentImageIndex((prevIndex) => prevIndex + 1);
   };
 
   // 切换到上一张
   const goToPrev = () => {
-    setCurrentImageIndex(
-      (prevIndex) => (prevIndex - 1 + screenshots.length) % screenshots.length
-    );
+    if (isAnimating) return; // Prevent rapid clicks
+    setIsAnimating(true); // Start animation
+    setCurrentImageIndex((prevIndex) => prevIndex - 1);
   };
 
   // 处理手动切换
@@ -68,6 +77,37 @@ const Personalization = () => {
       startAutoPlay();
     }
   };
+
+
+  // 处理循环跳转和动画结束
+  useEffect(() => {
+    let timer: number;
+    // This setTimeout handles the duration of the visual slide animation
+    timer = window.setTimeout(() => {
+      // After the slide animation, check if a jump is needed
+      if (currentImageIndex === screenshots.length - 1) {
+        setIsJumping(true); // Disable transition for the jump
+        setCurrentImageIndex(1); // Jump to the real first image
+      } else if (currentImageIndex === 0) {
+        setIsJumping(true); // Disable transition for the jump
+        setCurrentImageIndex(screenshots.length - 2); // Jump to the real last image
+      }
+      // In any case, after the slide (or potential jump), animation is considered done
+      setIsAnimating(false);
+    }, transitionDuration);
+
+    return () => window.clearTimeout(timer);
+  }, [currentImageIndex, screenshots.length]);
+
+  // Re-enable transition after jumping
+  useEffect(() => {
+    if (isJumping) {
+      // Use requestAnimationFrame to ensure the state update for setIsJumping(false) happens after the DOM has rendered the jump
+      requestAnimationFrame(() => {
+        setIsJumping(false);
+      });
+    }
+  }, [isJumping]);
 
 
   useEffect(() => {
@@ -93,8 +133,11 @@ const Personalization = () => {
       >
         {/* 滑动容器 */}
         <div
-          className="flex h-full transition-transform duration-500 ease-in-out"
-          style={{ transform: `translateX(-${currentImageIndex * 100}%)` }}
+          className="flex h-full ease-in-out"
+          style={{
+            transform: `translateX(-${currentImageIndex * 100}%)`,
+            transition: isJumping ? 'none' : `transform ${transitionDuration}ms ease-in-out`,
+          }}
         >
           {screenshots.map((src, index) => (
             <div key={index} className="min-w-full flex-shrink-0">
@@ -151,4 +194,4 @@ const Personalization = () => {
   );
 };
 
-export default Personalization;
+export default Compatibility;
