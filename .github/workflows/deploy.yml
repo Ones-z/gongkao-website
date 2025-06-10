@@ -8,7 +8,7 @@ permissions:
   contents: write  # 允许写入仓库内容（如 git push、创建 release 等）
 jobs:
   build-and-deploy:
-    runs-on: Linux-latest
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
