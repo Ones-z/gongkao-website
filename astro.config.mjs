@@ -31,6 +31,10 @@ export default defineConfig({
           label: "开发者文档",
           autogenerate: { directory: "dev_docs" },
         },
+        {
+          label: "社区规范",
+          autogenerate: { directory: "standards" },
+        },
       ],
       components: {
         Head: "./components/starlight/Head.astro",
