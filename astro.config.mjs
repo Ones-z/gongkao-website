@@ -39,7 +39,7 @@ export default defineConfig({
       components: {
         Head: "./components/starlight/Head.astro",
       },
-      customCss: [
+      customCss: ['./styles/starlight-custom.css'
         // 你的自定义 CSS 文件的相对路径
       ],
     }),
