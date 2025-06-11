@@ -22,7 +22,7 @@ const Header = () => {
   }, []);
 
   return (
-    <header className="fixed top-0 left-0 w-full z-50 bg-opacity-10 backdrop-blur-md shadow-sm">
+    <header className="fixed top-0 left-0 w-full z-50 bg-gray-900/80 backdrop-blur-md shadow-sm">
       <nav className="container mx-auto px-4 py-3 flex justify-between items-center">
         <a href="/">
           <div className="flex items-center space-x-2">
