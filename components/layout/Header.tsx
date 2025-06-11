@@ -6,7 +6,17 @@ const Header = () => {
   const [currentPath, setCurrentPath] = useState('');
 
   useEffect(() => {
-    setCurrentPath(window.location.pathname);
+    setCurrentPath(new URL(window.location.href).pathname);
+
+    const handlePopstate = () => {
+      setCurrentPath(new URL(window.location.href).pathname);
+    };
+
+    window.addEventListener('popstate', handlePopstate);
+
+    return () => {
+      window.removeEventListener('popstate', handlePopstate);
+    };
   }, []);
 
   return (
