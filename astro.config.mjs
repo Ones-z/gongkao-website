@@ -20,7 +20,7 @@ export default defineConfig({
   ],
       plugins: [starlightNextjsTheme()],
       favicon: "/favicon.ico",
-      title: "Class Widgets",
+      title: "Class Widgets",disable404Route: true,
       logo: { src: "./assets/images/favicon.png", alt: "Class Widgets Logo" },
       sidebar: [
         {
