@@ -4,6 +4,7 @@ import preact from "@astrojs/preact";
 import starlight from "@astrojs/starlight";
 import tailwindcss from "@tailwindcss/vite";
 import { defineConfig } from "astro/config";
+import starlightNextjsTheme from 'starlight-nextjs-theme';
 
 // https://astro.build/config
 export default defineConfig({
@@ -11,7 +12,13 @@ export default defineConfig({
   integrations: [
     preact(),
     partytown(),
-    starlight({
+    starlight({social: [
+    { icon: 'download', label: '下载', href: '/download' },
+    { icon: 'comment', label: 'QQ', href: 'https://qun.qq.com/universal-share/share?ac=1&authKey=L5dC%2B02XrjoB5ArYYGFBip7aGqTdreXdEoAb1X5%2BtQJUzwCjYd97t98xGBdsYohR&busi_data=eyJncm91cENvZGUiOiI2OTg1OTk4OTgiLCJ0b2tlbiI6InFaeGdlbnpoOHM1WHllMEp0SUNsUnZxTmdsM280K3FJRmdHbm1UNEFEUGplQk9YdUs2bXFEeWRSaGUvQUJLK2ciLCJ1aW4iOiIxOTg1NDA5NzExIn0=&data=1EBWxjW-zxlIdsZbE--bdpkjBQBz8UG_SHTt8j325Z3iawQVQKMthE6TXv-xA_VVGpTIZDMPqzpIQRfsUP4cVg&svctype=4&tempid=h5_group_info' },
+    { icon: 'discord', label: 'Discord', href: 'https://discord.com/invite/xhZqhGuBxu' },
+    { icon: 'github', label: 'GitHub', href: 'https://github.com/Class-Widgets' },
+  ],
+      plugins: [starlightNextjsTheme()],
       favicon: "/favicon.ico",
       title: "Class Widgets",
       logo: { src: "./assets/images/favicon.png", alt: "Class Widgets Logo" },
@@ -27,11 +34,9 @@ export default defineConfig({
       ],
       components: {
         Head: "./components/starlight/Head.astro",
-        Header: "./components/starlight/Header.astro",
       },
       customCss: [
         // 你的自定义 CSS 文件的相对路径
-        "./styles/global.css",
       ],
     }),
   ],

@@ -21,6 +21,7 @@
     "react-dom": "^19.1.0",
     "sharp": "^0.34.2",
     "sharp-ico": "^0.1.5",
+    "starlight-nextjs-theme": "^0.2.0",
     "tailwindcss": "^4.1.7"
   },
   "devDependencies": {
