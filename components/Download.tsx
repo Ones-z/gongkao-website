@@ -14,6 +14,7 @@ const Download = () => {
     height: 0
   });
   const tabsRef = useRef<HTMLDivElement>(null);
+  const [loaded, setLoaded] = useState(false); // 新增状态
 
   // 添加哈希值到平台ID的映射
   const hashToPlatform: Record<string, string> = {
@@ -57,6 +58,10 @@ const Download = () => {
     return () => {
       window.removeEventListener('hashchange', handleHashChange);
     };
+  }, []);
+
+  useEffect(() => {
+    setLoaded(true); // 组件挂载后触发动画
   }, []);
 
   // 初始化滑块位置
@@ -130,7 +135,7 @@ const Download = () => {
   const currentPlatform = downloadData[activeTab as keyof typeof downloadData];
 
   return (
-    <div className="min-h-screen bg-mobai-background text-mobai-foreground">
+    <div className={`min-h-screen bg-mobai-background text-mobai-foreground transition-all duration-700 ease-out ${loaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
       <div className="max-w-6xl mx-auto px-8 py-16 md:px-12 lg:px-16">
         {/* Header */}
         <div className="mb-16">
