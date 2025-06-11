@@ -11,7 +11,7 @@ export default defineConfig({
   integrations: [
     preact(),
     partytown(),
-    starlight({
+    starlight({favicon: '/favicon.ico',
       title: "Class Widgets",
       logo: { src: "./assets/images/favicon.png", alt: "Class Widgets Logo" },
       sidebar: [{
@@ -20,7 +20,8 @@ export default defineConfig({
       },{
         label: "开发者文档",
         autogenerate: { directory: 'dev_docs' },
-      }],
+      }],    components: {
+      Head: "./components/starlight/Head.astro"}
     }),
   ],
   vite: {
