@@ -36,43 +36,47 @@ const Hero = () => {
             <div className="ease-mobai-bounce gap-4 text-3xl leading-snug font-semibold whitespace-pre-line transition-all duration-500 lg:text-4xl xl:text-5xl">
               <h1 data-aos="fade-up">{`多样的桌面课表\n由我们定义的全新桌面形态`}</h1>
             </div>
-            <div className="ease-mobai-bounce flex flex-row gap-4 transition-all duration-500 md:gap-8">
-              <Button
-                href="/download#win"
-                className="w-fit flex-row items-center gap-2 flex"
-                data-aos="fade-left"
-              >
-                <Windows className="size-6" />
-                <span className="text-lg lg:text-xl">下载 Class Widgets</span>
-              </Button>
-              <TransparentButton
-                href="/download#macos"
-                className="hidden w-fit flex-row items-center gap-2 lg:flex"
-                data-aos="fade-left"
-              >
-                <Apple className="size-6" />
-              </TransparentButton>
-              <TransparentButton
-                href="/download#linux"
-                className="hidden w-fit flex-row items-center gap-2 lg:flex"
-                data-aos="fade-left"
-              >
-                <Linux className="size-6" />
-              </TransparentButton>
-              <TransparentButton
-                href="/user_docs"
-                className="flex w-fit flex-row items-center gap-2"
-                data-aos="fade-up"
-              >
-                <span className="text-lg lg:text-xl">文档</span>
-              </TransparentButton>
-              <TransparentButton
-                href="https://www.yuque.com/rinlit/standards"
-                className="flex w-fit flex-row items-center gap-2"
-                data-aos="fade-up"
-              >
-                <span className="text-lg lg:text-xl">社区</span>
-              </TransparentButton>
+            <div className="ease-mobai-bounce flex flex-col gap-4 transition-all duration-500 md:flex-row md:gap-8">
+              <div className="flex flex-col gap-4 md:flex-row">
+                <Button
+                  href="/download#win"
+                  className="w-fit flex-row items-center gap-2 flex"
+                  data-aos="fade-left"
+                >
+                  <Windows className="size-6" />
+                  <span className="text-lg lg:text-xl">下载 Class Widgets</span>
+                </Button>
+                <TransparentButton
+                  href="/download#macos"
+                  className="hidden w-fit flex-row items-center gap-2 lg:flex"
+                  data-aos="fade-left"
+                >
+                  <Apple className="size-6" />
+                </TransparentButton>
+                <TransparentButton
+                  href="/download#linux"
+                  className="hidden w-fit flex-row items-center gap-2 lg:flex"
+                  data-aos="fade-left"
+                >
+                  <Linux className="size-6" />
+                </TransparentButton>
+              </div>
+              <div className="flex flex-row gap-4">
+                <TransparentButton
+                  href="/user_docs"
+                  className="flex w-fit flex-row items-center gap-2"
+                  data-aos="fade-up"
+                >
+                  <span className="text-lg lg:text-xl">文档</span>
+                </TransparentButton>
+                <TransparentButton
+                  href="https://www.yuque.com/rinlit/standards"
+                  className="flex w-fit flex-row items-center gap-2"
+                  data-aos="fade-up"
+                >
+                  <span className="text-lg lg:text-xl">社区</span>
+                </TransparentButton>
+              </div>
             </div>
           </div>
         </div>
