@@ -3,6 +3,7 @@ import Apple from "@/components/icon/Apple";
 import Linux from "@/components/icon/Linux";
 import Windows from "@/components/icon/Windows";
 import logoImage from "@/assets/images/icons/logo_square.png";
+import Switch from "@/components/ui/Switch";
 
 const Download = () => {
   const [activeTab, setActiveTab] = useState("windows");
@@ -15,6 +16,7 @@ const Download = () => {
   });
   const tabsRef = useRef<HTMLDivElement>(null);
   const [loaded, setLoaded] = useState(false); // 新增状态
+  const [useProxy, setUseProxy] = useState(true); // 新增代理开关状态
 
   // 添加哈希值到平台ID的映射
   const hashToPlatform: Record<string, string> = {
@@ -84,21 +86,27 @@ const Download = () => {
     setActiveIndex(index);
   }, [activeTab]);
 
+  const ver = 'v1.1.7.1';
+  const proxy = 'https://ghfile.geekertao.top/';
+  const getDownloadUrl = (baseUrl: string) => {
+    return useProxy ? proxy + baseUrl : baseUrl;
+  };
+
   const downloadData = {
     macos: {
       title: "MacOS下载",
       description: "支持Apple Silicon和Intel处理器。",
       downloads: [
         {
-          name: "v1.1.7.1",
+          name: ver,
           type: "Apple Silicon",
-          url: "https://github.com/Class-Widgets/Class-Widgets/releases/download/v1.1.7.1/ClassWidgets-macOS-arm64.zip"
+          url: getDownloadUrl("https://github.com/Class-Widgets/Class-Widgets/releases/download/"+ver+"/ClassWidgets-macOS-arm64.zip")
 
         },
         {
-          name: "v1.1.7.1",
+          name: ver,
           type: "Intel",
-          url: "https://github.com/Class-Widgets/Class-Widgets/releases/download/v1.1.7.1/ClassWidgets-macOS-x64.zip"
+          url: getDownloadUrl("https://github.com/Class-Widgets/Class-Widgets/releases/download/"+ver+"/ClassWidgets-macOS-x64.zip")
 
         }
       ]
@@ -108,14 +116,14 @@ const Download = () => {
       description: "支持Windows7及以上版本。\n提供x64和x86版本。",
       downloads: [
         {
-          name: "v1.1.7.1",
+          name: ver,
           type: "x64",
-          url: "https://github.com/Class-Widgets/Class-Widgets/releases/download/v1.1.7.1/ClassWidgets-Windows-x64.zip"
+          url: getDownloadUrl("https://github.com/Class-Widgets/Class-Widgets/releases/download/"+ver+"/ClassWidgets-Windows-x64.zip")
         },
         {
-          name: "v1.1.7.1",
+          name: ver,
           type: "x86",
-          url: "https://github.com/Class-Widgets/Class-Widgets/releases/download/v1.1.7.1/ClassWidgets-Windows-x86.zip"
+          url: getDownloadUrl("https://github.com/Class-Widgets/Class-Widgets/releases/download/"+ver+"/ClassWidgets-Windows-x86.zip")
         }
       ]
     },
@@ -124,9 +132,9 @@ const Download = () => {
       description: "暂时只支持Debian，其他版本请尽情期待",
       downloads: [
         {
-          name: "v1.1.7.1",
+          name: ver,
           type: "Debian",
-          url: "https://github.com/Class-Widgets/Class-Widgets/releases/download/v1.1.7.1/ClassWidgets-Debian10.zip"
+          url: getDownloadUrl("https://github.com/Class-Widgets/Class-Widgets/releases/download/"+ver+"/ClassWidgets-Debian10.zip")
         },
       ]
     }
@@ -143,6 +151,17 @@ const Download = () => {
           <p className="text-xl text-gray-300 max-w-3xl leading-relaxed">
             下载Class Widgets应用程序以在您的设备上使用。我们提供了适用于macOS、Windows和Linux的版本，确保您可以在任何平台上享受我们的软件。
           </p>
+          {/* Proxy Toggle */}
+          <div className="mt-8 flex items-center">
+            <Switch
+              checked={useProxy}
+              onChange={setUseProxy}
+              className="mr-2"
+            />
+            <label htmlFor="useProxyToggle" className="text-gray-300">
+              使用代理下载 (如果直接下载速度慢，请勾选此项)
+            </label>
+          </div>
         </div>
 
         {/* Platform Tabs */}
