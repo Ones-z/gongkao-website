@@ -167,7 +167,7 @@ const Download = () => {
                   }`}
                 >
                   <IconComponent className="size-5" />
-                  <span className="font-medium">{platform.name}</span>
+                  <span className={`font-medium ${activeTab !== platform.id ? 'hidden md:block' : ''}`}>{platform.name}</span>
                 </button>
               );
             })}
