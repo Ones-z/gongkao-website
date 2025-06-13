@@ -2,7 +2,7 @@
 import "@/styles/global.css";
 import Footer from "@/components/layout/Footer";
 import Header from "@/components/layout/Header";
-import { ViewTransitions } from "astro:transitions";
+import { ClientRouter } from "astro:transitions";
 ---
 
 <!doctype html>
@@ -13,6 +13,7 @@ import { ViewTransitions } from "astro:transitions";
     <link rel="icon" type="image/ico" href="/favicon.ico" />
     <meta name="generator" content={Astro.generator} />
     <title>Class Widgets</title>
+    <ClientRouter />
   </head>
   <body>
     <Header client:load />
@@ -31,4 +32,3 @@ import { ViewTransitions } from "astro:transitions";
     height: 100%;
   }
 </style>
-<ViewTransitions />
