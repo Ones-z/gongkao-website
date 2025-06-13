@@ -3,18 +3,11 @@ import { useEffect } from "preact/hooks";
 import personalizationImage from "@/assets/images/personalization.png";
 
 const Personalization = () => {
-  useEffect(() => {
-    import("aos").then((AOS) => {
-      AOS.init({
-        duration: 1000,
-        once: true,
-      });
-    });
-  }, []);
+
 
   return (
     <div className="grid gap-12 lg:grid-cols-[1fr_1.5fr]">
-      <div className="flex flex-col justify-center gap-6" data-aos="fade-right">
+      <div className="flex flex-col justify-center gap-6">
         <p
           className="bg-gradient-to-r from-[#8e82ff] to-[#16e647] bg-clip-text text-lg font-semibold text-transparent"
           data-aos="zoom-in"

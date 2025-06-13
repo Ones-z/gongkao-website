@@ -6,14 +6,7 @@ import "aos/dist/aos.css";
 import { useEffect, useState, useRef } from "preact/hooks";
 
 const Compatibility = () => {
-  useEffect(() => {
-    import("aos").then((AOS) => {
-      AOS.init({
-        duration: 1000,
-        once: true,
-      });
-    });
-  }, []);
+
 
   const rawScreenshots = [win11Image, linuxImage, win7Image, macosImage].map(
     (it) => it.src,
