@@ -70,7 +70,7 @@ const Hero = () => {
                   <span className="text-lg lg:text-xl">文档</span>
                 </TransparentButton>
                 <TransparentButton
-                  href="https://www.yuque.com/rinlit/standards"
+                  href="https://cwdocs.rinlit.cn/standards/"
                   className="flex w-fit flex-row items-center gap-2"
                   data-aos="fade-up"
                 >

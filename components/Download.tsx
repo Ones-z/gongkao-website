@@ -180,7 +180,7 @@ const Download = () => {
           <h1 className="text-5xl font-bold mb-6 text-white">下载Class Widgets</h1>
           <p className="text-xl text-gray-300 max-w-3xl leading-relaxed">
             下载Class Widgets应用程序以在您的设备上使用。我们提供了适用于macOS、Windows和Linux的版本，确保您可以在任何平台上享受我们的软件。
-          </p>
+          </p><br/>
           {/* 添加显示最新版本 */}
           <Version latestVer={latestVer} publishedDate={publishedDate} loading={loading} />
           {/* Proxy Toggle */}
