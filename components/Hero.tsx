@@ -63,7 +63,7 @@ const Hero = () => {
               </div>
               <div className="flex flex-row gap-4">
                 <TransparentButton
-                  href="/user_docs"
+                  href="https://cwdocs.rinlit.cn/user_docs"
                   className="flex w-fit flex-row items-center gap-2"
                   data-aos="fade-up"
                 >
