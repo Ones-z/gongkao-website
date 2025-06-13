@@ -177,14 +177,14 @@ const Download = () => {
       <div className="max-w-6xl mx-auto px-8 py-16 md:px-12 lg:px-16">
         {/* Header */}
         <div className="mb-16">
-          <h1 className="text-5xl font-bold mb-6 text-white">下载Class Widgets</h1>
-          <p className="text-xl text-gray-300 max-w-3xl leading-relaxed">
+          <h1 className="text-5xl font-bold mb-6 text-white" data-aos="fade-right">下载Class Widgets</h1>
+          <p className="text-xl text-gray-300 max-w-3xl leading-relaxed" data-aos="fade-right">
             下载Class Widgets应用程序以在您的设备上使用。我们提供了适用于macOS、Windows和Linux的版本，确保您可以在任何平台上享受我们的软件。
           </p><br/>
           {/* 添加显示最新版本 */}
-          <Version latestVer={latestVer} publishedDate={publishedDate} loading={loading} />
+          <div data-aos="fade-right"><Version latestVer={latestVer} publishedDate={publishedDate} loading={loading} /></div>
           {/* Proxy Toggle */}
-          <div className="mt-8 flex items-center">
+          <div className="mt-8 flex items-center" data-aos="fade-right">
             <Switch
               checked={useProxy}
               onChange={setUseProxy}
@@ -197,7 +197,7 @@ const Download = () => {
         </div>
 
         {/* Platform Tabs */}
-        <div className="mb-12">
+        <div className="mb-12" data-aos="zoom-in-right">
           <div ref={tabsRef} className="flex flex-wrap gap-2 bg-white/5 rounded-xl p-2 w-fit relative">
             {platforms.map((platform) => {
               const IconComponent = platform.icon;
@@ -235,7 +235,7 @@ const Download = () => {
         </div>
 
         {/* Download Section - 改为滑动切换 */}
-        <div className="bg-white/5 rounded-2xl p-8 backdrop-blur-sm border border-white/10">
+        <div className="bg-white/5 rounded-2xl p-8 backdrop-blur-sm border border-white/10" data-aos="zoom-out-right">
           <div className="flex items-start justify-between">
             <div className="flex-1 overflow-hidden">
               {/* 滑动容器 */}

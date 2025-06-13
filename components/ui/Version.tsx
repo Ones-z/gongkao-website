@@ -1,4 +1,3 @@
-import { useState, useEffect } from "preact/hooks";
 import logoImage from "@/assets/images/icons/logo_square.png";
 
 interface VersionProps {

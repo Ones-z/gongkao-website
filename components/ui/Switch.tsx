@@ -1,4 +1,4 @@
-import { useState } from "preact/hooks";
+
 
 interface SwitchProps {
   checked: boolean;
