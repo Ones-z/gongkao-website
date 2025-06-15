@@ -125,7 +125,7 @@ const Download = () => {
   const downloadData = {
     macos: {
       title: "MacOS下载",
-      description: "支持Apple Silicon和Intel处理器。",
+      description: "支持 Apple Silicon 和 Intel 处理器。",
       downloads: [
         {
           name: ver,
@@ -143,7 +143,7 @@ const Download = () => {
     },
     windows: {
       title: "Windows下载",
-      description: "支持Windows7及以上版本。\n提供x64和x86版本。",
+      description: "支持 Windows7 及以上版本。\n提供 x64 和 x86 版本。",
       downloads: [
         {
           name: ver,
@@ -159,7 +159,7 @@ const Download = () => {
     },
     linux: {
       title: "Linux下载",
-      description: "暂时只支持Debian，其他版本请尽情期待",
+      description: "暂时只支持 Debian，其他版本请敬请期待",
       downloads: [
         {
           name: ver,
@@ -179,7 +179,7 @@ const Download = () => {
         <div className="mb-16">
           <h1 className="text-5xl font-bold mb-6 text-white" data-aos="fade-right">下载Class Widgets</h1>
           <p className="text-xl text-gray-300 max-w-3xl leading-relaxed" data-aos="fade-right">
-            下载Class Widgets应用程序以在您的设备上使用。我们提供了适用于macOS、Windows和Linux的版本，确保您可以在任何平台上享受我们的软件。
+            下载 Class Widgets 应用程序以在您的设备上使用。我们提供了适用于 macOS、Windows 和 Linux 的版本，确保您可以在任何平台上享受我们的软件。
           </p><br/>
           {/* 添加显示最新版本 */}
           <div data-aos="fade-right"><Version latestVer={latestVer} publishedDate={publishedDate} loading={loading} /></div>
