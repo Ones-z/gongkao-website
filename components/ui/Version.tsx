@@ -1,4 +1,4 @@
-import logoImage from "@/assets/images/icons/logo_square.png";
+import logoImage from "@/public/favicon.svg";
 
 interface VersionProps {
   latestVer: string | null;

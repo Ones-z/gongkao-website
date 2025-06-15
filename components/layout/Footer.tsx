@@ -13,7 +13,7 @@ const Footer = () => {
           <div className="flex flex-col gap-6">
             <div className="flex items-center gap-3">
               <img
-                src="/favicon.png"
+                src="/favicon.svg"
                 alt="Class Widgets Logo"
                 className="h-10 w-10"
               />
