@@ -5,6 +5,7 @@ import Windows from "@/components/icon/Windows";
 import logoImage from "@/assets/images/icons/logo_square.png";
 import Switch from "@/components/ui/Switch";
 import Version from "@/components/ui/Version";
+import {detectPlatformFromUserAgent} from "plat.ts";
 
 const Download = () => {
   const [activeTab, setActiveTab] = useState("windows");
@@ -21,6 +22,7 @@ const Download = () => {
   const [latestVer, setLatestVer] = useState<string | null>(null); // 新增最新版本状态
   const [publishedDate, setPublishedDate] = useState<string | null>(null); // 新增发布日期状态
   const [loading, setLoading] = useState(true); // 新增加载状态
+
 
   // 添加哈希值到平台ID的映射
   const hashToPlatform: Record<string, string> = {
@@ -52,6 +54,10 @@ const Download = () => {
       const platformId = hashToPlatform[hash];
       if (platformId) {
         setActiveTab(platformId);
+      } else {
+        // 没有URL标签时根据navigator.platform检测系统类型
+        const detectedPlatform = detectPlatformFromUserAgent();
+        setActiveTab(detectedPlatform);
       }
     };
 

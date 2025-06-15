@@ -5,9 +5,42 @@ import Linux from "@/components/icon/Linux";
 import Windows from "@/components/icon/Windows";
 import { Button, TransparentButton } from "@/components/ui/Button";
 import "aos/dist/aos.css";
-import { useEffect } from "preact/hooks";
+import { useEffect, useState } from "preact/hooks";
+import {detectPlatformFromUserAgent} from "plat.ts";
 
 const Hero = () => {
+  const [platform, setPlatform] = useState('');
+
+  useEffect(() => {
+    // 定义哈希值到平台ID的映射
+    const hashToPlatform: Record<string, string> = {
+      '#win': 'windows',
+      '#macos': 'macos',
+      '#linux': 'linux'
+    };
+
+    // 处理哈希变化的函数
+    const handleHashChange = () => {
+      const hash = window.location.hash;
+      const platformId = hashToPlatform[hash];
+      if (platformId) {
+        setPlatform(platformId);
+      } else {
+        // 没有URL标签时根据用户代理检测系统类型
+        setPlatform(detectPlatformFromUserAgent());
+      }
+    };
+
+    // 初始加载时检查哈希
+    handleHashChange();
+
+    // 添加哈希变化监听
+    window.addEventListener('hashchange', handleHashChange);
+
+    return () => {
+      window.removeEventListener('hashchange', handleHashChange);
+    };
+  }, []);
   return (
     <div className="h-screen w-full">
       <div
@@ -37,23 +70,17 @@ const Hero = () => {
                   className="flex w-fit flex-row items-center gap-2"
                   data-aos="fade-left"
                 >
-                  <Windows className="size-6" />
+                  {!platform ? (
+                    <div className="size-6 animate-pulse rounded-full bg-gray-300" />
+                  ) : (
+                    <>
+                      {platform === 'windows' && <Windows className="size-6" />}
+                      {platform === 'macos' && <Apple className="size-6" />}
+                      {platform === 'linux' && <Linux className="size-6" />}
+                    </>
+                  )}
                   <span className="text-lg lg:text-xl">下载 Class Widgets</span>
                 </Button>
-                <TransparentButton
-                  href="/download#macos"
-                  className="hidden w-fit flex-row items-center gap-2 lg:flex"
-                  data-aos="fade-left"
-                >
-                  <Apple className="size-6" />
-                </TransparentButton>
-                <TransparentButton
-                  href="/download#linux"
-                  className="hidden w-fit flex-row items-center gap-2 lg:flex"
-                  data-aos="fade-left"
-                >
-                  <Linux className="size-6" />
-                </TransparentButton>
               </div>
               <div className="flex flex-row gap-4">
                 <TransparentButton

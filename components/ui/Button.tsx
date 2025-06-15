@@ -1,12 +1,14 @@
+import type { JSX } from 'preact';
+
 export const Button = ({
   children,
   href,
   className,
 }: {
-  children: React.ReactNode;
+  children: JSX.Element | JSX.Element[];
   href: string;
   className?: string;
-}) => {
+}): JSX.Element => {
   return (
     <a
       href={href}
@@ -22,10 +24,10 @@ export const TransparentButton = ({
   href,
   className,
 }: {
-  children: React.ReactNode;
+  children: JSX.Element | JSX.Element[];
   href: string;
   className?: string;
-}) => {
+}): JSX.Element => {
   return (
     <a
       href={href}
