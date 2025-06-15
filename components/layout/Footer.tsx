@@ -70,15 +70,15 @@ const Footer = () => {
           <div>
             <h3 className="mb-6 text-lg font-semibold">平台支持</h3>
             <div className="flex flex-wrap gap-4">
-              <TransparentButton href="/download#win" className="flex">
+              <TransparentButton href="/download/#win" className="flex">
                 <Windows className="h-6 w-6" />
                 <span>Windows</span>
               </TransparentButton>
-              <TransparentButton href="/download#macos" className="flex">
+              <TransparentButton href="/download/#macos" className="flex">
                 <Apple className="h-6 w-6" />
                 <span>macOS</span>
               </TransparentButton>
-              <TransparentButton href="/download#linux" className="flex">
+              <TransparentButton href="/download/#linux" className="flex">
                 <Linux className="h-6 w-6" />
                 <span>Linux</span>
               </TransparentButton>
