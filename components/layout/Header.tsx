@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'preact/hooks';
 import { navItems } from 'Navs.ts';
+import logoImage from "@/assets/images/icons/favicon.svg";
 
 const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -26,7 +27,7 @@ const Header = () => {
       <nav className="container mx-auto px-4 py-3 flex justify-between items-center">
         <a href="/">
           <div className="flex items-center space-x-2">
-            <img src="/favicon.svg" alt="Logo" className="h-8 w-8" />
+            <img src={logoImage.src} alt="Logo" className="h-8 w-8" />
             <span className="text-xl font-bold text-gray-100">Class Widgets</span>
           </div>
         </a>

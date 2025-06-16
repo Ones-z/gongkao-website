@@ -1,5 +1,5 @@
-import bannerImage from "@/assets/images/backgrounds/banner.svg";
-import logoImage from "@/public/favicon.svg";
+import bannerImage from "@/assets/images/backgrounds/banner/dark.svg";
+import logoImage from "@/assets/images/icons/favicon.svg";
 import Apple from "@/components/icon/Apple";
 import Linux from "@/components/icon/Linux";
 import Windows from "@/components/icon/Windows";

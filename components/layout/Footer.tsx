@@ -3,6 +3,7 @@ import Linux from "../icon/Linux";
 import Windows from "../icon/Windows";
 import { Button, TransparentButton } from "@/components/ui/Button";
 import { navItems } from 'Navs.ts';
+import logoImage from "@/assets/images/icons/favicon.svg";
 
 const Footer = () => {
   return (
@@ -13,7 +14,7 @@ const Footer = () => {
           <div className="flex flex-col gap-6">
             <div className="flex items-center gap-3">
               <img
-                src="/favicon.svg"
+                src={logoImage.src}
                 alt="Class Widgets Logo"
                 className="h-10 w-10"
               />

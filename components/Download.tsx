@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "preact/hooks";
 import Apple from "@/components/icon/Apple";
 import Linux from "@/components/icon/Linux";
 import Windows from "@/components/icon/Windows";
-import logoImage from "@/public/favicon.svg";
+import logoImage from "@/assets/images/icons/favicon.svg";
 import Switch from "@/components/ui/Switch";
 import Version from "@/components/ui/Version";
 import {detectPlatformFromUserAgent} from "plat.ts";
