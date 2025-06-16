@@ -5,11 +5,24 @@ import Linux from "@/components/icon/Linux";
 import Windows from "@/components/icon/Windows";
 import { Button, TransparentButton } from "@/components/ui/Button";
 import "aos/dist/aos.css";
-import { useEffect, useState } from "preact/hooks";
+import { useEffect, useState, useRef } from "preact/hooks";
 import {detectPlatformFromUserAgent} from "plat.ts";
 
 const Hero = () => {
   const [platform, setPlatform] = useState('');
+  const [logoScale, setLogoScale] = useState(1);
+  const logoRef = useRef<HTMLImageElement>(null);
+  
+  const handleLogoClick = () => {
+    if (logoRef.current) {
+      logoRef.current.classList.add('shake-animation');
+      setTimeout(() => {
+        if (logoRef.current) {
+          logoRef.current.classList.remove('shake-animation');
+        }
+      }, 500); // 动画持续时间500ms
+    }
+  };
 
   useEffect(() => {
     // 定义哈希值到平台ID的映射
@@ -50,11 +63,16 @@ const Hero = () => {
         <div className="absolute inset-0 bg-gradient-to-r from-black/70 to-transparent" />
         <div className="ease-bounce max-w-8xl relative z-10 mx-auto flex h-full flex-col items-start justify-center gap-4 px-8 transition-all duration-500 md:gap-8 md:px-12 lg:px-16 xl:px-24">
           <img
+            ref={logoRef}
             src={logoImage.src}
             alt="logo"
             className="ease-bounce size-24 transition-all duration-500 lg:size-32 xl:size-48"
             data-aos="zoom-in"
-            data-aos-duration="1500"
+            data-aos-duration="500"
+            onMouseEnter={() => setLogoScale(1.1)}
+            onMouseLeave={() => setLogoScale(1)}
+            style={{ transform: `scale(${logoScale})` }}
+            onClick={handleLogoClick}
           />
           <div className="ease-bounce flex flex-col gap-4 transition-all duration-500 md:gap-8">
             <div className="ease-bounce gap-4 text-3xl leading-snug font-semibold whitespace-pre-line transition-all duration-500 lg:text-4xl xl:text-5xl">
