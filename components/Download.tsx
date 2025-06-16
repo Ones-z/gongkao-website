@@ -179,7 +179,7 @@ const Download = () => {
   const currentPlatform = downloadData[activeTab as keyof typeof downloadData];
 
   return (
-    <div className={`min-h-screen bg-mobai-background text-mobai-foreground transition-all duration-700 ease-out ${loaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+    <div className={`min-h-screen bg-background text-foreground transition-all duration-700 ease-out ${loaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
       <div className="max-w-6xl mx-auto px-8 py-16 md:px-12 lg:px-16">
         {/* Header */}
         <div className="mb-16">

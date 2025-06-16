@@ -5,7 +5,7 @@ const NotFound = () => {
   return (
     <FadeInDiv>
       <div
-        className="bg-mobai-background text-mobai-foreground flex min-h-screen items-center justify-center px-4 py-16 sm:px-6 lg:px-8"
+        className="bg-background text-foreground flex min-h-screen items-center justify-center px-4 py-16 sm:px-6 lg:px-8"
       >
         <div className="w-full max-w-md text-center"><div data-aos="fade-in">
           <h1

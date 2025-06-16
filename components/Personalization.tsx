@@ -15,7 +15,7 @@ const Personalization = () => {
           # 个性化
         </p>
         <h1
-          className="ease-mobai-bounce text-2xl leading-snug font-semibold whitespace-pre-line transition-all duration-500 lg:gap-4 lg:text-3xl xl:gap-8 xl:text-4xl"
+          className="ease-bounce text-2xl leading-snug font-semibold whitespace-pre-line transition-all duration-500 lg:gap-4 lg:text-3xl xl:gap-8 xl:text-4xl"
           data-aos="fade-up"
         >
           {`插件 & 主题\n极致的自定义`}

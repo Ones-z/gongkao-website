@@ -2,18 +2,18 @@
 @import 'aos/dist/aos.css';
 
 :root {
-  --color-mobai-background: #11121c;
-  --color-mobai-foreground: #ffffff;
+  --color-background: #11121c;
+  --color-foreground: #ffffff;
 
-  --ease-mobai-bounce: cubic-bezier(0.84, 0, 0.165, 1);
-  --ease-mobai-standard: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-bounce: cubic-bezier(0.84, 0, 0.165, 1);
+  --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
 
   --container-8xl: 96rem;
 }
 
 body {
-  background-color: var(--color-mobai-background);
-  color: var(--color-mobai-foreground);
+  background-color: var(--color-background);
+  color: var(--color-foreground);
 }
 
 /* 添加动态渐变文本效果 */

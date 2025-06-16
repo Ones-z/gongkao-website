@@ -136,7 +136,7 @@ const Compatibility = () => {
             <div key={index} className="min-w-full flex-shrink-0">
               <img
                 src={src}
-                className="ease-mobai-standard h-full w-full object-cover"
+                className="ease-standard h-full w-full object-cover"
               />
             </div>
           ))}
@@ -171,7 +171,7 @@ const Compatibility = () => {
           # 多端支持
         </p>
         <h1
-          className="ease-mobai-bounce text-2xl leading-snug font-semibold whitespace-pre-line transition-all duration-500 lg:gap-4 lg:text-3xl xl:gap-8 xl:text-4xl"
+          className="ease-bounce text-2xl leading-snug font-semibold whitespace-pre-line transition-all duration-500 lg:gap-4 lg:text-3xl xl:gap-8 xl:text-4xl"
           data-aos="fade-up"
         >
           {`近乎完美的\n兼容性`}
