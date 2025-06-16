@@ -50,20 +50,20 @@ body {
     opacity: 1;
     filter: blur(0);
   }
-  30% {
-    transform: scale(5);
-    opacity: 0.8;
-    filter: blur(10px);
-  }
-  70% {
+  33% {
     transform: scale(8);
+    opacity: 0.8;
+    filter: blur(15px);
+  }
+  66% {
+    transform: scale(14);
     opacity: 0.3;
-    filter: blur(20px);
+    filter: blur(25px);
   }
   100% {
-    transform: scale(10);
+    transform: scale(18);
     opacity: 0;
-    filter: blur(30px);
+    filter: blur(40px);
   }
 }
 
