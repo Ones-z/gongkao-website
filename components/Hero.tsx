@@ -11,16 +11,36 @@ import {detectPlatformFromUserAgent} from "plat.ts";
 const Hero = () => {
   const [platform, setPlatform] = useState('');
   const [logoScale, setLogoScale] = useState(1);
+  const [clickCount, setClickCount] = useState(0); // 添加点击计数器
   const logoRef = useRef<HTMLImageElement>(null);
   
   const handleLogoClick = () => {
+    const newCount = clickCount + 1;
+    setClickCount(newCount);
+    
     if (logoRef.current) {
+      // 每次点击都触发旋转动画
       logoRef.current.classList.add('shake-animation');
       setTimeout(() => {
         if (logoRef.current) {
           logoRef.current.classList.remove('shake-animation');
         }
-      }, 500); // 动画持续时间500ms
+      }, 500);
+      
+      // 每10次点击触发爆炸效果
+      if (newCount >= 10) {
+        logoRef.current.classList.add('explode-animation');
+        setTimeout(() => {
+          if (logoRef.current) {
+            logoRef.current.classList.remove('explode-animation');
+            // 重置样式
+            logoRef.current.style.opacity = '1';
+            logoRef.current.style.transform = '';
+            logoRef.current.style.filter = '';
+          }
+          setClickCount(0); // 重置计数器
+        }, 1000);
+      }
     }
   };
 
