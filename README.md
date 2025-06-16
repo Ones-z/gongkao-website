@@ -1,14 +1,16 @@
 ![截屏](readme_image.jpeg)
 
-## 🧞 Commands
+# Class Widgets Offcial Website
 
-All commands are run from the root of the project, from a terminal:
+## 🧞 命令
 
-| Command                | Action                                           |
+所有命令都在项目根目录下通过终端运行：
+
+| 命令                   | 操作                                           |
 | :--------------------- | :----------------------------------------------- |
-| `pnpm install`         | Installs dependencies                            |
-| `pnpm dev`             | Starts local dev server at `localhost:4321`      |
-| `pnpm build`           | Build your production site to `./dist/`          |
-| `pnpm preview`         | Preview your build locally, before deploying     |
-| `pnpm astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `pnpm astro -- --help` | Get help using the Astro CLI                     |
+| `pnpm i`               | 安装依赖                            |
+| `pnpm dev`             | 启动本地开发服务器，地址为 `http://localhost:4321/`      |
+| `pnpm build`           | 构建生产环境站点到 `./dist/` 目录          |
+| `pnpm preview`         | 在部署前本地预览构建结果     |
+| `pnpm astro ...`       | 运行 Astro CLI 命令，如 `astro add`, `astro check` |
+| `pnpm astro --help`    | 获取 Astro CLI 帮助信息                     |
