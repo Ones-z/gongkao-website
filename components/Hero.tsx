@@ -13,6 +13,7 @@ const Hero = () => {
   const [logoScale, setLogoScale] = useState(1);
   const [clickCount, setClickCount] = useState(0); // 添加点击计数器
   const logoRef = useRef<HTMLImageElement>(null);
+  const logoAnimationRef = useRef<HTMLDivElement>(null);
   
   const handleLogoClick = () => {
     const newCount = clickCount + 1;
@@ -75,25 +76,38 @@ const Hero = () => {
     };
   }, []);
   return (
-    <div className="h-screen w-full">
+    <div className="h-screen w-full relative overflow-hidden">
+      {/* 径向渐变背景（位于背景图后面） */}
+      <div className="absolute inset-0" style={{
+        background: `radial-gradient(ellipse at left bottom, #34507B 0%, #2C3643 50%, #4E5F6A 100%)`
+      }} />
+      
+      {/* 背景图（绝对定位，应用自定义动画） */}
       <div
-        className="relative h-full bg-cover bg-center bg-no-repeat text-white"
-        style={{ backgroundImage: `url(${bannerImage.src})` }}        data-aos="zoom-out-down"     data-aos-duration="500"
-      >
-        <div className="absolute inset-0 bg-gradient-to-r from-black/70 to-transparent" />
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat banner-slide-in"
+        style={{ backgroundImage: `url(${bannerImage.src})` }}
+      />
+              <div className="absolute inset-0 bg-gradient-to-r from-black/70 to-transparent" />
+      {/* 内容容器（相对定位，不受背景动画影响） */}
+      <div className="relative h-full text-white">
         <div className="ease-bounce max-w-8xl relative z-10 mx-auto flex h-full flex-col items-start justify-center gap-4 px-8 transition-all duration-500 md:gap-8 md:px-12 lg:px-16 xl:px-24">
-          <img
-            ref={logoRef}
-            src={logoImage.src}
-            alt="logo"
-            className="ease-bounce size-24 transition-all duration-500 lg:size-32 xl:size-48"
+          <div
             data-aos="zoom-in"
             data-aos-duration="500"
-            onMouseEnter={() => setLogoScale(1.1)}
-            onMouseLeave={() => setLogoScale(1)}
-            style={{ transform: `scale(${logoScale})` }}
-            onClick={handleLogoClick}
-          />
+            data-aos-once="true"
+            ref={logoAnimationRef}
+          >
+            <img
+              ref={logoRef}
+              src={logoImage.src}
+              alt="logo"
+              className="ease-bounce size-24 transition-all duration-500 lg:size-32 xl:size-48"
+              onMouseEnter={() => setLogoScale(1.1)}
+              onMouseLeave={() => setLogoScale(1)}
+              style={{ transform: `scale(${logoScale})` }}
+              onClick={handleLogoClick}
+            />
+          </div>
           <div className="ease-bounce flex flex-col gap-4 transition-all duration-500 md:gap-8">
             <div className="ease-bounce gap-4 text-3xl leading-snug font-semibold whitespace-pre-line transition-all duration-500 lg:text-4xl xl:text-5xl">
               <h1 data-aos="zoom-in-right">{`多样的桌面课表\n由我们定义的全新桌面形态`}</h1>
