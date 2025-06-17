@@ -1,19 +1,5 @@
 ---
-// 空 frontmatter 保留 Astro 文件结构
+import RedirectLayout from '../layouts/RedirectLayout.astro';
+const targetUrl = "https://cwdocs.rinlit.cn/dev_docs";
 ---
-<!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="refresh" content="0; url=https://cwdocs.rinlit.cn/dev_docs">
-  <script>
-    // 后备重定向逻辑
-    window.location.replace("https://cwdocs.rinlit.cn/dev_docs");
-  </script>
-  <title>正在重定向...</title>
-</head>
-<body>
-  <p>您正在跳转到 ClassWidgets 文档中心，<a href="https://cwdocs.rinlit.cn/dev_docs">请点击此处</a>。</p>
-</body>
-</html>
+<RedirectLayout {targetUrl} />
