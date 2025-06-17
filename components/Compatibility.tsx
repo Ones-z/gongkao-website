@@ -1,7 +1,7 @@
-import linuxImage from "@/assets/images/screenshots/linux.png";
-import macosImage from "@/assets/images/screenshots/macos.png";
-import win7Image from "@/assets/images/screenshots/win7.png";
-import win11Image from "@/assets/images/screenshots/win11.png";
+import linuxImage from "@/assets/images/screenshots/linux.webp";
+import macosImage from "@/assets/images/screenshots/macos.webp";
+import win7Image from "@/assets/images/screenshots/win7.webp";
+import win11Image from "@/assets/images/screenshots/win11.webp";
 import "aos/dist/aos.css";
 import { useEffect, useState, useRef } from "preact/hooks";
 
