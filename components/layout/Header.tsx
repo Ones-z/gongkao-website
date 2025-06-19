@@ -5,6 +5,7 @@ import logoImage from "@/assets/images/icons/favicon.svg";
 const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [currentPath, setCurrentPath] = useState('');
+  const [overHero, setOverHero] = useState(true);
 
   const normalizePath = (path: string) => path.endsWith('/') ? path.slice(0, -1) : path;
 
@@ -22,8 +23,19 @@ const Header = () => {
     };
   }, []);
 
+  useEffect(() => {
+    const handleScroll = () => {
+      setOverHero(window.scrollY === 0);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    handleScroll();
+    
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   return (
-    <header className="fixed top-0 left-0 w-full z-50 bg-gray-900/80 backdrop-blur-md shadow-sm">
+    <header className={`fixed top-0 left-0 w-full z-50 ${overHero ? '' : 'shadow-sm bg-gray-900/80 backdrop-blur-md'}`}>
       <nav className="container mx-auto px-4 py-3 flex justify-between items-center">
         <a href="/">
           <div className="flex items-center space-x-2">
@@ -75,8 +87,8 @@ const Header = () => {
         </div>
       </nav>
       <div
-        className={`md:hidden bg-opacity-10 backdrop-blur-md shadow-sm overflow-hidden transition-all duration-300 ease-in-out ${
-          isOpen ? 'max-h-[calc(100vh-64px)] opacity-100' : 'max-h-0 opacity-0'
+        className={`md:hidden shadow-sm overflow-hidden transition-all duration-300 ease-in-out ${
+          isOpen ? `max-h-[calc(100vh-64px)] opacity-100 bg-opacity-10 backdrop-blur-md` : 'max-h-0 opacity-0'
         }`}
       >
         <div className="container mx-auto px-4 flex flex-col space-y-2">
