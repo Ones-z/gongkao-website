@@ -1,10 +1,7 @@
 @keyframes bannerSlideIn {
   0% {
-    transform: translateX(100%) translateY(100%);
-    opacity: 0.1;
-  }
-  75% {
-    opacity: 0.5;
+    transform: translateX(20%) translateY(20%);
+    opacity: 0.4;
   }
   100% {
     transform: translateX(0) translateY(0);
@@ -13,7 +10,7 @@
 }
 
 .banner-slide-in {
-  animation: bannerSlideIn 1s ease-out forwards;
+  animation: bannerSlideIn 0.5s ease-out forwards;
   opacity: 0.1; /* 初始状态确保半透明 */
 }
 @import "tailwindcss";
