@@ -14,7 +14,7 @@ export const Block = ({
 }) => {
 
   return (
-    <div data-aos="fade-up" className="flex flex-col gap-8 bg-[#11121C]">
+    <div data-aos="fade-up" className="flex flex-col gap-8">
       <p
         className="bg-clip-text text-lg font-semibold text-transparent"
         style={{
