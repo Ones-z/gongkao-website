@@ -113,7 +113,7 @@ const Compatibility = () => {
   return (
     <div className="grid gap-12 lg:grid-cols-[1.5fr_1fr]">
       <div
-        className="order-2 aspect-video min-h-[200px] w-full overflow-hidden rounded-lg border-2 border-[#303640] lg:order-1 relative"
+        className="order-2 w-full overflow-hidden rounded-lg border-2 border-[#303640] lg:order-1 relative"
         data-aos="fade-right"
         onMouseEnter={() => {
           stopAutoPlay();
@@ -133,10 +133,10 @@ const Compatibility = () => {
           }}
         >
           {screenshots.map((src, index) => (
-            <div key={index} className="min-w-full flex-shrink-0">
+            <div key={index} className="w-full flex-shrink-0">
               <img
                 src={src}
-                className="ease-standard h-full w-full object-cover"
+                className="ease-standard h-full w-full object-contain"
               />
             </div>
           ))}
