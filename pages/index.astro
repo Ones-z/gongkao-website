@@ -1,5 +1,7 @@
 ---
 import Hero from "@/components/Hero";
+import Acknowledgements from "@/components/Acknowledgements.astro";
+
 import Layout from "@/layouts/Layout.astro";
 import Desktop from "@/components/Desktop";
 import Personalization from "@/components/Personalization";
@@ -18,9 +20,12 @@ import Test from "@/components/Test";
         <Personalization />
         <Compatibility client:load />
       </div>
+
       <div>
         <Test />
+
       </div>
+      <Acknowledgements />
     </div>
   </div>
 </Layout>

@@ -1,0 +1,100 @@
+---
+interface Contributor {
+  id: number;
+  login: string;
+  avatar_url: string;
+}
+
+const response = await fetch('https://api.github.com/repos/Class-Widgets/Class-Widgets/contributors');
+const contributors: Contributor[] = await response.json();
+---
+
+<style>
+  .acknowledgements {
+    padding: 2rem;
+    margin: 2rem 0;
+  }
+
+  .special-thanks {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+
+  .special-thanks h2 {
+    color: white;
+    font-size: 2rem;
+    margin-bottom: 1rem;
+  }
+
+  .acknowledgements-image {
+    display: block;
+    max-width: 200px;
+    height: auto;
+    margin: 0 auto 1rem;
+    border-radius: 8px;
+  }
+
+  .acknowledgements-text {
+    text-align: center;
+    margin-bottom: 2rem;
+    font-size: 1.5rem;
+    color: white;
+  }
+
+  .contributors {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+    gap: 1rem;
+    justify-content: center;
+  }
+
+  .contributor-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 8px;
+    object-fit: cover;
+  }
+
+  .contributors-link {
+    display: block;
+    text-align: center;
+    margin-top: 1rem;
+  }
+
+  .contributors-link a {
+    color: #007bff;
+    text-decoration: none;
+    font-weight: bold;
+  }
+
+  .contributors-link a:hover {
+    text-decoration: underline;
+  }
+</style>
+
+<div class="acknowledgements">
+  <div class="special-thanks" data-aos="fade-up">
+    <h2>特别鸣谢</h2>
+  </div>
+
+  <img src="/assets/images/Acknowledgements/Weblate_logo.svg.png" alt="Weblate Logo" class="acknowledgements-image" data-aos="fade-up" data-aos-delay="200">
+
+  <p class="acknowledgements-text" data-aos="fade-up" data-aos-delay="400">鸣谢所有的贡献者</p>
+
+  <div class="contributors" data-aos="fade-up" data-aos-delay="600">
+    {contributors.map((contributor: Contributor) => (
+      <img
+        src={contributor.avatar_url}
+        alt={contributor.login}
+        class="contributor-avatar"
+        data-key={contributor.id}
+        data-aos="fade-up"
+        data-aos-delay={600 + (contributor.id % 20) * 100}
+      />
+    ))}
+  </div>
+
+  <div class="contributors-link" data-aos="fade-up" data-aos-delay="1000">
+    <p>在<a href="https://github.com/Class-Widgets/Class-Widgets/graphs/contributors" target="_blank">GitHub</a>上查看所有的贡献者</p>
+  </div>
+</div>
