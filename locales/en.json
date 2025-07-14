@@ -79,5 +79,10 @@
   },
   "vercard": {
     "title": "Version Card"
+  },
+  "acknowledgements": {
+    "special_thanks_title": "Special Thanks",
+    "thanks_contributors": "Thanks to all contributors",
+    "view_all_on_github": "View all contributors on <a href=\"https://github.com/Class-Widgets/Class-Widgets/graphs/contributors\" target=\"_blank\">GitHub</a>"
   }
 }

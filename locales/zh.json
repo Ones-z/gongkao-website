@@ -79,5 +79,10 @@
   },
   "vercard": {
     "title": "版本卡片"
+  },
+  "acknowledgements": {
+    "special_thanks_title": "特别鸣谢",
+    "thanks_contributors": "鸣谢所有的贡献者",
+    "view_all_on_github": "在<a href=\"https://github.com/Class-Widgets/Class-Widgets/graphs/contributors\" target=\"_blank\">GitHub</a>上查看所有的贡献者"
   }
 }

@@ -5,9 +5,14 @@ interface Contributor {
   avatar_url: string;
 }
 
+import { getTranslator } from '@gudupao/astro-i18n';
+
 const response = await fetch('https://api.github.com/repos/Class-Widgets/Class-Widgets/contributors');
 const contributors: Contributor[] = await response.json();
+const lang = Astro.params.lang || 'en';
+const t = getTranslator(lang);
 import WeblateImage from "@/assets/images/Acknowledgements/Weblate_logo.svg";
+import GudupaoImage from "@/assets/images/Acknowledgements/gudupao.webp";
 ---
 
 <style>
@@ -28,11 +33,20 @@ import WeblateImage from "@/assets/images/Acknowledgements/Weblate_logo.svg";
   }
 
   .acknowledgements-image {
-    display: block;
+    display: inline-block;
     max-width: 200px;
     height: auto;
-    margin: 0 auto 1rem;
+    margin: 0 1rem; /* Adjusted margin for inline-block */
     border-radius: 8px;
+  }
+
+  .acknowledgements-logos {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 2rem;
+    flex-wrap: wrap;
+    margin-bottom: 2rem;
   }
 
   .acknowledgements-text {
@@ -75,12 +89,19 @@ import WeblateImage from "@/assets/images/Acknowledgements/Weblate_logo.svg";
 
 <div class="acknowledgements">
   <div class="special-thanks" data-aos="fade-up">
-    <h2>特别鸣谢</h2>
+    <h2>{t('acknowledgements.special_thanks_title')}</h2>
   </div>
 
-  <img src={WeblateImage.src} alt="Weblate Logo" class="acknowledgements-image" data-aos="fade-up" data-aos-delay="200">
+  <div class="acknowledgements-logos" data-aos="fade-up" data-aos-delay="200">
+    <a href="https://weblate.org/" target="_blank" rel="noopener noreferrer" title="Visit Weblate website">
+      <img src={WeblateImage.src} alt="Weblate Logo" class="acknowledgements-image">
+    </a>
+    <a href="https://gudupao.top/" target="_blank" rel="noopener noreferrer" title="Visit Gudupao website">
+      <img src={GudupaoImage.src} alt="Gudupao Logo" class="acknowledgements-image">
+    </a>
+  </div>
 
-  <p class="acknowledgements-text" data-aos="fade-up" data-aos-delay="400">鸣谢所有的贡献者</p>
+  <p class="acknowledgements-text" data-aos="fade-up" data-aos-delay="400">{t('acknowledgements.thanks_contributors')}</p>
 
   <div class="contributors" data-aos="fade-up" data-aos-delay="600">
     {contributors.map((contributor: Contributor) => (
@@ -98,6 +119,6 @@ import WeblateImage from "@/assets/images/Acknowledgements/Weblate_logo.svg";
   </div>
 
   <div class="contributors-link" data-aos="fade-up" data-aos-delay="1000">
-    <p>在<a href="https://github.com/Class-Widgets/Class-Widgets/graphs/contributors" target="_blank">GitHub</a>上查看所有的贡献者</p>
+    <p set:html={t('acknowledgements.view_all_on_github')}></p>
   </div>
 </div>
