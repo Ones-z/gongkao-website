@@ -271,7 +271,7 @@ const Download = ({ translations }: { translations: Translations }) => {
                           <p className="text-gray-400">{t("download.loading")}</p>
                         ) : (
                           platformData.downloads.map((download, index) => (
-                            <div key={index} className="flex items-center justify-between p-4 bg-white/5 rounded-xl border border-white/10 hover:bg-white/10 transition-all duration-300">
+                            <div key={index} className="flex flex-wrap items-center justify-between p-4 bg-white/5 rounded-xl border border-white/10 hover:bg-white/10 transition-all duration-300">
                               <div className="flex items-center gap-4">
                                 <div>
                                   <div className="flex items-center gap-2">
@@ -288,12 +288,12 @@ const Download = ({ translations }: { translations: Translations }) => {
                               </div>
                               <a
                                 href={download.url}
-                                className="flex items-center gap-2 bg-white text-black px-6 py-2 rounded-lg font-medium hover:bg-gray-100 transition-all duration-300"
+                                className="flex items-center justify-center gap-2 bg-white text-black px-4 py-2 rounded-lg font-medium hover:bg-gray-100 transition-all duration-300 text-sm w-full mt-2 md:w-auto md:mt-0 md:px-6 md:py-2"
                               >
-                                <svg className="size-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg className="size-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                                 </svg>
-                                {t("download.download_button")}
+                                <span className="flex-shrink-0">{t("download.download_button")}</span>
                               </a>
                             </div>
                           ))
