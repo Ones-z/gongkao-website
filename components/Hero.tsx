@@ -7,14 +7,16 @@ import { Button, TransparentButton } from "@/components/ui/Button";
 import "aos/dist/aos.css";
 import { useEffect, useState, useRef } from "preact/hooks";
 import {detectPlatformFromUserAgent} from "plat.ts";
+import type { Translations } from "@gudupao/astro-i18n";
+import { createClientTranslator } from "@gudupao/astro-i18n/client";
 
-const Hero = () => {
+const Hero = ({ translations }: { translations: Translations }) => {
   const [platform, setPlatform] = useState('');
   const [logoScale, setLogoScale] = useState(1);
   const [clickCount, setClickCount] = useState(0); // 添加点击计数器
   const logoRef = useRef<HTMLImageElement>(null);
   const logoAnimationRef = useRef<HTMLDivElement>(null);
-  
+  const t = createClientTranslator(translations);
   const handleLogoClick = () => {
     const newCount = clickCount + 1;
     setClickCount(newCount);
@@ -110,7 +112,7 @@ const Hero = () => {
           </div>
           <div className="ease-bounce flex flex-col gap-4 transition-all duration-500 md:gap-8">
             <div className="ease-bounce gap-4 text-3xl leading-snug font-semibold whitespace-pre-line transition-all duration-500 lg:text-4xl xl:text-5xl">
-              <h1 data-aos="zoom-in-right">{`多样的桌面课表\n由我们定义的全新桌面形态`}</h1>
+              <h1 data-aos="zoom-in-right">{t("hero.title")}</h1>
             </div>
             <div
               className="ease-bounce flex flex-col gap-4 transition-all duration-500 md:flex-row md:gap-8"
@@ -118,7 +120,9 @@ const Hero = () => {
             >
               <div className="flex flex-col gap-4 md:flex-row">
                 <Button
-                  href="/download#win"
+                  href={`${
+                    translations.lang === "en" ? "" : "/" + translations.lang
+                  }/download#${platform === "windows" ? "win" : platform}`}
                   className="flex w-fit flex-row items-center gap-2"
                   data-aos="fade-left"
                 >
@@ -131,7 +135,7 @@ const Hero = () => {
                       {platform === 'linux' && <Linux className="size-6" />}
                     </>
                   )}
-                  <span className="text-lg lg:text-xl">下载 Class Widgets</span>
+                  <span className="text-lg lg:text-xl">{t("hero.download")}</span>
                 </Button>
               </div>
               <div className="flex flex-row gap-4">
@@ -140,14 +144,14 @@ const Hero = () => {
                   className="flex w-fit flex-row items-center gap-2"
                   data-aos="fade-up"
                 >
-                  <span className="text-lg lg:text-xl">文档</span>
+                  <span className="text-lg lg:text-xl">{t("hero.docs")}</span>
                 </TransparentButton>
                 <TransparentButton
                   href="https://cwdocs.rinlit.cn/standards/"
                   className="flex w-fit flex-row items-center gap-2"
                   data-aos="fade-up"
                 >
-                  <span className="text-lg lg:text-xl">社区</span>
+                  <span className="text-lg lg:text-xl">{t("hero.community")}</span>
                 </TransparentButton>
               </div>
             </div>

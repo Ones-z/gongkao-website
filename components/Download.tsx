@@ -6,8 +6,11 @@ import logoImage from "@/assets/images/icons/favicon.svg";
 import Switch from "@/components/ui/Switch";
 import Version from "@/components/ui/Version";
 import {detectPlatformFromUserAgent} from "plat.ts";
+import type { Translations } from "@gudupao/astro-i18n";
+import { createClientTranslator } from "@gudupao/astro-i18n/client";
 
-const Download = () => {
+const Download = ({ translations }: { translations: Translations }) => {
+  const t = createClientTranslator(translations);
   const [activeTab, setActiveTab] = useState("windows");
   const [activeIndex, setActiveIndex] = useState(0); // 添加滑动索引状态
   const [sliderPosition, setSliderPosition] = useState({
@@ -130,8 +133,8 @@ const Download = () => {
 
   const downloadData = {
     macos: {
-      title: "MacOS下载",
-      description: "支持 Apple Silicon 和 Intel 处理器。",
+      title: t("download.macos.title"),
+      description: t("download.macos.description"),
       downloads: [
         {
           name: ver,
@@ -148,8 +151,8 @@ const Download = () => {
       ]
     },
     windows: {
-      title: "Windows下载",
-      description: "支持 Windows7 及以上版本。\n提供 x64 和 x86 版本。",
+      title: t("download.windows.title"),
+      description: t("download.windows.description"),
       downloads: [
         {
           name: ver,
@@ -164,8 +167,8 @@ const Download = () => {
       ]
     },
     linux: {
-      title: "Linux下载",
-      description: "暂时只支持 Debian，其他版本请敬请期待",
+      title: t("download.linux.title"),
+      description: t("download.linux.description"),
       downloads: [
         {
           name: ver,
@@ -183,12 +186,12 @@ const Download = () => {
       <div className="max-w-6xl mx-auto px-8 py-16 md:px-12 lg:px-16">
         {/* Header */}
         <div className="mb-16">
-          <h1 className="text-5xl font-bold mb-6 text-white" data-aos="fade-right">下载Class Widgets</h1>
+          <h1 className="text-5xl font-bold mb-6 text-white" data-aos="fade-right">{t("download.title")}</h1>
           <p className="text-xl text-gray-300 max-w-3xl leading-relaxed" data-aos="fade-right">
-            下载 Class Widgets 应用程序以在您的设备上使用。我们提供了适用于 macOS、Windows 和 Linux 的版本，确保您可以在任何平台上享受我们的软件。
+            {t("download.description")}
           </p><br/>
           {/* 添加显示最新版本 */}
-          <div data-aos="fade-right"><Version latestVer={latestVer} publishedDate={publishedDate} loading={loading} /></div>
+          <div data-aos="fade-right"><Version latestVer={latestVer} publishedDate={publishedDate} loading={loading} translations={translations} /></div>
           {/* Proxy Toggle */}
           <div className="mt-8 flex items-center" data-aos="fade-right">
             <Switch
@@ -197,7 +200,7 @@ const Download = () => {
               className="mr-2"
             />
             <label htmlFor="useProxyToggle" className="text-gray-300">
-              使用代理下载 (如果直接下载速度慢，请勾选此项)
+              {t("download.use_proxy")}
             </label>
           </div>
         </div>
@@ -265,7 +268,7 @@ const Download = () => {
                       {/* Download Options */}
                       <div className="space-y-4">
                         {loading ? (
-                          <p className="text-gray-400">正在加载最新版本信息...</p>
+                          <p className="text-gray-400">{t("download.loading")}</p>
                         ) : (
                           platformData.downloads.map((download, index) => (
                             <div key={index} className="flex items-center justify-between p-4 bg-white/5 rounded-xl border border-white/10 hover:bg-white/10 transition-all duration-300">
@@ -290,7 +293,7 @@ const Download = () => {
                                 <svg className="size-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                                 </svg>
-                                下载
+                                {t("download.download_button")}
                               </a>
                             </div>
                           ))
@@ -318,17 +321,10 @@ const Download = () => {
         {/* Additional Info */}
         <div className="mt-12 text-center">
           <p className="text-gray-400 mb-4">
-            需要帮助？前往我们的{" "}
-            <a href="https://github.com/Class-Widgets/Class-Widgets">
-              Github
-            </a>{" "}
-            或者加入{" "}
-            <a href="https://github.com/orgs/Class-Widgets/discussions">
-              社群
-            </a>
+            <span dangerouslySetInnerHTML={{ __html: t('download.footer.help') }} />
           </p>
           <p className="text-sm text-gray-500">
-            所有下载均经过数字签名和安全验证
+            {t("download.footer.security")}
           </p>
         </div>
       </div>

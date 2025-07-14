@@ -4,7 +4,10 @@ import Footer from "@/components/layout/Footer";
 import Header from "@/components/layout/Header";
 import { ClientRouter } from "astro:transitions";
 import AOSInit from '@/components/AOSInit.astro';
+import { getTranslator,getTranslations } from '@gudupao/astro-i18n';
 const { title } = Astro.props;
+const lang = Astro.params.lang || 'en';
+const t = getTranslator(lang);
 ---
 
 <!doctype html>
@@ -18,11 +21,11 @@ const { title } = Astro.props;
     <ClientRouter />
   </head>
   <body>
-    <Header client:load />
+    <Header client:load translations={getTranslations(lang)}/>
     <main>
       <slot />
     </main>
-    <Footer />
+    <Footer translations={getTranslations(lang)}/>
     <AOSInit />
   </body>
 </html>

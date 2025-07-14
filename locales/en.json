@@ -1,0 +1,83 @@
+{
+  "test": "Test",
+  "hero": {
+    "title": "Diverse Desktop Schedule\nA new desktop form defined by us",
+    "download": "Download",
+    "docs": "Docs",
+    "community": "Community"
+  },
+  "navs": {
+    "home": "Home",
+    "user_docs": "User Docs",
+    "dev_docs": "Developer Docs",
+    "download": "Download"
+  },
+  "footer": {
+    "desc": "Bring a new personalized experience to your desktop, supporting Windows, macOS, and Linux systems.",
+    "quick_links": "Quick Links",
+    "systems": "Platform Support",
+    "cr":"Based on GPL v3 protocol release."
+  },
+  "desktop": {
+    "title": "Say hello to the course schedule of the <span class=\"gradient-text\">future form</span>"
+  },
+  "personalization": {
+    "tag": "# Personalization",
+    "title": "Plugins & Themes\nUltimate Customization",
+    "content": "In Class Widgets, a Python-based plugin system and plugin marketplace are provided; you can install the plugins you need from the plugin marketplace. And a theme system that shows individuality, allowing you to build a unique Class Widgets."
+  },
+  "compatibility": {
+    "tag": "# Multi-platform Support",
+    "title": "Near-perfect\nCompatibility",
+    "content": "Class Widgets is built on PyQt and provides support for the three major operating systems: Windows, Linux, and MacOS."
+  },
+  "misc": {
+    "notification": {
+      "tag": "Notification",
+      "title": "Powerful Notification System",
+      "content": "Provides a powerful notification system that can send reminders at times such as before and after class; in addition, plugins can also call the notification interface to make it more practical."
+    },
+    "floating": {
+      "tag": "Floating Window",
+      "title": "A New Way to Hide",
+      "content": "The new hiding method - floating window, can condense the important information of Class Widgets into a floating window, which is lighter and more convenient. Minimize its interference with teaching work as much as possible."
+    },
+    "design": {
+      "tag": "Design",
+      "title": "Ultimate Design Language",
+      "content": "Class Widgets uses the Fluent Design language launched by Microsoft to make the interface more concise, comfortable and smooth, and uses the QFluentWidgets UI library."
+    }
+  },
+  "download": {
+    "page_title": "Download",
+    "title": "Download Class Widgets",
+    "description": "Download the Class Widgets application to use on your device. We provide versions for macOS, Windows, and Linux to ensure you can enjoy our software on any platform.",
+    "use_proxy": "Use proxy to download (please check this option if the direct download speed is slow)",
+    "loading": "Loading latest version information...",
+    "download_button": "Download",
+    "macos": {
+      "title": "Download for macOS",
+      "description": "Supports Apple Silicon and Intel processors."
+    },
+    "windows": {
+      "title": "Download for Windows",
+      "description": "Supports Windows 7 and above.\nProvides x64 and x86 versions."
+    },
+    "linux": {
+      "title": "Download for Linux",
+      "description": "Currently only supports Debian, please stay tuned for other versions."
+    },
+    "footer": {
+      "help": "Need help? Go to our <a href=\"https://github.com/Class-Widgets/Class-Widgets\">Github</a> or join the <a href=\"https://github.com/orgs/Class-Widgets/discussions\">Community</a>",
+      "security": "All downloads are digitally signed and security verified"
+    }
+  },
+  "version": {
+    "loading": "Fetching latest version information...",
+    "latest": "Latest Version",
+    "published": "Published Date"
+  },
+  "vercard": {
+    "title": "Version Card"
+  }
+}

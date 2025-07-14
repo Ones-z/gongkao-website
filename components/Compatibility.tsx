@@ -4,9 +4,11 @@ import win7Image from "@/assets/images/screenshots/win7.webp";
 import win11Image from "@/assets/images/screenshots/win11.webp";
 import "aos/dist/aos.css";
 import { useEffect, useState, useRef } from "preact/hooks";
+import type { Translations } from "@gudupao/astro-i18n";
+import { createClientTranslator } from "@gudupao/astro-i18n/client";
 
-const Compatibility = () => {
-
+const Compatibility = ({ translations }: { translations: Translations }) => {
+  const t = createClientTranslator(translations);
 
   const rawScreenshots = [win11Image, linuxImage, win7Image, macosImage].map(
     (it) => it.src,
@@ -168,19 +170,19 @@ const Compatibility = () => {
           className="bg-gradient-to-r from-[#ffc182] to-[#5d64e4] bg-clip-text text-lg font-semibold text-transparent"
           data-aos="zoom-in"
         >
-          # 多端支持
+          {t("compatibility.tag")}
         </p>
         <h1
           className="ease-bounce text-2xl leading-snug font-semibold whitespace-pre-line transition-all duration-500 lg:gap-4 lg:text-3xl xl:gap-8 xl:text-4xl"
           data-aos="fade-up"
         >
-          {`近乎完美的\n兼容性`}
+          {t("compatibility.title")}
         </h1>
         <p
           className="text-md leading-tight text-[#87878A] xl:text-lg"
           data-aos="fade-up"
         >
-          {`Class Widgets 基于 PyQt 构建，为 Windows、Linux、MacOS 三大主流操作系统提供支持`}
+          {t("compatibility.content")}
         </p>
       </div>
     </div>

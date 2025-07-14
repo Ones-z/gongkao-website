@@ -1,6 +1,10 @@
 ---
 import "@/styles/global.css";
 import Version from "@/components/ui/Version";
+import { getTranslator, getTranslations } from "@gudupao/astro-i18n";
+
+const lang = Astro.params.lang || 'en';
+const t = getTranslator(lang);
 
 let latestVer: string | null;
 let publishedDate: string | null;
@@ -14,7 +18,7 @@ try {
   const data = await response.json();
   latestVer = data.tag_name;
   const date = new Date(data.published_at);
-  publishedDate = date.toLocaleDateString('zh-CN');
+  publishedDate = date.toLocaleDateString(lang === 'zh' ? 'zh-CN' : 'en-US'); // 根据语言选择日期格式
 } catch (error) {
   console.error("Failed to fetch latest release:", error);
   latestVer = 'v1.1.7.1'; // Fallback version
@@ -24,13 +28,13 @@ try {
 }
 ---
 <!doctype html>
-<html lang="en">
+<html lang={lang}>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
     <link rel="icon" type="image/ico" href="/favicon.ico" />
     <meta name="generator" content={Astro.generator} />
-    <title>Class Widgets</title>
+    <title>{t("vercard.title")}</title>
     <style>
       html, body {
         height: 100%;
@@ -42,6 +46,6 @@ try {
     </style>
   </head>
   <body>
-    <Version latestVer={latestVer} publishedDate={publishedDate} loading={loading} size="auto" />
+    <Version latestVer={latestVer} publishedDate={publishedDate} loading={loading} size="auto" translations={getTranslations(lang)} />
   </body>
 </html>

@@ -2,10 +2,25 @@ import Apple from "../icon/Apple";
 import Linux from "../icon/Linux";
 import Windows from "../icon/Windows";
 import { Button, TransparentButton } from "@/components/ui/Button";
-import { navItems } from 'Navs.ts';
+import type { Translations } from "@gudupao/astro-i18n";
 import logoImage from "@/assets/images/icons/favicon.svg";
+import { createClientTranslator } from "@gudupao/astro-i18n/client";
 
-const Footer = () => {
+const Footer = ({ translations }: { translations: Translations }) => {
+  const t = createClientTranslator(translations);
+  const getLocalizedPath = (path: string) => {
+    if (translations && translations.lang) {
+      return `/${translations.lang}${path}`;
+    }
+    return path;
+  };
+  const navItems = [
+    { href: getLocalizedPath("/"), label: t("navs.home") },
+    { href: getLocalizedPath("/download"), label: t("navs.download") },
+    { href: "https://cwdocs.rinlit.cn/user_docs/", label: t("navs.user_docs") },
+    { href: "https://cwdocs.rinlit.cn/dev_docs/", label: t("navs.dev_docs") },
+  ];
+
   return (
     <footer className="bg-[#0A0B15] text-white">
       <div className="container mx-auto px-4 py-16">
@@ -21,7 +36,7 @@ const Footer = () => {
               <span className="text-xl font-bold">Class Widgets</span>
             </div>
             <p className="text-[#87878A]">
-              为您的桌面带来全新的个性化体验，支持Windows、macOS和Linux系统。
+              {t("footer.desc")}
             </p>
             <div className="flex gap-4">
               <a href="https://www.bilibili.com/video/BV1xwW9eyEGu/" className="text-[#87878A] hover:text-white transition-colors">
@@ -53,7 +68,7 @@ const Footer = () => {
 
           {/* Quick Links */}
           <div>
-            <h3 className="mb-6 text-lg font-semibold">快速链接</h3>
+            <h3 className="mb-6 text-lg font-semibold">{t("footer.quick_links")}</h3>
             <ul className="space-y-4">
               {navItems.map((item) => (
             <li><a
@@ -69,7 +84,7 @@ const Footer = () => {
 
           {/* Platform Support */}
           <div>
-            <h3 className="mb-6 text-lg font-semibold">平台支持</h3>
+            <h3 className="mb-6 text-lg font-semibold">{t("footer.systems")}</h3>
             <div className="flex flex-wrap gap-4">
               <TransparentButton href="/download/#win" className="flex">
                 <Windows className="h-6 w-6" />
@@ -89,7 +104,7 @@ const Footer = () => {
         </div>
 
         <div className="mt-16 border-t border-[#1A1B26] pt-8 text-center text-[#87878A]">
-          <p>© {new Date().getFullYear()} Class Widgets. 基于 GPL v3 协议发布。</p>
+          <p>© {new Date().getFullYear()} Class Widgets. {t("footer.cr")}</p>
         </div>
       </div>
     </footer>
