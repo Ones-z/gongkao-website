@@ -68,7 +68,7 @@
       "description": "暂时只支持 Debian，其他版本请敬请期待"
     },
     "footer": {
-      "help": "需要帮助？前往我们的 <a href=\"https://github.com/Class-Widgets/Class-Widgets\">Github</a> 或者加入 <a href=\"https://github.com/orgs/Class-Widgets/discussions\">社群</a>",
+      "help": "需要帮助？前往我们的 <a href=\"https://github.com/Class-Widgets/Class-Widgets\" style=\"color: #007bff;\">Github</a> 或者加入 <a href=\"https://github.com/orgs/Class-Widgets/discussions\" style=\"color: #007bff;\">社群</a>",
       "security": "所有下载均经过数字签名和安全验证"
     }
   },
@@ -83,6 +83,6 @@
   "acknowledgements": {
     "special_thanks_title": "特别鸣谢",
     "thanks_contributors": "鸣谢所有的贡献者",
-    "view_all_on_github": "在<a href=\"https://github.com/Class-Widgets/Class-Widgets/graphs/contributors\" target=\"_blank\">GitHub</a>上查看所有的贡献者"
+    "view_all_on_github": "在 <a href=\"https://github.com/Class-Widgets/Class-Widgets/graphs/contributors\" target=\"_blank\" style=\"color: #007bff;\">GitHub</a> 上查看所有的贡献者"
   }
 }
