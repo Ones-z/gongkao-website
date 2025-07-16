@@ -1,7 +1,7 @@
 {
   "test": "Test",
   "hero": {
-    "title": "Experience a redefined classroom desktop\npowered by versatile schedule widgets",
+    "title": "The Next Class Schedule\nDesigned for You",
     "download": "Download",
     "docs": "Docs",
     "community": "Community"
@@ -24,7 +24,7 @@
   "personalization": {
     "tag": "# Personalization",
     "title": "Plugins & Themes\nUltimate Customization",
-    "content": "A Python-based plugin system and Plugin Plaza is provided in Class Widgets; you can install the plugins you need from the Plugin Plaza. And a theme system that shows individuality, allowing you to build your unique Class Widgets."
+    "content": "A Python-based plugin system and Plugin Plaza is provided in Class Widgets, you can install the plugins you need from the Plugin Plaza. And a theme system that shows individuality, allowing you to build your unique Class Widgets."
   },
   "compatibility": {
     "tag": "# Multi-platform Support",
