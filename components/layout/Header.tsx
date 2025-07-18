@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'preact/hooks';
+import { useState, useEffect } from 'react';
 import logoImage from "@/assets/images/icons/favicon.svg";
 import LanguageSwitcher from "@/components/LanguageSwitcher.tsx";
 import type { Translations } from "@gudupao/astro-i18n";

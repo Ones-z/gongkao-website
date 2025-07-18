@@ -1,6 +1,6 @@
 // @ts-check
 import partytown from "@astrojs/partytown";
-import preact from "@astrojs/preact";
+import react from "@astrojs/react";
 import tailwindcss from "@tailwindcss/vite";
 import { defineConfig } from "astro/config";
 import { astroI18nPlugin } from "@gudupao/astro-i18n";
@@ -13,7 +13,7 @@ export default defineConfig({
       localesDir: "./locales",
       fallbackLang: "zh",
     }),
-    preact(),
+    react(),
     partytown(),
   ],
   base: "/",

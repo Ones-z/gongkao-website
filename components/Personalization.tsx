@@ -1,5 +1,5 @@
 import "aos/dist/aos.css";
-import { useEffect } from "preact/hooks";
+import { useEffect } from "react";
 import personalizationImage from "@/assets/images/personalization.png";
 import type { Translations } from "@gudupao/astro-i18n";
 import { createClientTranslator } from "@gudupao/astro-i18n/client";

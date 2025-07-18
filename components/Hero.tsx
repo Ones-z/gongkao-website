@@ -5,7 +5,7 @@ import Linux from "@/components/icon/Linux";
 import Windows from "@/components/icon/Windows";
 import { Button, TransparentButton } from "@/components/ui/Button";
 import "aos/dist/aos.css";
-import { useEffect, useState, useRef } from "preact/hooks";
+import { useEffect, useState, useRef } from "react";
 import {detectPlatformFromUserAgent} from "plat.ts";
 import type { Translations } from "@gudupao/astro-i18n";
 import { createClientTranslator } from "@gudupao/astro-i18n/client";

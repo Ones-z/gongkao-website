@@ -1,7 +1,7 @@
-import { useState, useEffect } from "preact/hooks";
+import { useState, useEffect } from "react";
 
 interface FadeInDivProps {
-  children: preact.ComponentChildren;
+  children: React.ReactNode;
 }
 
 const FadeInDiv = ({ children }: FadeInDivProps) => {

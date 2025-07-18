@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "preact/hooks";
+import { useState, useEffect, useRef } from "react";
 import Apple from "@/components/icon/Apple";
 import Linux from "@/components/icon/Linux";
 import Windows from "@/components/icon/Windows";

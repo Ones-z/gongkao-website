@@ -104,18 +104,22 @@ import GudupaoImage from "@/assets/images/Acknowledgements/gudupao.webp";
   <p class="acknowledgements-text" data-aos="fade-up" data-aos-delay="400">{t('acknowledgements.thanks_contributors')}</p>
 
   <div class="contributors" data-aos="fade-up" data-aos-delay="600">
-    {contributors.map((contributor: Contributor) => (
-      <a href={`https://github.com/${contributor.login}`} target="_blank" rel="noopener noreferrer">
-        <img
-          src={contributor.avatar_url}
-          alt={contributor.login}
-          class="contributor-avatar"
-          data-key={contributor.id}
-          data-aos="fade-up"
-          data-aos-delay={600 + (contributor.id % 20) * 100}
-        />
-      </a>
-    ))}
+    {Array.isArray(contributors) ? (
+      contributors.map((contributor: Contributor) => (
+        <a href={`https://github.com/${contributor.login}`} target="_blank" rel="noopener noreferrer">
+          <img
+            src={contributor.avatar_url}
+            alt={contributor.login}
+            class="contributor-avatar"
+            data-key={contributor.id}
+            data-aos="fade-up"
+            data-aos-delay={600 + (contributor.id % 20) * 100}
+          />
+        </a>
+      ))
+    ) : (
+      <p>Could not load contributors.</p>
+    )}
   </div>
 
   <div class="contributors-link" data-aos="fade-up" data-aos-delay="1000">

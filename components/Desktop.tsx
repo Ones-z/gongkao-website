@@ -2,7 +2,7 @@ import desktopImage from "@/assets/images/desktop.png";
 import "aos/dist/aos.css";
 import type { Translations } from "@gudupao/astro-i18n";
 import { createClientTranslator } from "@gudupao/astro-i18n/client";
-import { useEffect } from "preact/hooks";
+import { useEffect } from "react";
 
 const Desktop = ({ translations }: { translations: Translations }) => {
   const t = createClientTranslator(translations);

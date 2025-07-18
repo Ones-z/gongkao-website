@@ -3,7 +3,7 @@ import macosImage from "@/assets/images/screenshots/macos.webp";
 import win7Image from "@/assets/images/screenshots/win7.webp";
 import win11Image from "@/assets/images/screenshots/win11.webp";
 import "aos/dist/aos.css";
-import { useEffect, useState, useRef } from "preact/hooks";
+import { useEffect, useState, useRef } from "react";
 import type { Translations } from "@gudupao/astro-i18n";
 import { createClientTranslator } from "@gudupao/astro-i18n/client";
 
