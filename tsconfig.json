@@ -5,9 +5,13 @@
     "jsxImportSource": "react",
     "paths": {
       "@/*": ["./*"]
-    }
+    },
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true
   },
   "exclude": ["dist"],
   "extends": "astro/tsconfigs/strict",
-  "include": [".astro/types.d.ts", "**/*"]
+  "include": [".astro/types.d.ts", "components/**/*.tsx", "plat.ts"]
 }

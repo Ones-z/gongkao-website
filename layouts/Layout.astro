@@ -1,9 +1,9 @@
 ---
 import "@/styles/global.css";
-import Footer from "@/components/layout/Footer";
-import Header from "@/components/layout/Header";
+import Footer from "../components/layout/Footer";
+import Header from "../components/layout/Header";
 import { ClientRouter } from "astro:transitions";
-import AOSInit from '@/components/AOSInit.astro';
+import AOSInit from '../components/AOSInit.astro';
 import { getTranslator,getTranslations } from '@gudupao/astro-i18n';
 const { title } = Astro.props;
 const lang = Astro.params.lang || 'en';
