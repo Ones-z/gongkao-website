@@ -13,7 +13,7 @@
     "download": "下载"
   },
   "footer": {
-    "desc": "为您的桌面带来全新的个性化体验，支持Windows、MacOS和Linux系统。",
+    "desc": "为您的桌面带来全新的个性化体验，支持Windows、macOS和Linux系统。",
     "quick_links": "快速链接",
     "systems": "平台支持",
     "cr":"基于 GPL v3 协议发布。"
@@ -29,7 +29,7 @@
   "compatibility": {
     "tag": "# 多端支持",
     "title": "近乎完美的\n兼容性",
-    "content": "Class Widgets 基于 PyQt 构建，为 Windows、MacOS、Linux 三大主流操作系统提供支持"
+    "content": "Class Widgets 基于 PyQt 构建，为 Windows、macOS、Linux 三大主流操作系统提供支持。"
   },
   "misc": {
     "notification": {
@@ -51,7 +51,7 @@
   "download": {
     "page_title": "下载",
     "title": "下载Class Widgets",
-    "description": "下载 Class Widgets 应用程序以在您的设备上使用。我们提供了适用于 Windows、MacOS 和 Linux 的版本，确保您可以在任何平台上享受我们的软件",
+    "description": "下载 Class Widgets 应用程序以在您的设备上使用。我们提供了适用于 Windows、macOS 和 Linux 的版本，确保您可以在任何平台上享受我们的软件。\n如果您需要使用或体验本软件的一些新特性，请前往本项目 Github 仓库的 <div v-html=\"linkHtml\"><a href=\\\"https://github.com/Class-Widgets/Class-Widgets/actions\\\" style=\\\"color: #007bff;\\\">Actions</a></div> 页面下载最新构建。\n您会得到一个压缩文件，请解压到合适位置后，打开“ClassWidgets.exe”。您可以通过托盘菜单进入设置或退出此程序。",
     "use_proxy": "使用代理下载 (如果直接下载速度慢，请勾选此项)",
     "loading": "正在加载最新版本信息...",
     "download_button": "下载",

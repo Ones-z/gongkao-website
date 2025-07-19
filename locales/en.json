@@ -1,7 +1,7 @@
 {
   "test": "Test",
   "hero": {
-    "title": "The Next Class Schedule\nDesigned for You",
+    "title": "The Next Class Schedule\nDesigned for Your Desktop Today",
     "download": "Download",
     "docs": "Docs",
     "community": "Community"
@@ -13,13 +13,13 @@
     "download": "Download"
   },
   "footer": {
-    "desc": "Bring a new personalized experience to your desktop, supporting Windows, MacOS, and Linux.",
+    "desc": "Bring a new personalized experience to your desktop, supporting Windows, macOS, and Linux.",
     "quick_links": "Quick Links",
     "systems": "Platform Support",
-    "cr":"Based on GPL v3 protocol release."
+    "cr":"Based on GPL v3 license release."
   },
   "desktop": {
-    "title": "Say hello, to the next course schedule of the <span class=\"gradient-text\">future</span>"
+    "title": "Say hello, to the <span class=\"gradient-text\">future morphology</span> of class schedule"
   },
   "personalization": {
     "tag": "# Personalization",
@@ -29,7 +29,7 @@
   "compatibility": {
     "tag": "# Multi-platform Support",
     "title": "Near-perfect\nCompatibility",
-    "content": "Class Widgets is built on PyQt and supports Windows, MacOS, and Linux."
+    "content": "Class Widgets is built on PyQt and supports Windows, macOS, and Linux."
   },
   "misc": {
     "notification": {
@@ -51,7 +51,7 @@
   "download": {
     "page_title": "Download",
     "title": "Download Class Widgets",
-    "description": "Download the Class Widgets application to use on your device. We provide versions for Windows, MacOS, and Linux to ensure you can enjoy our software on any platform.",
+    "description": "Download the Class Widgets application to use on your device. We provide versions for Windows, macOS, and Linux to ensure you can enjoy our software on any platform.\nOr if you want to use or experience the new features, please download Class Widgets from the <a href=\"https://github.com/Class-Widgets/Class-Widgets/actions\" style=\"color: #007bff;\">Actions</a> page of its GitHub repository.\nYou will get a zip file, please extract it to a suitable location and run 'ClassWidgets.exe'. You can access settings or exit the program via the tray menu.",
     "use_proxy": "Use proxy to download (please check this option if the direct download speed is slow)",
     "loading": "Loading latest version information...",
     "download_button": "Download",
