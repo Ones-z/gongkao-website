@@ -188,7 +188,7 @@ const Download = ({ translations }: { translations: Translations }) => {
         <div className="mb-16">
           <h1 className="text-5xl font-bold mb-6 text-white" data-aos="fade-right">{t("download.title")}</h1>
           <p className="text-xl text-gray-300 max-w-3xl leading-relaxed" data-aos="fade-right">
-            {t("download.description")}
+            <span dangerouslySetInnerHTML={{ __html: t("download.description") }} />
           </p><br/>
           {/* 添加显示最新版本 */}
           <div data-aos="fade-right"><Version latestVer={latestVer} publishedDate={publishedDate} loading={loading} translations={translations} /></div>
