@@ -17,8 +17,8 @@ const Footer = ({ translations }: { translations: Translations }) => {
   const navItems = [
     { href: getLocalizedPath("/"), label: t("navs.home") },
     { href: getLocalizedPath("/download"), label: t("navs.download") },
-    { href: "https://cwdocs.rinlit.cn/user_docs/", label: t("navs.user_docs") },
-    { href: "https://cwdocs.rinlit.cn/dev_docs/", label: t("navs.dev_docs") },
+    { href: "https://cwdocs.rinlit.cn/about/", label: t("navs.user_docs") },
+    { href: "https://cwdocs.rinlit.cn/dev/", label: t("navs.dev_docs") },
   ];
 
   return (
