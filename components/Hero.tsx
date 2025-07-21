@@ -140,14 +140,14 @@ const Hero = ({ translations }: { translations: Translations }) => {
               </div>
               <div className="flex flex-row gap-4">
                 <TransparentButton
-                  href="https://cwdocs.rinlit.cn/user_docs"
+                  href="https://cwdocs.rinlit.cn/about"
                   className="flex w-fit flex-row items-center gap-2"
                   data-aos="fade-up"
                 >
                   <span className="text-lg lg:text-xl">{t("hero.docs")}</span>
                 </TransparentButton>
                 <TransparentButton
-                  href="https://cwdocs.rinlit.cn/standards/"
+                  href="https://cwdocs.rinlit.cn/community/"
                   className="flex w-fit flex-row items-center gap-2"
                   data-aos="fade-up"
                 >
