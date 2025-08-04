@@ -32,7 +32,7 @@ const LanguageSwitcher = () => {
             : 'text-gray-200 hover:bg-white/10 hover:text-white hover:shadow-sm'
         }`}
       >
-        English(US)
+        English
       </button>
       <button
         onClick={() => switchLanguage('zh')}
