@@ -173,7 +173,7 @@ const Download = ({ translations }: { translations: Translations }) => {
         {
           name: ver,
           type: "Debian",
-          url: getDownloadUrl(`https://github.com/Class-Widgets/Class-Widgets/releases/download/${ver}/ClassWidgets-Debian10.zip`)
+          url: getDownloadUrl(`https://github.com/Class-Widgets/Class-Widgets/releases/download/${ver}/ClassWidgets-Linux-x64.zip`)
         },
       ]
     }
