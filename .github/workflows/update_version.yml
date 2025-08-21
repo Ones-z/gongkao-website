@@ -4,7 +4,6 @@ on:
   repository_dispatch:
     types: [update-version]
   workflow_dispatch:
-
 permissions:
   contents: write
   actions: read
@@ -24,7 +23,6 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           REPO: "Class-Widgets/Class-Widgets"
         run: |
-          # 获取最新正式版本（非预发布版本）
           VERSION_RELEASE=$(gh release list --repo "${{ env.REPO }}" --json tagName,isPrerelease --jq '[.[] | select(.isPrerelease == false)][0].tagName // empty')
           if [ -z "$VERSION_RELEASE" ] || [ "$VERSION_RELEASE" = "null" ]; then
             echo "[DEBUG] 未找到正式版本"
@@ -48,6 +46,16 @@ jobs:
           echo "VERSION_RELEASE=$VERSION_RELEASE" >> $GITHUB_OUTPUT
           echo "VERSION_BETA=$VERSION_BETA" >> $GITHUB_OUTPUT
 
+      - name: Import GPG key
+        id: import-gpg
+        uses: crazy-max/ghaction-import-gpg@v6
+        continue-on-error: true
+        with:
+          gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
+          passphrase: ${{ secrets.GPG_PASSPHRASE }}
+          git_user_signingkey: true
+          git_commit_gpgsign: true
+
       - name: Commit changes
         uses: stefanzweifel/git-auto-commit-action@v6
         with:
@@ -57,3 +65,6 @@ jobs:
             * 正式版: ${{ steps.fetch_versions.outputs.VERSION_RELEASE }}
             * Beta / Nightly 版: ${{ steps.fetch_versions.outputs.VERSION_BETA }}
           file_pattern: 'public/version.json'
+          commit_user_name: 'ChimeYao-bot'
+          commit_user_email: 'ChimeYao@outlook.jp'
+          commit_author: 'ChimeYao-bot <ChimeYao@outlook.jp>'
