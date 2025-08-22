@@ -7,6 +7,7 @@ on:
 permissions:
   contents: write
   actions: read
+  pull-requests: write
 
 jobs:
   update-version:
@@ -56,15 +57,22 @@ jobs:
           git_user_signingkey: true
           git_commit_gpgsign: true
 
-      - name: Commit changes
-        uses: stefanzweifel/git-auto-commit-action@v6
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v7
         with:
-          commit_message: |
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: |
             chore(version): 更新版本号
 
             * 正式版: ${{ steps.fetch_versions.outputs.VERSION_RELEASE }}
             * Beta / Nightly 版: ${{ steps.fetch_versions.outputs.VERSION_BETA }}
-          file_pattern: 'public/version.json'
-          commit_user_name: 'ChimeYao-bot'
-          commit_user_email: 'ChimeYao@outlook.jp'
-          commit_author: 'ChimeYao-bot <ChimeYao@outlook.jp>'
+          title: 'chore(version): 更新版本号'
+          body: |
+            ## 版本更新
+            - **正式版**: ${{ steps.fetch_versions.outputs.VERSION_RELEASE }}
+            - **Beta / Nightly 版**: ${{ steps.fetch_versions.outputs.VERSION_BETA }}
+
+          branch: update/version-$(date +%Y%m%d)
+          delete-branch: true
+          committer: ChimeYao-bot <ChimeYao@outlook.jp>
+          author: ChimeYao-bot <ChimeYao@outlook.jp>
