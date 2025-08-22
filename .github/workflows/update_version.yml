@@ -72,7 +72,7 @@ jobs:
             - **正式版**: ${{ steps.fetch_versions.outputs.VERSION_RELEASE }}
             - **Beta / Nightly 版**: ${{ steps.fetch_versions.outputs.VERSION_BETA }}
 
-          branch: update/version-$(date +%Y%m%d)
+          branch: update/version-${{ github.run_id }}
           delete-branch: true
           committer: ChimeYao-bot <ChimeYao@outlook.jp>
           author: ChimeYao-bot <ChimeYao@outlook.jp>
