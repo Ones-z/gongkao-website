@@ -28,9 +28,11 @@ const Header = ({ translations }: { translations: Translations }) => {
   };
   const navItems = [
     { href: getLocalizedPath("/"), label: t("navs.home") },
-    { href: getLocalizedPath("/download"), label: t("navs.download") },
-    { href: "https://cwdocs.rinlit.cn/about/", label: t("navs.user_docs") },
-    { href: "https://cwdocs.rinlit.cn/dev/", label: t("navs.dev_docs") },
+    { href: getLocalizedPath("/job"), label: t("navs.job") },
+    { href: getLocalizedPath("/login"), label: t("navs.login") },
+    // { href: getLocalizedPath("/download"), label: t("navs.download") },
+    // { href: "https://cwdocs.rinlit.cn/about/", label: t("navs.user_docs") },
+    // { href: "https://cwdocs.rinlit.cn/dev/", label: t("navs.dev_docs") },
   ];
 
   useEffect(() => {
@@ -64,7 +66,7 @@ const Header = ({ translations }: { translations: Translations }) => {
         <a href={getLocalizedPath("/")}>
           <div className="flex items-center space-x-2">
             <img src={logoImage.src} alt="Logo" className="h-8 w-8" />
-            <span className="text-xl font-bold text-gray-100">Class Widgets</span>
+            <span className="text-xl font-bold text-gray-100">青云选岗</span>
           </div>
         </a>
         <div className="hidden md:flex items-center space-x-6">

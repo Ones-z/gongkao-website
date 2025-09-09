@@ -32,7 +32,7 @@ const LanguageSwitcher = () => {
             : 'text-gray-200 hover:bg-white/10 hover:text-white hover:shadow-sm'
         }`}
       >
-        English
+        黑夜
       </button>
       <button
         onClick={() => switchLanguage('zh')}
@@ -42,18 +42,18 @@ const LanguageSwitcher = () => {
             : 'text-gray-200 hover:bg-white/10 hover:text-white hover:shadow-sm'
         }`}
       >
-        简体中文
+        白天
       </button>
-      <button
-        onClick={() => switchLanguage('ja')}
-        className={`px-3 py-2 text-sm font-medium rounded-md transition-all duration-300 ease-out ${
-          currentLang === 'ja'
-            ? 'bg-white/20 text-white shadow-md backdrop-blur-sm border border-white/30 transform scale-105'
-            : 'text-gray-200 hover:bg-white/10 hover:text-white hover:shadow-sm'
-        }`}
-      >
-        日本語
-      </button>
+      {/*<button*/}
+      {/*  onClick={() => switchLanguage('ja')}*/}
+      {/*  className={`px-3 py-2 text-sm font-medium rounded-md transition-all duration-300 ease-out ${*/}
+      {/*    currentLang === 'ja'*/}
+      {/*      ? 'bg-white/20 text-white shadow-md backdrop-blur-sm border border-white/30 transform scale-105'*/}
+      {/*      : 'text-gray-200 hover:bg-white/10 hover:text-white hover:shadow-sm'*/}
+      {/*  }`}*/}
+      {/*>*/}
+      {/*  日本語*/}
+      {/*</button>*/}
     </div>
   );
 };

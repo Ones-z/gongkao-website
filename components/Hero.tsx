@@ -119,40 +119,49 @@ const Hero = ({ translations }: { translations: Translations }) => {
               data-aos="zoom-in-right"
             >
               <div className="flex flex-col gap-4 md:flex-row">
-                <Button
-                  href={`${
-                    translations.lang === "en" ? "" : "/" + translations.lang
-                  }/download#${platform === "windows" ? "win" : platform}`}
+                {/*<Button*/}
+                {/*  href={`${*/}
+                {/*    translations.lang === "en" ? "" : "/" + translations.lang*/}
+                {/*  }/download#${platform === "windows" ? "win" : platform}`}*/}
+                {/*  className="flex w-fit flex-row items-center gap-2"*/}
+                {/*  data-aos="fade-left"*/}
+                {/*>*/}
+                {/*  {!platform ? (*/}
+                {/*    <div className="size-6 animate-pulse rounded-full bg-gray-300" />*/}
+                {/*  ) : (*/}
+                {/*    <>*/}
+                {/*      {platform === 'windows' && <Windows className="size-6" />}*/}
+                {/*      {platform === 'macos' && <Apple className="size-6" />}*/}
+                {/*      {platform === 'linux' && <Linux className="size-6" />}*/}
+                {/*    </>*/}
+                {/*  )}*/}
+                {/*  <span className="text-lg lg:text-xl">{t("hero.job")}</span>*/}
+                {/*</Button>*/}
+                <TransparentButton
+                  href="/job"
                   className="flex w-fit flex-row items-center gap-2"
-                  data-aos="fade-left"
+                  data-aos="fade-up"
                 >
-                  {!platform ? (
-                    <div className="size-6 animate-pulse rounded-full bg-gray-300" />
-                  ) : (
-                    <>
-                      {platform === 'windows' && <Windows className="size-6" />}
-                      {platform === 'macos' && <Apple className="size-6" />}
-                      {platform === 'linux' && <Linux className="size-6" />}
-                    </>
-                  )}
-                  <span className="text-lg lg:text-xl">{t("hero.download")}</span>
-                </Button>
+                  <Windows className="size-6" />
+                  <span className="text-lg lg:text-xl">{t("hero.job")}</span>
+                </TransparentButton>
               </div>
               <div className="flex flex-row gap-4">
                 <TransparentButton
-                  href="https://cwdocs.rinlit.cn/about"
+                  href="/userInfo"
                   className="flex w-fit flex-row items-center gap-2"
                   data-aos="fade-up"
                 >
-                  <span className="text-lg lg:text-xl">{t("hero.docs")}</span>
+                  <Apple className="size-6" />
+                  <span className="text-lg lg:text-xl">{t("hero.userInfo")}</span>
                 </TransparentButton>
-                <TransparentButton
-                  href="https://cwdocs.rinlit.cn/community/"
-                  className="flex w-fit flex-row items-center gap-2"
-                  data-aos="fade-up"
-                >
-                  <span className="text-lg lg:text-xl">{t("hero.community")}</span>
-                </TransparentButton>
+                {/*<TransparentButton*/}
+                {/*  href="https://cwdocs.rinlit.cn/community/"*/}
+                {/*  className="flex w-fit flex-row items-center gap-2"*/}
+                {/*  data-aos="fade-up"*/}
+                {/*>*/}
+                {/*  <span className="text-lg lg:text-xl">{t("hero.community")}</span>*/}
+                {/*</TransparentButton>*/}
               </div>
             </div>
           </div>

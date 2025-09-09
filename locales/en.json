@@ -10,7 +10,8 @@
     "home": "Home",
     "user_docs": "User Docs",
     "dev_docs": "Developer Docs",
-    "download": "Download"
+    "download": "Download",
+    "job": "Job"
   },
   "footer": {
     "desc": "Bring a new personalized experience to your desktop, supporting Windows, macOS, and Linux.",
@@ -79,10 +80,5 @@
   },
   "vercard": {
     "title": "Version Card"
-  },
-  "acknowledgements": {
-    "special_thanks_title": "Special Thanks",
-    "thanks_contributors": "Thanks to all contributors",
-    "view_all_on_github": "View all contributors on <a href=\"https://github.com/Class-Widgets/Class-Widgets/graphs/contributors\" target=\"_blank\" style=\"color: #007bff;\">GitHub</a>"
   }
 }
