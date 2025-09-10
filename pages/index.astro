@@ -1,0 +1,27 @@
+---
+import Hero from '@/components/Hero';
+import Layout from '@/layouts/Layout.astro';
+import Desktop from '@/components/Desktop';
+import Personalization from '@/components/Personalization';
+import Compatibility from '@/components/Compatibility';
+// import Test from '@/components/Test';
+
+// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
+// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+---
+
+<Layout>
+	<Hero />
+	<div class="flex flex-col gap-16 px-24">
+		<div class="flex flex-col gap-16 pb-12">
+			<Desktop />
+			<div class="flex flex-col gap-12 max-w-9xl mx-auto">
+				<Personalization />
+				<Compatibility client:load />
+			</div>
+		</div>
+	</div>
+	<!-- <div class="px-24 flex flex-col gap-16 py-12 bg-[#101823]">
+		<Test />
+	</div> -->
+</Layout>
