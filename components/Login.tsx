@@ -22,7 +22,7 @@ export default function LoginPage({ translations}: { translations: Translations}
         // 模拟API调用
         await new Promise((resolve) => setTimeout(resolve, 1000));
         // 实际项目中这里应该是真实的支付宝登录二维码URL
-        setQrCodeValue("https://openauth.alipay.com/oauth2/publicAppAuthorize.htm?app_id=2021005190675084&scope=auth_user&redirect_uri=http%3A%2F%2Flocalhost%3A4321%2Fzh%2Flogin&state=init");
+        setQrCodeValue("https://openauth.alipay.com/oauth2/publicAppAuthorize.htm?app_id=2021005190675084&scope=auth_user&redirect_uri=https%3A%2F%2Fgongkao.me%2Flogin%2F&state=init");
         setLoading(false);
       } catch (error) {
         message.error("获取二维码失败，请刷新重试");

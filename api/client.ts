@@ -21,7 +21,7 @@ export interface Result<T = any> {
 // 创建 axios 实例
 const axiosInstance = axios.create({
   // baseURL: import.meta.env.VITE_APP_BASE_API,
-  baseURL: "http://localhost:9000",
+  baseURL: "https://gongkao.me/api",
   timeout: 50000,
   headers: { "Content-Type": "application/json;charset=utf-8" },
 });
