@@ -1,4 +1,4 @@
-// login.tsx
+// Login.tsx
 import { AlipayOutlined } from "@ant-design/icons";
 import type { Translations } from "@gudupao/astro-i18n";
 import { createClientTranslator } from "@gudupao/astro-i18n/client";
