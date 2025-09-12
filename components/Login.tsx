@@ -1,4 +1,5 @@
 // Login.tsx
+import { getUserInfoSync } from "@/store/userStore";
 import { AlipayOutlined } from "@ant-design/icons";
 import type { Translations } from "@gudupao/astro-i18n";
 import { createClientTranslator } from "@gudupao/astro-i18n/client";
@@ -7,22 +8,31 @@ import { useEffect, useState } from "react";
 
 const { Title, Text } = Typography;
 
-export default function LoginPage({ translations}: { translations: Translations}) {
+export default function LoginPage({
+  translations,
+}: {
+  translations: Translations;
+}) {
   const t = createClientTranslator(translations);
   const [qrCodeValue, setQrCodeValue] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(true);
-  const [loginStatus, setLoginStatus] = useState<"pending" | "scanned" | "success" | "expired">("pending");
+  const [loginStatus, setLoginStatus] = useState<
+    "pending" | "scanned" | "success" | "expired"
+  >("pending");
 
   // 模拟获取二维码
   useEffect(() => {
     // 这里应该调用后端API获取支付宝登录二维码
     const fetchQRCode = async () => {
+      const { uuid } = getUserInfoSync();
       try {
         setLoading(true);
         // 模拟API调用
-        await new Promise((resolve) => setTimeout(resolve, 1000));
+        // await new Promise((resolve) => setTimeout(resolve, 1000));
         // 实际项目中这里应该是真实的支付宝登录二维码URL
-        setQrCodeValue("https://openauth.alipay.com/oauth2/publicAppAuthorize.htm?app_id=2021005190675084&scope=auth_user&redirect_uri=https%3A%2F%2Fgongkao.me%2Flogin%2F&state=init");
+        setQrCodeValue(
+          `https://openauth.alipay.com/oauth2/publicAppAuthorize.htm?app_id=2021005190675084&scope=auth_user&redirect_uri=https://gongkao.me/alipay-login-callback&uuid=${uuid}`,
+        );
         setLoading(false);
       } catch (error) {
         message.error("获取二维码失败，请刷新重试");
@@ -67,7 +77,7 @@ export default function LoginPage({ translations}: { translations: Translations}
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-blue-50 to-cyan-100 p-4 mt-10">
+    <div className="mt-10 flex min-h-screen items-center justify-center bg-gradient-to-br from-blue-50 to-cyan-100 p-4">
       <Card
         className="w-full max-w-md overflow-hidden rounded-2xl shadow-xl"
         style={{

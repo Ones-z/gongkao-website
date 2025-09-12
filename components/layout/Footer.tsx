@@ -106,7 +106,8 @@ const Footer = ({ translations }: { translations: Translations }) => {
 
         <div className="border-t border-[#1A1B26] pt-8 text-center text-[#87878A]">
           <span>Copyright © {new Date().getFullYear()} 青云选岗</span>
-          <span className="ml-10">京ICP备14013441号-5</span>
+          <span className="ml-10">沪ICP备2023018158号-3</span>
+          <span className="ml-10">上海澹墨信息技术有限公司</span>
         </div>
       </div>
     </footer>

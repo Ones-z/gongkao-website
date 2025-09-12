@@ -36,3 +36,23 @@ export interface JobFilter {
   experience: string;
   education: string;
 }
+
+export interface AlipayLoginCallbackData {
+  app_id: string | null;
+  auth_code: string | null;
+  scope: string | null;
+  uuid: string | null;
+}
+
+export interface UserInfo {
+  id?: string;
+  uuid: string;
+  source?: string;
+  user_name?: string;
+  nick_name?: string;
+  avatar?: string;
+  gender?: string;
+  province?: string;
+  city?: string;
+  status: string;
+}

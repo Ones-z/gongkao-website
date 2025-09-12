@@ -1,18 +1,18 @@
 // Job.tsx
 import jobService from "@/api/jobService";
+import userService from "@/api/userService";
 import type { Job, JobFilter } from "@/entity";
+import { useUserActions, isUserLoggedIn, getUserInfoSync } from "@/store/userStore";
 import {
   ClockCircleOutlined,
   DollarOutlined,
   EnvironmentOutlined,
   PlusOutlined,
-  SafetyCertificateOutlined,
   SearchOutlined,
   ShareAltOutlined,
-  SmileOutlined,
   StarOutlined,
   TeamOutlined,
-  UserOutlined,
+  UserOutlined
 } from "@ant-design/icons";
 import type { Translations } from "@gudupao/astro-i18n";
 import { createClientTranslator } from "@gudupao/astro-i18n/client";
@@ -21,7 +21,6 @@ import {
   Card,
   Col,
   Divider,
-  Form,
   Input,
   List,
   Progress,
@@ -29,7 +28,7 @@ import {
   Select,
   Space,
   Tag,
-  Typography,
+  Typography
 } from "antd";
 import type { ProgressProps } from "antd";
 import { useCallback, useEffect, useState } from "react";
@@ -40,25 +39,57 @@ const conicColors: ProgressProps["strokeColor"] = {
   "25%": "#ffc069",
   "50%": "#ffe58f",
   "75%": "#ffe7ba",
-  "100%": "#ffccc7",
+  "100%": "#ffccc7"
 };
 
 export default function JobPage({
-  translations,
-}: {
+                                  translations
+                                }: {
   translations: Translations;
 }) {
   const t = createClientTranslator(translations);
   const [loading, setLoading] = useState(false);
   const [jobs, setJobs] = useState<Job[]>([]);
+  const { setUserInfo } = useUserActions();
   const [selectedJob, setSelectedJob] = useState<Job | null>(null);
   const [filters, setFilters] = useState({
     cityCode: "SH",
     jobName: "",
     category: "",
     experience: "",
-    educationLevel: "",
+    educationLevel: ""
   });
+
+  const generateUuid = () => {
+    return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(
+      /[xy]/g,
+      function(c) {
+        const r = (Math.random() * 16) | 0,
+          v = c == "x" ? r : (r & 0x3) | 0x8;
+        return v.toString(16);
+      }
+    );
+  };
+
+  const checkLogin = async () => {
+    const isLogin = isUserLoggedIn();
+    console.log("isLogin", isLogin);
+    if (!isLogin) {
+      const uuid = generateUuid();
+      setUserInfo({ uuid: uuid, status: "guest" });
+      await userService.createUuid({ status: "guest", uuid });
+    } else {
+      await getUserInfo();
+    }
+  };
+
+  const getUserInfo = async () => {
+    const { uuid, source } = getUserInfoSync();
+    const info = await userService.getUserInfo(uuid, source);
+    if (info.code == 0) {
+      setUserInfo(info.data);
+    }
+  };
 
   const onSearch = useCallback(
     async (params: JobFilter) => {
@@ -76,23 +107,23 @@ export default function JobPage({
         setLoading(false);
       }
     },
-    [selectedJob],
+    [selectedJob]
   );
-
   useEffect(() => {
+    checkLogin();
     onSearch({
       city_code: filters.cityCode,
       name: filters.jobName,
       category: filters.category,
       experience: filters.experience,
-      education: filters.educationLevel,
+      education: filters.educationLevel
     });
   }, [filters, onSearch]);
 
   const handleFilterChange = (field: string, value: any) => {
     setFilters((prev) => ({
       ...prev,
-      [field]: value,
+      [field]: value
     }));
   };
 
@@ -104,7 +135,7 @@ export default function JobPage({
     { value: "HZ", label: "杭州" },
     { value: "NJ", label: "南京" },
     { value: "WH", label: "武汉" },
-    { value: "CD", label: "成都" },
+    { value: "CD", label: "成都" }
   ];
 
   const categories = [
@@ -115,7 +146,7 @@ export default function JobPage({
     { value: "市场", label: "市场" },
     { value: "人事", label: "人事" },
     { value: "财务", label: "财务" },
-    { value: "行政", label: "行政" },
+    { value: "行政", label: "行政" }
   ];
 
   return (
@@ -131,7 +162,7 @@ export default function JobPage({
                 width: 600,
                 borderRadius: 20,
                 border: "1px solid #e5e5e5",
-                boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
+                boxShadow: "0 2px 8px rgba(0,0,0,0.08)"
               }}
               prefix={<SearchOutlined className="text-gray-400" />}
               value={filters.jobName}
@@ -142,7 +173,7 @@ export default function JobPage({
                   name: filters.jobName,
                   category: filters.category,
                   experience: filters.experience,
-                  education: filters.educationLevel,
+                  education: filters.educationLevel
                 })
               }
             />
@@ -214,7 +245,7 @@ export default function JobPage({
                   jobName: "",
                   category: "",
                   experience: "",
-                  educationLevel: "",
+                  educationLevel: ""
                 })
               }
             >
@@ -233,13 +264,13 @@ export default function JobPage({
               style={{
                 height: "calc(100vh - 180px)",
                 overflowY: "auto",
-                paddingRight: 10,
+                paddingRight: 10
               }}
             >
               <List
                 loading={{
                   spinning: loading,
-                  tip: "职位加载中...",
+                  tip: "职位加载中..."
                 }}
                 dataSource={jobs}
                 renderItem={(job) => (
@@ -257,7 +288,7 @@ export default function JobPage({
                       boxShadow:
                         selectedJob?.id === job.id
                           ? "0 2px 8px rgba(24, 144, 255, 0.1)"
-                          : "none",
+                          : "none"
                     }}
                   >
                     <div className="flex justify-between">
@@ -327,7 +358,7 @@ export default function JobPage({
               style={{
                 height: "calc(100vh - 180px)",
                 overflowY: "auto",
-                paddingLeft: 10,
+                paddingLeft: 10
               }}
             >
               {selectedJob ? (

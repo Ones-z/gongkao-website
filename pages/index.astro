@@ -11,7 +11,6 @@ const lang = Astro.params.lang || 'zh';
 const t = getTranslator(lang);
 
 ---
-
 <Layout transition:animate="slide">
   <Hero client:load translations={getTranslations(lang)}/>
   <div class="max-w-8xl mx-auto flex flex-col gap-16 py-16 overflow-hidden">
@@ -29,4 +28,21 @@ const t = getTranslator(lang);
       </div>
     </div>
   </div>
+  <!--<script is:inline>-->
+  <!--  // 客户端判断是否需要重定向-->
+  <!--  if (window.location.pathname === '/' || window.location.pathname === '/{lang}/') {-->
+  <!--    // 检查是否是用户主动访问根路径-->
+  <!--    const navigationEntries = performance.getEntriesByType('navigation');-->
+  <!--    if (navigationEntries.length > 0) {-->
+  <!--      const navigation = navigationEntries[0];-->
+  <!--      // 如果是通过导航（输入URL、书签等）访问，则重定向-->
+  <!--      if (navigation.type === 'navigate') {-->
+  <!--        window.location.replace('/{lang}/job');-->
+  <!--      }-->
+  <!--    } else {-->
+  <!--      // 兼容性处理-->
+  <!--      window.location.replace('/{lang}/job');-->
+  <!--    }-->
+  <!--  }-->
+  <!--</script>-->
 </Layout>
