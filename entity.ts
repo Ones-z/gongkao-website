@@ -55,4 +55,5 @@ export interface UserInfo {
   province?: string;
   city?: string;
   status: string;
+  open_id?: string;
 }

@@ -1,5 +1,5 @@
 ---
-import Layout from "../layouts/Layout.astro";
+// import Layout from "../layouts/Layout.astro";
 import AlipayLoginCallbackPage from "../components/AlipayLoginCallback";
 import { getTranslator, getTranslations } from "@gudupao/astro-i18n";
 
@@ -7,7 +7,8 @@ const lang = Astro.params.lang || "zh";
 const t = getTranslator(lang);
 ---
 
-<Layout transition:animate="slide" title={t("download.page_title")}>
-  <br />
-  <AlipayLoginCallbackPage client:load translations={getTranslations(lang)} />
-</Layout>
+<!--<Layout transition:animate="slide" title={t("download.page_title")}>-->
+<!--  <br />-->
+<!--  <AlipayLoginCallbackPage client:load translations={getTranslations(lang)} />-->
+<!--</Layout>-->
+<AlipayLoginCallbackPage client:load translations={getTranslations(lang)} />

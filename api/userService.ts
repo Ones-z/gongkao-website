@@ -4,7 +4,7 @@ import client from "./client";
 
 export enum UserApi {
   AlipayAuthCallback = "/user/auth/alipay/callback",
-  UserInfo = "/user/uuid/info",
+  UuidInfo = "/user/uuid/info",
   UuidCreate = "/user/uuid/create",
 }
 
@@ -13,9 +13,9 @@ const loginByAlipay = (data: AlipayLoginCallbackData) =>
     url: UserApi.AlipayAuthCallback,
     data,
   });
-const getUserInfo = (uuid: string | undefined, source: string | undefined) =>
+const getUuidInfo = (uuid: string | undefined, source: string | undefined) =>
   client.get<{ code: number; data: UserInfo; message: string }>({
-    url: UserApi.UserInfo,
+    url: UserApi.UuidInfo,
     params: { uuid, source },
   });
 const createUuid = (data: UserInfo) =>
@@ -23,9 +23,8 @@ const createUuid = (data: UserInfo) =>
     url: UserApi.UuidCreate,
     data,
   });
-
 export default {
   loginByAlipay,
-  getUserInfo,
+  getUuidInfo,
   createUuid,
 };

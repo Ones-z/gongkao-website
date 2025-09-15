@@ -1,15 +1,21 @@
 import { useState, useEffect } from 'react';
 import logoImage from "@/assets/images/icons/favicon.svg";
-import LanguageSwitcher from "@/components/LanguageSwitcher.tsx";
+// import LanguageSwitcher from "@/components/LanguageSwitcher.tsx";
 import type { Translations } from "@gudupao/astro-i18n";
 import { createClientTranslator } from "@gudupao/astro-i18n/client";
+import { getUserInfoSync } from "@/store/userStore";
+import { Avatar, Dropdown } from "antd";
+import type { MenuProps } from 'antd';
+import { UserOutlined } from "@ant-design/icons";
 
 
 const Header = ({ translations }: { translations: Translations }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [currentPath, setCurrentPath] = useState('');
   const [overHero, setOverHero] = useState(true);
+  const userInfo = getUserInfoSync();
   const t = createClientTranslator(translations);
+  const isLoggedIn = !!userInfo.uuid;
 
   const normalizePath = (path: string) => {
     // 移除语言前缀，例如 /en/about -> /about
@@ -21,15 +27,36 @@ const Header = ({ translations }: { translations: Translations }) => {
     return withoutLang;
   };
   const getLocalizedPath = (path: string) => {
-    if (translations && translations.lang) {
-      return `/${translations.lang}${path}`;
-    }
+    // if (translations && translations.lang) {
+    //   return `/${translations.lang}${path}`;
+    // }
     return path;
   };
+  const userMenuItems:MenuProps['items'] = [
+    {
+      key: 'profile',
+      label: <a href={getLocalizedPath("/profile")}>个人中心</a>
+    },
+    {
+      key: 'favorite',
+      label: <a href={getLocalizedPath("/favorite")}>感兴趣</a>
+    },
+    {
+      key: 'diff',
+      label: <a href={getLocalizedPath("/diff")}>职位对比</a>
+    },
+    // {
+    //   type: 'divider',
+    // },
+    // {
+    //   key: 'logout',
+    //   label: <a href={getLocalizedPath("/logout")}>退出登录</a>
+    // }
+  ];
   const navItems = [
     { href: getLocalizedPath("/"), label: t("navs.home") },
     { href: getLocalizedPath("/job"), label: t("navs.job") },
-    { href: getLocalizedPath("/login"), label: t("navs.login") },
+    // { href: getLocalizedPath("/login"), label: t("navs.login") },
     // { href: getLocalizedPath("/download"), label: t("navs.download") },
     // { href: "https://cwdocs.rinlit.cn/about/", label: t("navs.user_docs") },
     // { href: "https://cwdocs.rinlit.cn/dev/", label: t("navs.dev_docs") },
@@ -85,7 +112,31 @@ const Header = ({ translations }: { translations: Translations }) => {
               </a>
             ))}
           </div>
-          <LanguageSwitcher />
+          {isLoggedIn ? (
+            <div className="flex items-center space-x-4">
+              <Dropdown menu={{ items: userMenuItems }} placement="bottomRight">
+                <div className="flex items-center space-x-2 cursor-pointer">
+                  <Avatar
+                    src={userInfo.avatar}
+                    icon={<UserOutlined />}
+                    size="small"
+                    className="bg-blue-500"
+                  />
+                  <span className="text-gray-500 text-sm ml-2">
+                    {userInfo.nick_name}
+                  </span>
+                </div>
+              </Dropdown>
+            </div>
+          ) : (
+            <a
+              href={getLocalizedPath("/login")}
+              className="text-gray-200 hover:text-blue-500 transition-colors"
+            >
+              登录
+            </a>
+          )}
+          {/*<LanguageSwitcher />*/}
         </div>
         <div className="md:hidden">
           <button onClick={() => setIsOpen(!isOpen)} className="text-gray-200 focus:outline-none">
@@ -135,9 +186,9 @@ const Header = ({ translations }: { translations: Translations }) => {
               {item.label}
             </a>
           ))}
-          <div className="py-2 border-t border-gray-600 mt-4">
-            <LanguageSwitcher />
-          </div>
+          {/*<div className="py-2 border-t border-gray-600 mt-4">*/}
+          {/*  <LanguageSwitcher />*/}
+          {/*</div>*/}
         </div>
       </div>
     </header>

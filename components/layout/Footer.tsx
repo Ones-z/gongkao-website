@@ -10,9 +10,9 @@ import Windows from "../icon/Windows";
 const Footer = ({ translations }: { translations: Translations }) => {
   const t = createClientTranslator(translations);
   const getLocalizedPath = (path: string) => {
-    if (translations && translations.lang) {
-      return `/${translations.lang}${path}`;
-    }
+    // if (translations && translations.lang) {
+    //   return `/${translations.lang}${path}`;
+    // }
     return path;
   };
   const navItems = [

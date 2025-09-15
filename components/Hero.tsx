@@ -9,6 +9,7 @@ import { useEffect, useState, useRef } from "react";
 import {detectPlatformFromUserAgent} from "plat.ts";
 import type { Translations } from "@gudupao/astro-i18n";
 import { createClientTranslator } from "@gudupao/astro-i18n/client";
+import { FileSearchOutlined, ProfileOutlined } from "@ant-design/icons";
 
 const Hero = ({ translations }: { translations: Translations }) => {
   const [platform, setPlatform] = useState('');
@@ -142,7 +143,7 @@ const Hero = ({ translations }: { translations: Translations }) => {
                   className="flex w-fit flex-row items-center gap-2"
                   data-aos="fade-up"
                 >
-                  <Windows className="size-6" />
+                  <FileSearchOutlined style={{fontSize:20}} />
                   <span className="text-lg lg:text-xl">{t("hero.job")}</span>
                 </TransparentButton>
               </div>
@@ -152,7 +153,7 @@ const Hero = ({ translations }: { translations: Translations }) => {
                   className="flex w-fit flex-row items-center gap-2"
                   data-aos="fade-up"
                 >
-                  <Apple className="size-6" />
+                  <ProfileOutlined style={{fontSize:20}} />
                   <span className="text-lg lg:text-xl">{t("hero.userInfo")}</span>
                 </TransparentButton>
                 {/*<TransparentButton*/}

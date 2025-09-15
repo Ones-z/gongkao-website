@@ -31,6 +31,15 @@ body {
   color: var(--color-foreground);
 }
 
+.hide-scrollbar {
+  -ms-overflow-style: none; /* IE 和 Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
+}
+
 /* 添加动态渐变文本效果 */
 @keyframes gradient-animation {
   0% {

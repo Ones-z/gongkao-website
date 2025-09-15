@@ -2,12 +2,16 @@
 import jobService from "@/api/jobService";
 import userService from "@/api/userService";
 import type { Job, JobFilter } from "@/entity";
-import { useUserActions, isUserLoggedIn, getUserInfoSync } from "@/store/userStore";
+import {
+  getUserInfoSync,
+  isUserLoggedIn,
+  useUserActions,
+} from "@/store/userStore";
 import {
   ClockCircleOutlined,
   DollarOutlined,
   EnvironmentOutlined,
-  PlusOutlined,
+  PlusOutlined, ReadOutlined,
   SearchOutlined,
   ShareAltOutlined,
   StarOutlined,
@@ -28,7 +32,7 @@ import {
   Select,
   Space,
   Tag,
-  Typography
+  Typography,
 } from "antd";
 import type { ProgressProps } from "antd";
 import { useCallback, useEffect, useState } from "react";
@@ -39,12 +43,12 @@ const conicColors: ProgressProps["strokeColor"] = {
   "25%": "#ffc069",
   "50%": "#ffe58f",
   "75%": "#ffe7ba",
-  "100%": "#ffccc7"
+  "100%": "#ffccc7",
 };
 
 export default function JobPage({
-                                  translations
-                                }: {
+  translations,
+}: {
   translations: Translations;
 }) {
   const t = createClientTranslator(translations);
@@ -57,17 +61,17 @@ export default function JobPage({
     jobName: "",
     category: "",
     experience: "",
-    educationLevel: ""
+    educationLevel: "",
   });
 
   const generateUuid = () => {
     return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(
       /[xy]/g,
-      function(c) {
+      function (c) {
         const r = (Math.random() * 16) | 0,
           v = c == "x" ? r : (r & 0x3) | 0x8;
         return v.toString(16);
-      }
+      },
     );
   };
 
@@ -85,7 +89,7 @@ export default function JobPage({
 
   const getUserInfo = async () => {
     const { uuid, source } = getUserInfoSync();
-    const info = await userService.getUserInfo(uuid, source);
+    const info = await userService.getUuidInfo(uuid, source);
     if (info.code == 0) {
       setUserInfo(info.data);
     }
@@ -98,7 +102,7 @@ export default function JobPage({
         const res = await jobService.getJobs(params);
         setJobs(res.data);
         // 默认选中第一个职位
-        if (res.data.length > 0 && !selectedJob) {
+        if (res.data.length > 0 ) {
           setSelectedJob(res.data[0]);
         }
       } catch (error) {
@@ -107,8 +111,9 @@ export default function JobPage({
         setLoading(false);
       }
     },
-    [selectedJob]
+    [],
   );
+
   useEffect(() => {
     checkLogin();
     onSearch({
@@ -116,14 +121,14 @@ export default function JobPage({
       name: filters.jobName,
       category: filters.category,
       experience: filters.experience,
-      education: filters.educationLevel
+      education: filters.educationLevel,
     });
   }, [filters, onSearch]);
 
   const handleFilterChange = (field: string, value: any) => {
     setFilters((prev) => ({
       ...prev,
-      [field]: value
+      [field]: value,
     }));
   };
 
@@ -135,7 +140,7 @@ export default function JobPage({
     { value: "HZ", label: "杭州" },
     { value: "NJ", label: "南京" },
     { value: "WH", label: "武汉" },
-    { value: "CD", label: "成都" }
+    { value: "CD", label: "成都" },
   ];
 
   const categories = [
@@ -146,23 +151,23 @@ export default function JobPage({
     { value: "市场", label: "市场" },
     { value: "人事", label: "人事" },
     { value: "财务", label: "财务" },
-    { value: "行政", label: "行政" }
+    { value: "行政", label: "行政" },
   ];
 
   return (
-    <div className="mt-10 min-h-screen bg-gray-50">
+    <div className="mt-10 min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
       {/* 顶部搜索区域 */}
-      <div className="sticky top-0 z-10 bg-white shadow-sm">
+      <div className="sticky top-0 z-10 border-b border-gray-200 bg-white/80 shadow-sm backdrop-blur-md">
         <div className="mx-auto max-w-7xl px-4 py-6">
           <div className="mb-6 flex justify-center">
             <Input
               placeholder="搜索职位、公司"
               size="large"
+              className="shadow-md transition-shadow duration-300 hover:shadow-lg"
               style={{
                 width: 600,
-                borderRadius: 20,
+                borderRadius: 24,
                 border: "1px solid #e5e5e5",
-                boxShadow: "0 2px 8px rgba(0,0,0,0.08)"
               }}
               prefix={<SearchOutlined className="text-gray-400" />}
               value={filters.jobName}
@@ -173,19 +178,20 @@ export default function JobPage({
                   name: filters.jobName,
                   category: filters.category,
                   experience: filters.experience,
-                  education: filters.educationLevel
+                  education: filters.educationLevel,
                 })
               }
             />
           </div>
 
           {/* 筛选器 */}
-          <div className="flex flex-wrap gap-3">
+          <div className="flex flex-wrap justify-center gap-3">
             <Select
-              style={{ width: 100, height: 40, borderRadius: 20 }}
+              className="shadow-sm"
+              style={{ width: 120, height: 40, borderRadius: 20 }}
               value={filters.cityCode}
-              prefix={<EnvironmentOutlined />}
               onChange={(value) => handleFilterChange("cityCode", value)}
+              prefix={<EnvironmentOutlined />}
               placeholder="城市"
             >
               {cities.map((city) => (
@@ -196,6 +202,7 @@ export default function JobPage({
             </Select>
 
             <Select
+              className="shadow-sm"
               style={{ width: 150, height: 40, borderRadius: 20 }}
               value={filters.category}
               onChange={(value) => handleFilterChange("category", value)}
@@ -210,6 +217,7 @@ export default function JobPage({
             </Select>
 
             <Select
+              className="shadow-sm"
               style={{ width: 150, height: 40, borderRadius: 20 }}
               value={filters.experience}
               onChange={(value) => handleFilterChange("experience", value)}
@@ -225,6 +233,7 @@ export default function JobPage({
             </Select>
 
             <Select
+              className="shadow-sm"
               style={{ width: 150, height: 40, borderRadius: 20 }}
               value={filters.educationLevel}
               onChange={(value) => handleFilterChange("educationLevel", value)}
@@ -239,13 +248,14 @@ export default function JobPage({
 
             <Button
               type="link"
+              className="self-center"
               onClick={() =>
                 setFilters({
                   cityCode: "SH",
                   jobName: "",
                   category: "",
                   experience: "",
-                  educationLevel: ""
+                  educationLevel: "",
                 })
               }
             >
@@ -261,6 +271,7 @@ export default function JobPage({
           {/* 左侧职位列表 */}
           <Col span={10}>
             <div
+              className="rounded-xl bg-white/50 p-2 shadow-inner backdrop-blur-sm hide-scrollbar"
               style={{
                 height: "calc(100vh - 180px)",
                 overflowY: "auto",
@@ -270,7 +281,7 @@ export default function JobPage({
               <List
                 loading={{
                   spinning: loading,
-                  tip: "职位加载中..."
+                  tip: "职位加载中...",
                 }}
                 dataSource={jobs}
                 renderItem={(job) => (
@@ -278,72 +289,98 @@ export default function JobPage({
                     key={job.id}
                     hoverable
                     onClick={() => setSelectedJob(job)}
+                    className="mb-4 rounded-xl border border-gray-200 transition-all duration-300 hover:shadow-lg"
                     style={{
+                      borderRadius: 20,
                       marginBottom: 12,
-                      borderRadius: 8,
                       border:
                         selectedJob?.id === job.id
-                          ? "1px solid #1890ff"
-                          : "1px solid #f0f0f0",
+                          ? "1px solid #3b82f6"
+                          : "1px solid #e5e7eb",
                       boxShadow:
                         selectedJob?.id === job.id
-                          ? "0 2px 8px rgba(24, 144, 255, 0.1)"
-                          : "none"
+                          ? "0 4px 12px rgba(59, 130, 246, 0.15)"
+                          : "0 1px 3px rgba(0,0,0,0.05)",
                     }}
                   >
                     <div className="flex justify-between">
-                      <div>
-                        <div className="flex items-center">
+                      <div className="flex-1">
+                        <div className="flex items-start">
                           <Title
                             level={5}
-                            style={{ margin: 0, marginRight: 12 }}
+                            className="m-0 mr-3 text-gray-800 transition-colors hover:text-blue-600"
+                            style={{ fontSize: "16px" }}
                           >
                             {job.name}
                           </Title>
-                          {job.is_urgent && <Tag color="red">急聘</Tag>}
+                          {job.is_urgent && (
+                            <Tag color="red" className="mt-1">
+                              急聘
+                            </Tag>
+                          )}
                         </div>
-                        <div className="mt-5 flex flex-wrap gap-1">
-                          <Tag bordered={false} style={{ fontSize: 14 }}>
+                        <div className="mt-3 flex flex-wrap gap-2">
+                          <Tag
+                            bordered={false}
+                            className="border-blue-200 bg-blue-50 text-blue-700"
+                          >
                             {job.seniority}
                           </Tag>
-                          <Tag bordered={false} style={{ fontSize: 14 }}>
+                          <Tag
+                            bordered={false}
+                            className="border-purple-200 bg-purple-50 text-purple-700"
+                          >
                             {job.education_requirement}
                           </Tag>
                           {job.recruitment !== "不限" && (
-                            <Tag bordered={false} style={{ fontSize: 14 }}>
+                            <Tag
+                              bordered={false}
+                              className="border-green-200 bg-green-50 text-green-700"
+                            >
                               {job.recruitment}
                             </Tag>
                           )}
                           {job.political_status !== "不限" && (
-                            <Tag bordered={false} style={{ fontSize: 14 }}>
+                            <Tag
+                              bordered={false}
+                              className="border-yellow-200 bg-yellow-50 text-yellow-700"
+                            >
                               {job.political_status}
                             </Tag>
                           )}
                           {job.major_requirement !== "不限" && (
-                            <Tag bordered={false} style={{ fontSize: 14 }}>
-                              {job.major_requirement.split("、")[0] ?? ""}
+                            <Tag
+                              bordered={false}
+                              className="border-pink-200 bg-pink-50 text-pink-700"
+                            >
+                              {job.major_requirement.split("，")[0] ?? ""}
                             </Tag>
                           )}
                         </div>
                       </div>
-                      <div className="text-right">
+                      <div className="ml-4 text-right">
                         <Progress
                           size="small"
                           type="dashboard"
                           percent={93}
                           strokeColor={conicColors}
+                          format={() => (
+                            <span className="text-xs font-bold text-gray-600">
+                              93%
+                            </span>
+                          )}
                         />
                       </div>
                     </div>
 
-                    <div className="mt-3 -mb-3 flex justify-between">
-                      <div>
-                        <TeamOutlined style={{ color: "gray" }} />
-                        <span className="ml-2">{job.sponsor}</span>
+                    <div className="mt-4 -mb-2 flex justify-between text-sm">
+                      <div className="flex items-center text-gray-600">
+                        <TeamOutlined className="mr-1" />
+                        <span>{job.sponsor}</span>
                       </div>
-                      <div>
-                        <EnvironmentOutlined style={{ color: "gray" }} />
-                        <span className="ml-2">{job.city}</span>
+                      <div className="flex items-center text-gray-600">
+                        <EnvironmentOutlined className="mr-1" />
+                        <span>{job.city}</span>
                       </div>
                     </div>
                   </Card>
@@ -355,6 +392,7 @@ export default function JobPage({
           {/* 右侧职位详情 */}
           <Col span={14}>
             <div
+              className="rounded-xl bg-white/50 p-2 shadow-inner backdrop-blur-sm hide-scrollbar"
               style={{
                 height: "calc(100vh - 180px)",
                 overflowY: "auto",
@@ -362,209 +400,274 @@ export default function JobPage({
               }}
             >
               {selectedJob ? (
-                <Card style={{ borderRadius: 8 }}>
+                <Card
+                  className="rounded-xl border border-gray-200 shadow-md"
+                  style={{ borderRadius: 12 }}
+                >
                   <div className="mb-6">
-                    <div className="flex items-start justify-between">
+                    <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
                       <div>
-                        <Title level={4} style={{ margin: 0 }}>
+                        <Title level={4} className="m-0 text-gray-800">
                           {selectedJob.name}
                         </Title>
-                        <div className="mt-2 flex items-center">
-                          <div>
-                            <span className="text-black-800 text-sm">
-                              招聘人数:
-                            </span>
-                            <span className="ml-5 text-sm text-red-800">
+                        <div className="mt-3 flex flex-wrap gap-6">
+                          <div className="flex items-center">
+                            <span className="text-gray-600">招聘人数:</span>
+                            <span className="ml-2 font-semibold text-blue-600">
                               {selectedJob?.headcount}
                             </span>
                           </div>
-                          <div className="ml-20">
-                            <span className="text-black-800 text-sm">
-                              匹配度:
-                            </span>
-                            <span className="ml-5 text-sm text-red-800">
-                              {93}
+                          <div className="flex items-center">
+                            <span className="text-gray-600">匹配度:</span>
+                            <span className="ml-2 font-semibold text-green-600">
+                              93%
                             </span>
                           </div>
                         </div>
                       </div>
-                      <div>
-                        <Space>
-                          <Button
-                            color="cyan"
-                            variant="outlined"
-                            size="large"
-                            icon={<StarOutlined />}
-                          >
-                            收藏
-                          </Button>
-                          <Button
-                            color="cyan"
-                            variant="filled"
-                            size="large"
-                            icon={<PlusOutlined />}
-                            className="ml-3"
-                          >
-                            添加对比
-                          </Button>
-                          <Button
-                            size="large"
-                            color="cyan"
-                            variant="solid"
-                            icon={<ShareAltOutlined />}
-                            className="ml-3"
-                          >
-                            分享
-                          </Button>
-                        </Space>
+                      <div className="flex flex-wrap gap-2">
+                        <Button
+                          color="primary"
+                          variant="outlined"
+                          size="middle"
+                          icon={<StarOutlined />}
+                          className="flex items-center"
+                        >
+                          收藏
+                        </Button>
+                        <Button
+                          color="primary"
+                          variant="filled"
+                          size="middle"
+                          icon={<PlusOutlined />}
+                        >
+                          添加对比
+                        </Button>
+                        <Button
+                          size="middle"
+                          color="primary"
+                          variant="solid"
+                          icon={<ShareAltOutlined />}
+                        >
+                          分享
+                        </Button>
                       </div>
                     </div>
 
-                    <div className="mt-4 grid grid-cols-2 gap-3">
-                      <div className="flex items-center">
-                        <EnvironmentOutlined className="mr-2 text-gray-400" />
-                        <Text type="secondary">{selectedJob.city}</Text>
+                    <div className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-2">
+                      <div className="flex items-center rounded-lg bg-blue-50 p-3">
+                        <EnvironmentOutlined className="mr-3 text-lg text-blue-500" />
+                        <div>
+                          <Text type="secondary" className="block text-xs">
+                            工作地点
+                          </Text>
+                          <Text className="font-medium">
+                            {selectedJob.city}
+                          </Text>
+                        </div>
                       </div>
-                      <div className="flex items-center">
-                        <UserOutlined className="mr-2 text-gray-400" />
-                        <Text type="secondary">{selectedJob.seniority}</Text>
+                      <div className="flex items-center rounded-lg bg-purple-50 p-3">
+                        <UserOutlined className="mr-3 text-lg text-purple-500" />
+                        <div>
+                          <Text type="secondary" className="block text-xs">
+                            经验要求
+                          </Text>
+                          <Text className="font-medium">
+                            {selectedJob.seniority}
+                          </Text>
+                        </div>
                       </div>
-                      <div className="flex items-center">
-                        <DollarOutlined className="mr-2 text-gray-400" />
-                        <Text type="secondary">
-                          {selectedJob.education_requirement}
+                      <div className="flex items-center rounded-lg bg-green-50 p-3">
+                        <ReadOutlined className="mr-3 text-lg text-green-500" />
+                        <div>
+                          <Text type="secondary" className="block text-xs">
+                            学历要求
+                          </Text>
+                          <Text className="font-medium">
+                            {selectedJob.education_requirement}
+                          </Text>
+                        </div>
+                      </div>
+                      <div className="flex items-center rounded-lg bg-amber-50 p-3">
+                        <ClockCircleOutlined className="mr-3 text-lg text-amber-500" />
+                        <div>
+                          <Text type="secondary" className="block text-xs">
+                            发布时间
+                          </Text>
+                          <Text className="font-medium">
+                            {selectedJob.publish_time}
+                          </Text>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <Divider className="my-6" />
+
+                  <div className="mb-6">
+                    <Title level={5} className="mb-4 text-gray-800">
+                      职位描述
+                    </Title>
+                    <div className="space-y-3">
+                      <div className="flex">
+                        <Text className="w-24 flex-shrink-0 text-gray-600">
+                          岗位类别:
+                        </Text>
+                        <Text type="secondary">{selectedJob.category}</Text>
+                      </div>
+                      <div className="flex">
+                        <Text className="w-24 flex-shrink-0 text-gray-600">
+                          岗位编号:
+                        </Text>
+                        <Text type="secondary">{selectedJob.No}</Text>
+                      </div>
+                      <div className="flex">
+                        <Text className="w-24 flex-shrink-0 text-gray-600">
+                          主管单位:
+                        </Text>
+                        <Text type="secondary">{selectedJob.sponsor}</Text>
+                      </div>
+                      <div className="flex">
+                        <Text className="w-24 flex-shrink-0 text-gray-600">
+                          用人单位:
+                        </Text>
+                        <Text type="secondary">{selectedJob.employer}</Text>
+                      </div>
+                      <div className="flex">
+                        <Text className="w-24 flex-shrink-0 text-gray-600">
+                          岗位职责:
+                        </Text>
+                        <Text type="secondary" className="flex-1">
+                          {selectedJob.duty}
                         </Text>
                       </div>
-                      <div className="flex items-center">
-                        <ClockCircleOutlined className="mr-2 text-gray-400" />
-                        <Text type="secondary">{selectedJob.publish_time}</Text>
-                      </div>
                     </div>
                   </div>
 
-                  <Divider />
+                  <Divider className="my-6" />
 
                   <div className="mb-6">
-                    <Title level={5}>职位描述</Title>
-                    <div className="mb-2 flex items-start">
-                      <Text className="mr-2">岗位类别:</Text>
-                      <Text type="secondary">{selectedJob.category}</Text>
-                    </div>
-                    <div className="mb-2 flex items-start">
-                      <Text className="mr-2">岗位编号:</Text>
-                      <Text type="secondary">{selectedJob.No}</Text>
-                    </div>
-                    <div className="mb-2 flex items-start">
-                      <Text className="mr-2">主管单位:</Text>
-                      <Text type="secondary">{selectedJob.sponsor}</Text>
-                    </div>
-                    <div className="mb-2 flex items-start">
-                      <Text className="mr-2">用人单位:</Text>
-                      <Text type="secondary">{selectedJob.employer}</Text>
-                    </div>
-                    <div className="mb-2 flex items-start">
-                      <Text className="mr-2">岗位职责:</Text>
-                      <Text type="secondary">{selectedJob.duty}</Text>
-                    </div>
-                  </div>
-
-                  <Divider />
-
-                  <div className="mb-6">
-                    <Title level={5}>任职要求</Title>
-                    <div className="mt-3">
-                      <div className="mb-2 flex items-start">
-                        <Text className="mr-2">学位:</Text>
+                    <Title level={5} className="mb-4 text-gray-800">
+                      任职要求
+                    </Title>
+                    <div className="space-y-3">
+                      <div className="flex">
+                        <Text className="w-24 flex-shrink-0 text-gray-600">
+                          学位:
+                        </Text>
                         <Text type="secondary">
                           {selectedJob.degree_requirement}
                         </Text>
                       </div>
-                      <div className="mb-2 flex items-start">
-                        <Text className="mr-2">学历:</Text>
+                      <div className="flex">
+                        <Text className="w-24 flex-shrink-0 text-gray-600">
+                          学历:
+                        </Text>
                         <Text type="secondary">
                           {selectedJob.education_requirement}
                         </Text>
                       </div>
-                      <div className="mb-2 flex items-start">
-                        <Text className="mr-2">经验:</Text>
+                      <div className="flex">
+                        <Text className="w-24 flex-shrink-0 text-gray-600">
+                          经验:
+                        </Text>
                         <Text type="secondary">{selectedJob.seniority}</Text>
                       </div>
-                      <div className="mb-2 flex items-start">
-                        <Text className="mr-2">专业:</Text>
+                      <div className="flex">
+                        <Text className="w-24 flex-shrink-0 text-gray-600">
+                          专业:
+                        </Text>
                         <Text type="secondary">
                           {selectedJob.major_requirement}
                         </Text>
                       </div>
-                      <div className="mb-2 flex items-start">
-                        <Text className="mr-2">是否应届:</Text>
+                      <div className="flex">
+                        <Text className="w-24 flex-shrink-0 text-gray-600">
+                          是否应届:
+                        </Text>
                         <Text type="secondary">{selectedJob.recruitment}</Text>
                       </div>
-                      <div className="mb-2 flex items-start">
-                        <Text className="mr-2">政治面貌:</Text>
+                      <div className="flex">
+                        <Text className="w-24 flex-shrink-0 text-gray-600">
+                          政治面貌:
+                        </Text>
                         <Text type="secondary">
                           {selectedJob.political_status}
                         </Text>
                       </div>
-                      <div className="mb-2 flex items-start">
-                        <Text className="mr-2">最低合格分数线:</Text>
+                      <div className="flex">
+                        <Text className="w-24 flex-shrink-0 text-gray-600">
+                          最低合格分数线:
+                        </Text>
                         <Text type="secondary">
                           {selectedJob.qualified_score}
                         </Text>
                       </div>
-                      <div className="mb-2 flex items-start">
-                        <Text className="mr-2">户籍要求:</Text>
+                      <div className="flex">
+                        <Text className="w-24 flex-shrink-0 text-gray-600">
+                          户籍要求:
+                        </Text>
                         <Text type="secondary">
                           {selectedJob.residency_requirement}
                         </Text>
                       </div>
-                      <div className="mb-2 flex items-start">
-                        <Text className="mr-2">年龄上限:</Text>
+                      <div className="flex">
+                        <Text className="w-24 flex-shrink-0 text-gray-600">
+                          年龄上限:
+                        </Text>
                         <Text type="secondary">{selectedJob.age_limit}</Text>
                       </div>
                     </div>
                   </div>
 
-                  <Divider />
+                  <Divider className="my-6" />
 
                   <div className="mb-6">
-                    <Title level={5}>其他</Title>
-                    <div className="mt-3">
-                      <div className="mb-2 flex items-start">
-                        <Text className="mr-2">面试比例:</Text>
+                    <Title level={5} className="mb-4 text-gray-800">
+                      其他信息
+                    </Title>
+                    <div className="space-y-3">
+                      <div className="flex">
+                        <Text className="w-24 flex-shrink-0 text-gray-600">
+                          面试比例:
+                        </Text>
                         <Text type="secondary">
                           {selectedJob.interview_ratio}
                         </Text>
                       </div>
-                      <div className="mb-2 flex items-start">
-                        <Text className="mr-2">笔试面试成绩比例:</Text>
+                      <div className="flex">
+                        <Text className="w-24 flex-shrink-0 text-gray-600">
+                          成绩比例:
+                        </Text>
                         <Text type="secondary">{selectedJob.score_ratio}</Text>
                       </div>
-                      <div className="mb-2 flex items-start">
-                        <Text
-                          className="mr-2"
-                          style={{ width: 60, flexShrink: 0 }}
-                        >
+                      <div className="flex">
+                        <Text className="w-24 flex-shrink-0 text-gray-600">
                           其他要求:
                         </Text>
-                        <Text type="secondary">
-                          {selectedJob.other_requirement}
+                        <Text type="secondary" className="flex-1">
+                          {selectedJob.other_requirement || "无"}
                         </Text>
                       </div>
-                      <div className="mb-2 flex items-start">
-                        <Text
-                          className="mr-2"
-                          style={{ width: 60, flexShrink: 0 }}
-                        >
+                      <div className="flex">
+                        <Text className="w-24 flex-shrink-0 text-gray-600">
                           注意事项:
                         </Text>
-                        <Text type="secondary">{selectedJob.notes}</Text>
+                        <Text type="secondary" className="flex-1">
+                          {selectedJob.notes || "无"}
+                        </Text>
                       </div>
                     </div>
                   </div>
                 </Card>
               ) : (
-                <Card style={{ borderRadius: 8, textAlign: "center" }}>
-                  <Text type="secondary">请选择一个职位查看详细信息</Text>
+                <Card
+                  className="rounded-xl border border-gray-200 py-12 text-center"
+                  style={{ borderRadius: 12 }}
+                >
+                  <Text type="secondary" className="text-lg">
+                    请选择一个职位查看详细信息
+                  </Text>
                 </Card>
               )}
             </div>

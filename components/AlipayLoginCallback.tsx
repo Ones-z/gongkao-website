@@ -43,7 +43,7 @@ export default function AlipayLoginCallbackPage({
       status="success"
       title="登录成功！"
       subTitle="您现在可以挑选自己心仪的岗位了。"
-      extra={[<Button key="buy">返回支付宝</Button>]}
+      extra={[<Button key="buy" onClick={() => window.close()}>返回支付宝</Button>]}
     />
   );
 }
