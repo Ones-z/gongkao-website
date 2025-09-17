@@ -30,11 +30,11 @@ export interface Job {
 }
 
 export interface JobFilter {
-  city_code: string;
+  city_code?: string;
   name: string;
-  category: string;
-  experience: string;
-  education: string;
+  category?: string;
+  experience?: string;
+  education?: string;
 }
 
 export interface AlipayLoginCallbackData {
@@ -56,4 +56,29 @@ export interface UserInfo {
   city?: string;
   status: string;
   open_id?: string;
+}
+
+export interface OrderCreate {
+  uuid?: string;
+  goods_id: number;
+  out_trade_no: string;
+  total_amount: number;
+  subject: string;
+}
+
+export interface OrderInfo {
+  id: number;
+  uuid: string;
+  goods_id: number;
+  trade_no: string;
+  subject: string;
+  product_code: string;
+  trade_status: string;
+  out_trade_no: string;
+  total_amount: number;
+  funds_bill_list: object[];
+  buyer_user_id: string;
+  send_pay_date: string;
+  receipt_amount: number;
+  ext_infos: string;
 }

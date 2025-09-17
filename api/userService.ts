@@ -6,6 +6,7 @@ export enum UserApi {
   AlipayAuthCallback = "/user/auth/alipay/callback",
   UuidInfo = "/user/uuid/info",
   UuidCreate = "/user/uuid/create",
+  PurchasePlan = "/user/purchase/plan",
 }
 
 const loginByAlipay = (data: AlipayLoginCallbackData) =>
@@ -23,8 +24,14 @@ const createUuid = (data: UserInfo) =>
     url: UserApi.UuidCreate,
     data,
   });
+const purchasePlan = (uuid: string | undefined) =>
+  client.get<{ code: number; data: number; message: string }>({
+    url: UserApi.PurchasePlan,
+    params: { uuid },
+  });
 export default {
   loginByAlipay,
   getUuidInfo,
   createUuid,
+  purchasePlan,
 };

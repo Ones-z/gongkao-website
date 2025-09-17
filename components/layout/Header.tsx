@@ -15,7 +15,7 @@ const Header = ({ translations }: { translations: Translations }) => {
   const [overHero, setOverHero] = useState(true);
   const userInfo = getUserInfoSync();
   const t = createClientTranslator(translations);
-  const isLoggedIn = !!userInfo.uuid;
+  const isLoggedIn = !!userInfo.open_id;
 
   const normalizePath = (path: string) => {
     // 移除语言前缀，例如 /en/about -> /about
@@ -56,6 +56,7 @@ const Header = ({ translations }: { translations: Translations }) => {
   const navItems = [
     { href: getLocalizedPath("/"), label: t("navs.home") },
     { href: getLocalizedPath("/job"), label: t("navs.job") },
+    { href: getLocalizedPath("/goods"), label: t("navs.goods") },
     // { href: getLocalizedPath("/login"), label: t("navs.login") },
     // { href: getLocalizedPath("/download"), label: t("navs.download") },
     // { href: "https://cwdocs.rinlit.cn/about/", label: t("navs.user_docs") },

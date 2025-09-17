@@ -20,6 +20,7 @@ export default function LoginPage({
   const [loginStatus, setLoginStatus] = useState<
     "pending" | "scanned" | "success" | "expired"
   >("pending");
+  const { updateUserInfo } = useUserActions();
 
   const checkLoginStatus = async () => {
     const { uuid, source } = getUserInfoSync();
@@ -69,7 +70,6 @@ export default function LoginPage({
       //   setLoginStatus("expired");
       // }
       const { uuid, source } = getUserInfoSync();
-      const { updateUserInfo } = useUserActions();
       const res = await userService.getUuidInfo(uuid, source);
 
       if (res.code === 0) {
@@ -85,13 +85,14 @@ export default function LoginPage({
         });
         clearInterval(interval);
         // 可以在这里添加登录成功后的回调或跳转逻辑
-        window.location.reload();
-        window.location.href = "/job";
+        setTimeout(() => {
+          window.location.href = "/job";
+        }, 1000);
       }
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [qrCodeValue]);
+  }, [qrCodeValue,updateUserInfo]);
 
   const handleRefresh = () => {
     setLoginStatus("pending");

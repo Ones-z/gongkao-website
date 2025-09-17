@@ -59,9 +59,9 @@ export default function JobPage({
   const [filters, setFilters] = useState({
     cityCode: "SH",
     jobName: "",
-    category: "",
-    experience: "",
-    educationLevel: "",
+    category: undefined,
+    experience: undefined,
+    educationLevel: undefined,
   });
 
   const generateUuid = () => {
@@ -253,9 +253,9 @@ export default function JobPage({
                 setFilters({
                   cityCode: "SH",
                   jobName: "",
-                  category: "",
-                  experience: "",
-                  educationLevel: "",
+                  category: undefined,
+                  experience: undefined,
+                  educationLevel: undefined,
                 })
               }
             >
