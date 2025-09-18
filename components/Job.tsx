@@ -121,7 +121,7 @@ export default function JobPage({
       name: filters.jobName,
       category: filters.category,
       experience: filters.experience,
-      education: filters.educationLevel,
+      education_level: filters.educationLevel,
     });
   }, [filters, onSearch]);
 
@@ -143,15 +143,20 @@ export default function JobPage({
     { value: "CD", label: "成都" },
   ];
 
+  // const categories = [
+  //   { value: "技术", label: "技术" },
+  //   { value: "产品", label: "产品" },
+  //   { value: "设计", label: "设计" },
+  //   { value: "运营", label: "运营" },
+  //   { value: "市场", label: "市场" },
+  //   { value: "人事", label: "人事" },
+  //   { value: "财务", label: "财务" },
+  //   { value: "行政", label: "行政" },
+  // ];
+
   const categories = [
-    { value: "技术", label: "技术" },
-    { value: "产品", label: "产品" },
-    { value: "设计", label: "设计" },
-    { value: "运营", label: "运营" },
-    { value: "市场", label: "市场" },
-    { value: "人事", label: "人事" },
-    { value: "财务", label: "财务" },
-    { value: "行政", label: "行政" },
+    { value: "专技岗位", label: "专技岗位" },
+    { value: "管理岗位", label: "管理岗位" },
   ];
 
   return (
@@ -178,7 +183,7 @@ export default function JobPage({
                   name: filters.jobName,
                   category: filters.category,
                   experience: filters.experience,
-                  education: filters.educationLevel,
+                  education_level: filters.educationLevel,
                 })
               }
             />
@@ -240,10 +245,8 @@ export default function JobPage({
               placeholder="学历要求"
               allowClear
             >
-              <Select.Option value="大专">大专</Select.Option>
-              <Select.Option value="本科">本科</Select.Option>
-              <Select.Option value="硕士">硕士</Select.Option>
-              <Select.Option value="博士">博士</Select.Option>
+              <Select.Option value="本科以上">本科以上</Select.Option>
+              <Select.Option value="研究生以上">研究生以上</Select.Option>
             </Select>
 
             <Button

@@ -149,12 +149,12 @@ const Hero = ({ translations }: { translations: Translations }) => {
               </div>
               <div className="flex flex-row gap-4">
                 <TransparentButton
-                  href="/userInfo"
+                  href="/profile"
                   className="flex w-fit flex-row items-center gap-2"
                   data-aos="fade-up"
                 >
                   <ProfileOutlined style={{fontSize:20}} />
-                  <span className="text-lg lg:text-xl">{t("hero.userInfo")}</span>
+                  <span className="text-lg lg:text-xl">{t("hero.userProfile")}</span>
                 </TransparentButton>
                 {/*<TransparentButton*/}
                 {/*  href="https://cwdocs.rinlit.cn/community/"*/}

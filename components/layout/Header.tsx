@@ -35,7 +35,7 @@ const Header = ({ translations }: { translations: Translations }) => {
   const userMenuItems:MenuProps['items'] = [
     {
       key: 'profile',
-      label: <a href={getLocalizedPath("/profile")}>个人中心</a>
+      label: <a href={getLocalizedPath("/profile")}>个人资料</a>
     },
     {
       key: 'favorite',

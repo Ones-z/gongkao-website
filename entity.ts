@@ -29,12 +29,35 @@ export interface Job {
   publish_time: string;
 }
 
+export interface UserProfile {
+  id?: number;
+  uuid: string;
+  username?: string;
+  birth_date: string;
+  gender: string;
+  political_status?: string;
+  city?: string;
+  education_level: string;
+  degeree_level: string;
+  undergraduate_major: string;
+  undergraduate_major_name: string;
+  postgraduate_major?: string;
+  postgraduate_major_name?: string;
+  fresh_graduate: string;
+  grassroots_experience: string;
+  seniority: number;
+  work_experience?: string;
+  address?: string;
+  address_geo?: string;
+  commute_way: string;
+}
+
 export interface JobFilter {
   city_code?: string;
   name: string;
   category?: string;
   experience?: string;
-  education?: string;
+  education_level?: string;
 }
 
 export interface AlipayLoginCallbackData {

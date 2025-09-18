@@ -1,4 +1,4 @@
-import type { AlipayLoginCallbackData, UserInfo } from "@/entity";
+import type { AlipayLoginCallbackData, UserInfo, UserProfile } from "@/entity";
 
 import client from "./client";
 
@@ -7,6 +7,8 @@ export enum UserApi {
   UuidInfo = "/user/uuid/info",
   UuidCreate = "/user/uuid/create",
   PurchasePlan = "/user/purchase/plan",
+  UserCreate = "/user/create",
+  UserDetail = "/user/detail",
 }
 
 const loginByAlipay = (data: AlipayLoginCallbackData) =>
@@ -29,9 +31,22 @@ const purchasePlan = (uuid: string | undefined) =>
     url: UserApi.PurchasePlan,
     params: { uuid },
   });
+const createUser = (data: UserProfile) =>
+  client.post<{ code: number; data: number; message: string }>({
+    url: UserApi.UserCreate,
+    data,
+  });
+const getUserDetail = (uuid: string | undefined) =>
+  client.get<{ code: number; data: UserProfile; message: string }>({
+    url: UserApi.UserDetail,
+    params: { uuid },
+  });
+
 export default {
   loginByAlipay,
   getUuidInfo,
   createUuid,
   purchasePlan,
+  createUser,
+  getUserDetail,
 };
