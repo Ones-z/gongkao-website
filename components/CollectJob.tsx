@@ -620,7 +620,7 @@ export default function CollectJobPage({
                           </Text>
                         </div>
                         <div className="flex flex-col sm:flex-row">
-                          <Text className="w-24 flex-shrink-0 text-sm text-gray-600">
+                          <Text className="w-30 flex-shrink-0 text-sm text-gray-600">
                             最低合格分数线:
                           </Text>
                           <Text type="secondary" className="text-sm">

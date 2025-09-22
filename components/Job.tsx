@@ -18,7 +18,7 @@ import {
   StarFilled,
   StarOutlined,
   TeamOutlined,
-  UserOutlined
+  UserOutlined,
 } from "@ant-design/icons";
 import type { Translations } from "@gudupao/astro-i18n";
 import { createClientTranslator } from "@gudupao/astro-i18n/client";
@@ -70,6 +70,7 @@ export default function JobPage({
   const { uuid, open_id } = getUserInfoSync();
   const [collectedJobs, setCollectedJobs] = useState<number[]>([]);
   const [comparedJobs, setComparedJobs] = useState<number[]>([]);
+  const [showLoginDialog, setShowLoginDialog] = useState(false);
 
   // 检测是否为移动端
   useEffect(() => {
@@ -154,6 +155,11 @@ export default function JobPage({
   };
 
   const handleCollect = async (jobId: number) => {
+    if (!open_id) {
+      messageApi.warning("请先完成登录");
+      setShowLoginDialog(true); // 打开登录弹窗
+      return;
+    }
     try {
       // 检查是否已收藏
       const isCollected = collectedJobs.includes(jobId);
@@ -202,13 +208,22 @@ export default function JobPage({
     }
   };
   const handleShare = async (jobId: number) => {
-    // const res = await jobService.shareJob({uuid, job_id: jobId});
-    // if (res.code == 0) {
-    //   messageApi.success("分享成功");
-    // }
-    console.log("share", jobId);
+    if (!open_id) {
+      messageApi.warning("请先完成登录");
+      setShowLoginDialog(true); // 打开登录弹窗
+      return;
+    }
+    const url = `${window.location.origin}/job-detail?id=${jobId}`;
+    // 使用 Clipboard API 复制链接到剪贴板
+    await navigator.clipboard.writeText(url);
+    messageApi.success("链接已复制到剪贴板");
   };
   const handleCompare = async (jobId: number) => {
+    if (!open_id) {
+      messageApi.warning("请先完成登录");
+      setShowLoginDialog(true); // 打开登录弹窗
+      return;
+    }
     try {
       // 检查是否已在对比列表中
       const isCompared = comparedJobs.includes(jobId);
@@ -646,13 +661,11 @@ export default function JobPage({
                           className="flex items-center"
                           onClick={() => handleCompare(selectedJob.id)}
                         >
-                          {
-                            isMobile
-                              ? ""
-                              : comparedJobs.includes(selectedJob.id)
-                                ? "取消对比"
-                                : "对比职位"
-                          }
+                          {isMobile
+                            ? ""
+                            : comparedJobs.includes(selectedJob.id)
+                              ? "取消对比"
+                              : "对比职位"}
                         </Button>
                         <Button
                           size={isMobile ? "small" : "middle"}
@@ -821,7 +834,7 @@ export default function JobPage({
                         </Text>
                       </div>
                       <div className="flex flex-col sm:flex-row">
-                        <Text className="w-24 flex-shrink-0 text-sm text-gray-600">
+                        <Text className="w-30 flex-shrink-0 text-sm text-gray-600">
                           最低合格分数线:
                         </Text>
                         <Text type="secondary" className="text-sm">
@@ -903,6 +916,66 @@ export default function JobPage({
           </Col>
         </Row>
       </div>
+      {showLoginDialog && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          {/* 背景蒙层 */}
+          <div
+            className="bg-opacity-50 absolute inset-0"
+            onClick={() => setShowLoginDialog(false)}
+          ></div>
+
+          {/* 弹窗内容 */}
+          <div
+            className="relative w-full max-w-md rounded-2xl bg-white p-8 shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="text-center">
+              <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-blue-100">
+                <svg
+                  className="h-8 w-8 text-blue-500"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                  />
+                </svg>
+              </div>
+
+              <h3 className="mb-3 text-2xl font-bold text-gray-800">
+                请登录
+              </h3>
+              <p className="mb-6 text-gray-600">
+                登录后才能收藏、添加对比、分享职位哦！
+              </p>
+
+              <div className="flex flex-col justify-center gap-4 sm:flex-row">
+                <Button
+                  size="large"
+                  className="px-6"
+                  onClick={() => setShowLoginDialog(false)}
+                >
+                  取消
+                </Button>
+                <Button
+                  type="primary"
+                  size="large"
+                  className="bg-gradient-to-r from-blue-500 to-blue-600 px-6"
+                  onClick={() => {
+                    window.location.replace("/login");
+                  }}
+                >
+                  去登录
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

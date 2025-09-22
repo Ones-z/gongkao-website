@@ -39,6 +39,7 @@ export default function GoodsPage({
     null,
   );
   const [showMembershipDialog, setShowMembershipDialog] = useState(false);
+  const [showLoginDialog, setShowLoginDialog] = useState(false);
   const { uuid, open_id } = getUserInfoSync();
   const membershipPlans: MembershipPlan[] = [
     {
@@ -115,6 +116,7 @@ export default function GoodsPage({
     console.log("购买计划:", planId);
     if (!open_id) {
       messageApi.warning("请先完成登录");
+      setShowLoginDialog(true);
       return;
     }
     const selectedPlanData = membershipPlans.find((p) => p.id === planId);
@@ -374,9 +376,7 @@ export default function GoodsPage({
           {showMembershipDialog && (
             <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
               {/* 背景蒙层 */}
-              <div
-                className="bg-opacity-50 absolute inset-0"
-              ></div>
+              <div className="bg-opacity-50 absolute inset-0"></div>
 
               {/* 对话框内容 */}
               <div className="relative max-h-[80vh] w-full max-w-7xl overflow-hidden rounded-3xl bg-white p-8 shadow-2xl">
@@ -842,6 +842,66 @@ export default function GoodsPage({
                       onClick={handleConfirmPayment}
                     >
                       {isCheckingPayment ? "检查中..." : "我已完成支付"}
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+          {showLoginDialog && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+              {/* 背景蒙层 */}
+              <div
+                className="bg-opacity-50 absolute inset-0"
+                onClick={() => setShowLoginDialog(false)}
+              ></div>
+
+              {/* 弹窗内容 */}
+              <div
+                className="relative w-full max-w-md rounded-2xl bg-white p-8 shadow-2xl"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <div className="text-center">
+                  <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-blue-100">
+                    <svg
+                      className="h-8 w-8 text-blue-500"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                      />
+                    </svg>
+                  </div>
+
+                  <h3 className="mb-3 text-2xl font-bold text-gray-800">
+                    请登录
+                  </h3>
+                  <p className="mb-6 text-gray-600">
+                    购买会员套餐需要先登录账户
+                  </p>
+
+                  <div className="flex flex-col justify-center gap-4 sm:flex-row">
+                    <Button
+                      size="large"
+                      className="px-6"
+                      onClick={() => setShowLoginDialog(false)}
+                    >
+                      取消
+                    </Button>
+                    <Button
+                      type="primary"
+                      size="large"
+                      className="bg-gradient-to-r from-blue-500 to-blue-600 px-6"
+                      onClick={() => {
+                        window.location.replace("/login");
+                      }}
+                    >
+                      去登录
                     </Button>
                   </div>
                 </div>

@@ -8,7 +8,6 @@ import { Avatar, Dropdown } from "antd";
 import type { MenuProps } from 'antd';
 import { UserOutlined } from "@ant-design/icons";
 
-
 const Header = ({ translations }: { translations: Translations }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [currentPath, setCurrentPath] = useState('');
@@ -32,7 +31,7 @@ const Header = ({ translations }: { translations: Translations }) => {
     // }
     return path;
   };
-  const userMenuItems:MenuProps['items'] = [
+  const userMenuItems: MenuProps['items'] = [
     {
       key: 'profile',
       label: <a href={getLocalizedPath("/profile")}>个人资料</a>
@@ -84,7 +83,7 @@ const Header = ({ translations }: { translations: Translations }) => {
 
     window.addEventListener('scroll', handleScroll);
     handleScroll();
-    
+
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
@@ -168,28 +167,89 @@ const Header = ({ translations }: { translations: Translations }) => {
         </div>
       </nav>
       <div
-        className={`md:hidden shadow-sm overflow-hidden transition-all duration-300 ease-in-out ${
-          isOpen ? `max-h-[calc(100vh-64px)] opacity-100 bg-opacity-10 backdrop-blur-md` : 'max-h-0 opacity-0'
+        className={`md:hidden fixed inset-0 z-40 transition-all duration-300 ease-in-out ${
+          isOpen ? 'bg-opacity-10 backdrop-blur-sm' : 'pointer-events-none'
         }`}
+        onClick={() => setIsOpen(false)}
       >
-        <div className="container mx-auto px-4 flex flex-col space-y-2">
-          {navItems.map((item) => (
-            <a
-              key={item.href}
-              href={item.href}
-              className={`block text-gray-200 hover:text-blue-500 transition-colors py-2 relative ${
-                currentPath === normalizePath(item.href)
-                  ? "after:content-[''] after:absolute after:left-0 after:-bottom-1 after:w-full after:h-0.5 after:bg-[#7dd3fc] after:transition-all"
-                  : ""
-              }`}
-              onClick={() => setIsOpen(false)}
-            >
-              {item.label}
-            </a>
-          ))}
-          {/*<div className="py-2 border-t border-gray-600 mt-4">*/}
-          {/*  <LanguageSwitcher />*/}
-          {/*</div>*/}
+        <div
+          className={`absolute top-16 right-4 w-64 rounded-lg shadow-xl transition-all duration-300 ease-in-out ${
+            isOpen 
+              ? 'opacity-100 translate-y-0 bg-gray-800' 
+              : 'opacity-0 -translate-y-2 pointer-events-none bg-gray-800'
+          }`}
+          onClick={(e) => e.stopPropagation()}
+        >
+          <div className="flex flex-col py-2">
+            {navItems.map((item) => (
+              <a
+                key={item.href}
+                href={item.href}
+                className={`block px-4 py-3 text-gray-200 hover:text-blue-500 hover:bg-gray-700 transition-colors ${
+                  currentPath === normalizePath(item.href)
+                    ? "font-medium text-blue-400 bg-gray-750"
+                    : ""
+                }`}
+                onClick={() => setIsOpen(false)}
+              >
+                {item.label}
+              </a>
+            ))}
+            {isLoggedIn && (
+              <>
+                <div className="border-t border-gray-700 my-1"></div>
+                <a
+                  href={getLocalizedPath("/profile")}
+                  className={`block px-4 py-3 text-gray-200 hover:text-blue-500 hover:bg-gray-700 transition-colors ${
+                    currentPath === normalizePath(getLocalizedPath("/profile"))
+                      ? "font-medium text-blue-400 bg-gray-750"
+                      : ""
+                  }`}
+                  onClick={() => setIsOpen(false)}
+                >
+                  个人资料
+                </a>
+                <a
+                  href={getLocalizedPath("/collect")}
+                  className={`block px-4 py-3 text-gray-200 hover:text-blue-500 hover:bg-gray-700 transition-colors ${
+                    currentPath === normalizePath(getLocalizedPath("/collect"))
+                      ? "font-medium text-blue-400 bg-gray-750"
+                      : ""
+                  }`}
+                  onClick={() => setIsOpen(false)}
+                >
+                  感兴趣
+                </a>
+                <a
+                  href={getLocalizedPath("/compare")}
+                  className={`block px-4 py-3 text-gray-200 hover:text-blue-500 hover:bg-gray-700 transition-colors ${
+                    currentPath === normalizePath(getLocalizedPath("/compare"))
+                      ? "font-medium text-blue-400 bg-gray-750"
+                      : ""
+                  }`}
+                  onClick={() => setIsOpen(false)}
+                >
+                  职位对比
+                </a>
+              </>
+            )}
+            {!isLoggedIn && (
+              <div className="border-t border-gray-700 my-1"></div>
+            )}
+            {!isLoggedIn && (
+              <a
+                href={getLocalizedPath("/login")}
+                className={`block px-4 py-3 text-gray-200 hover:text-blue-500 hover:bg-gray-700 transition-colors ${
+                  currentPath === normalizePath(getLocalizedPath("/login"))
+                    ? "font-medium text-blue-400 bg-gray-750"
+                    : ""
+                }`}
+                onClick={() => setIsOpen(false)}
+              >
+                登录
+              </a>
+            )}
+          </div>
         </div>
       </div>
     </header>

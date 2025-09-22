@@ -4,6 +4,7 @@ import client from "./client";
 
 export enum JobApi {
   Jobs = "/job/list",
+  JobDetail = "/job/detail",
   CollectJob = "/job/collect",
   UnCollectJob = "/job/unCollect",
   CollectJobs = "/job/collects",
@@ -47,6 +48,11 @@ const getCompareJobs = (uuid: string | undefined) =>
     url: JobApi.CompareJobs,
     params: { uuid },
   });
+const getJobDetail = (id: number) =>
+  client.get<{ code: number; data: Job }>({
+    url: JobApi.JobDetail,
+    params: { id },
+  });
 
 export default {
   getJobs,
@@ -56,4 +62,5 @@ export default {
   compareJob,
   unCompareJob,
   getCompareJobs,
+  getJobDetail,
 };
