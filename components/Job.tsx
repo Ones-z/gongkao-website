@@ -1,4 +1,4 @@
-// Job.tsx
+// Job.tsx (移动端样式优化部分)
 import jobService from "@/api/jobService";
 import userService from "@/api/userService";
 import type { Job, JobFilter } from "@/entity";
@@ -9,11 +9,13 @@ import {
 } from "@/store/userStore";
 import {
   ClockCircleOutlined,
-  DollarOutlined,
+  DeleteOutlined,
   EnvironmentOutlined,
-  PlusOutlined, ReadOutlined,
+  PlusOutlined,
+  ReadOutlined,
   SearchOutlined,
   ShareAltOutlined,
+  StarFilled,
   StarOutlined,
   TeamOutlined,
   UserOutlined
@@ -30,9 +32,9 @@ import {
   Progress,
   Row,
   Select,
-  Space,
   Tag,
   Typography,
+  message,
 } from "antd";
 import type { ProgressProps } from "antd";
 import { useCallback, useEffect, useState } from "react";
@@ -52,6 +54,7 @@ export default function JobPage({
   translations: Translations;
 }) {
   const t = createClientTranslator(translations);
+  const [messageApi, contextHolder] = message.useMessage();
   const [loading, setLoading] = useState(false);
   const [jobs, setJobs] = useState<Job[]>([]);
   const { setUserInfo } = useUserActions();
@@ -63,6 +66,24 @@ export default function JobPage({
     experience: undefined,
     educationLevel: undefined,
   });
+  const [isMobile, setIsMobile] = useState(false);
+  const { uuid, open_id } = getUserInfoSync();
+  const [collectedJobs, setCollectedJobs] = useState<number[]>([]);
+  const [comparedJobs, setComparedJobs] = useState<number[]>([]);
+
+  // 检测是否为移动端
+  useEffect(() => {
+    const checkIsMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    checkIsMobile();
+    window.addEventListener("resize", checkIsMobile);
+
+    return () => {
+      window.removeEventListener("resize", checkIsMobile);
+    };
+  }, []);
 
   const generateUuid = () => {
     return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(
@@ -95,24 +116,21 @@ export default function JobPage({
     }
   };
 
-  const onSearch = useCallback(
-    async (params: JobFilter) => {
-      setLoading(true);
-      try {
-        const res = await jobService.getJobs(params);
-        setJobs(res.data);
-        // 默认选中第一个职位
-        if (res.data.length > 0 ) {
-          setSelectedJob(res.data[0]);
-        }
-      } catch (error) {
-        console.error("获取职位列表失败:", error);
-      } finally {
-        setLoading(false);
+  const onSearch = useCallback(async (params: JobFilter) => {
+    setLoading(true);
+    try {
+      const res = await jobService.getJobs(params);
+      setJobs(res.data);
+      // 默认选中第一个职位
+      if (res.data.length > 0) {
+        setSelectedJob(res.data[0]);
       }
-    },
-    [],
-  );
+    } catch (error) {
+      console.error("获取职位列表失败:", error);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
   useEffect(() => {
     checkLogin();
@@ -123,13 +141,100 @@ export default function JobPage({
       experience: filters.experience,
       education_level: filters.educationLevel,
     });
-  }, [filters, onSearch]);
+    if (uuid) {
+      getUserJobStatus();
+    }
+  }, [filters, onSearch, uuid]);
 
   const handleFilterChange = (field: string, value: any) => {
     setFilters((prev) => ({
       ...prev,
       [field]: value,
     }));
+  };
+
+  const handleCollect = async (jobId: number) => {
+    try {
+      // 检查是否已收藏
+      const isCollected = collectedJobs.includes(jobId);
+
+      if (isCollected) {
+        // 取消收藏
+        const res = await jobService.unCollectJob({ uuid, job_id: jobId });
+        if (res.code === 0) {
+          messageApi.success("取消收藏成功");
+          setCollectedJobs((prev) => prev.filter((id) => id !== jobId));
+        } else {
+          messageApi.error("取消收藏失败");
+        }
+      } else {
+        // 添加收藏
+        const res = await jobService.collectJob({ uuid, job_id: jobId });
+        if (res.code === 0) {
+          messageApi.success("收藏成功");
+          setCollectedJobs((prev) => [...prev, jobId]);
+        } else {
+          messageApi.error("收藏失败");
+        }
+      }
+    } catch (error) {
+      messageApi.error("操作失败");
+    }
+  };
+  // 添加获取用户收藏和对比职位的函数
+  const getUserJobStatus = async () => {
+    try {
+      // 获取收藏的职位
+      const collectRes = await jobService.getCollectJobs(uuid);
+      if (collectRes.code === 0) {
+        const collectedIds = collectRes.data.map((job) => job.id);
+        setCollectedJobs(collectedIds);
+      }
+
+      // 获取对比的职位
+      const compareRes = await jobService.getCompareJobs(uuid);
+      if (compareRes.code === 0) {
+        const comparedIds = compareRes.data.map((job) => job.id);
+        setComparedJobs(comparedIds);
+      }
+    } catch (error) {
+      console.error("获取用户职位状态失败:", error);
+    }
+  };
+  const handleShare = async (jobId: number) => {
+    // const res = await jobService.shareJob({uuid, job_id: jobId});
+    // if (res.code == 0) {
+    //   messageApi.success("分享成功");
+    // }
+    console.log("share", jobId);
+  };
+  const handleCompare = async (jobId: number) => {
+    try {
+      // 检查是否已在对比列表中
+      const isCompared = comparedJobs.includes(jobId);
+
+      if (isCompared) {
+        // 从对比列表中移除
+        const res = await jobService.unCompareJob({ uuid, job_id: jobId });
+        if (res.code === 0) {
+          messageApi.success("已从对比列表中移除");
+          setComparedJobs((prev) => prev.filter((id) => id !== jobId));
+        } else {
+          messageApi.error("移除失败");
+        }
+      } else {
+        // 添加到对比列表
+        const res = await jobService.compareJob({ uuid, job_id: jobId });
+        if (res.code === 0) {
+          messageApi.success("已添加到对比列表");
+          setComparedJobs((prev) => [...prev, jobId]);
+        } else {
+          messageApi.error("添加失败");
+        }
+      }
+    } catch (error) {
+      messageApi.error("操作失败");
+    }
   };
 
   const cities = [
@@ -143,17 +248,6 @@ export default function JobPage({
     { value: "CD", label: "成都" },
   ];
 
-  // const categories = [
-  //   { value: "技术", label: "技术" },
-  //   { value: "产品", label: "产品" },
-  //   { value: "设计", label: "设计" },
-  //   { value: "运营", label: "运营" },
-  //   { value: "市场", label: "市场" },
-  //   { value: "人事", label: "人事" },
-  //   { value: "财务", label: "财务" },
-  //   { value: "行政", label: "行政" },
-  // ];
-
   const categories = [
     { value: "专技岗位", label: "专技岗位" },
     { value: "管理岗位", label: "管理岗位" },
@@ -161,6 +255,7 @@ export default function JobPage({
 
   return (
     <div className="mt-10 min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+      {contextHolder}
       {/* 顶部搜索区域 */}
       <div className="sticky top-0 z-10 border-b border-gray-200 bg-white/80 shadow-sm backdrop-blur-md">
         <div className="mx-auto max-w-7xl px-4 py-6">
@@ -170,7 +265,7 @@ export default function JobPage({
               size="large"
               className="shadow-md transition-shadow duration-300 hover:shadow-lg"
               style={{
-                width: 600,
+                width: isMobile ? "100%" : 600,
                 borderRadius: 24,
                 border: "1px solid #e5e5e5",
               }}
@@ -190,14 +285,18 @@ export default function JobPage({
           </div>
 
           {/* 筛选器 */}
-          <div className="flex flex-wrap justify-center gap-3">
+          <div className="flex flex-wrap justify-center gap-2">
             <Select
               className="shadow-sm"
-              style={{ width: 120, height: 40, borderRadius: 20 }}
+              style={{
+                width: isMobile ? 100 : 120,
+                height: 40,
+                borderRadius: 20,
+              }}
               value={filters.cityCode}
               onChange={(value) => handleFilterChange("cityCode", value)}
-              prefix={<EnvironmentOutlined />}
               placeholder="城市"
+              size="middle"
             >
               {cities.map((city) => (
                 <Select.Option key={city.value} value={city.value}>
@@ -208,11 +307,16 @@ export default function JobPage({
 
             <Select
               className="shadow-sm"
-              style={{ width: 150, height: 40, borderRadius: 20 }}
+              style={{
+                width: isMobile ? 120 : 150,
+                height: 40,
+                borderRadius: 20,
+              }}
               value={filters.category}
               onChange={(value) => handleFilterChange("category", value)}
               placeholder="职位类别"
               allowClear
+              size="middle"
             >
               {categories.map((category) => (
                 <Select.Option key={category.value} value={category.value}>
@@ -223,11 +327,16 @@ export default function JobPage({
 
             <Select
               className="shadow-sm"
-              style={{ width: 150, height: 40, borderRadius: 20 }}
+              style={{
+                width: isMobile ? 120 : 150,
+                height: 40,
+                borderRadius: 20,
+              }}
               value={filters.experience}
               onChange={(value) => handleFilterChange("experience", value)}
               placeholder="工作经验"
               allowClear
+              size="middle"
             >
               <Select.Option value="应届">应届毕业生</Select.Option>
               <Select.Option value="1年">1年以内</Select.Option>
@@ -237,21 +346,9 @@ export default function JobPage({
               <Select.Option value="10年以上">10年以上</Select.Option>
             </Select>
 
-            <Select
-              className="shadow-sm"
-              style={{ width: 150, height: 40, borderRadius: 20 }}
-              value={filters.educationLevel}
-              onChange={(value) => handleFilterChange("educationLevel", value)}
-              placeholder="学历要求"
-              allowClear
-            >
-              <Select.Option value="本科以上">本科以上</Select.Option>
-              <Select.Option value="研究生以上">研究生以上</Select.Option>
-            </Select>
-
             <Button
               type="link"
-              className="self-center"
+              className="self-center p-0"
               onClick={() =>
                 setFilters({
                   cityCode: "SH",
@@ -261,8 +358,9 @@ export default function JobPage({
                   educationLevel: undefined,
                 })
               }
+              style={{ fontSize: isMobile ? "12px" : "14px" }}
             >
-              清除筛选
+              清除
             </Button>
           </div>
         </div>
@@ -270,15 +368,19 @@ export default function JobPage({
 
       {/* 主要内容区域 */}
       <div className="mx-auto max-w-7xl px-4 py-6" style={{ maxWidth: 1600 }}>
-        <Row gutter={24}>
+        <Row gutter={isMobile ? 12 : 24}>
           {/* 左侧职位列表 */}
-          <Col span={10}>
+          <Col
+            span={isMobile ? 24 : 10}
+            className={isMobile && selectedJob ? "hidden" : ""}
+          >
             <div
-              className="rounded-xl bg-white/50 p-2 shadow-inner backdrop-blur-sm hide-scrollbar"
+              className="hide-scrollbar rounded-xl bg-white/50 p-2 shadow-inner backdrop-blur-sm"
               style={{
-                height: "calc(100vh - 180px)",
-                overflowY: "auto",
-                paddingRight: 10
+                height: isMobile ? "auto" : "calc(100vh - 180px)",
+                maxHeight: isMobile ? "none" : "calc(100vh - 180px)",
+                overflowY: isMobile ? "visible" : "auto",
+                paddingRight: 10,
               }}
             >
               <List
@@ -291,7 +393,21 @@ export default function JobPage({
                   <Card
                     key={job.id}
                     hoverable
-                    onClick={() => setSelectedJob(job)}
+                    onClick={() => {
+                      setSelectedJob(job);
+                      // 移动端点击后滚动到详情区域
+                      if (isMobile) {
+                        setTimeout(() => {
+                          const detailElement =
+                            document.getElementById("job-detail");
+                          if (detailElement) {
+                            detailElement.scrollIntoView({
+                              behavior: "smooth",
+                            });
+                          }
+                        }, 100);
+                      }
+                    }}
                     className="mb-4 rounded-xl border border-gray-200 transition-all duration-300 hover:shadow-lg"
                     style={{
                       borderRadius: 20,
@@ -312,26 +428,41 @@ export default function JobPage({
                           <Title
                             level={5}
                             className="m-0 mr-3 text-gray-800 transition-colors hover:text-blue-600"
-                            style={{ fontSize: "16px" }}
+                            style={{
+                              fontSize: isMobile ? "14px" : "16px",
+                              lineHeight: isMobile ? "1.4" : "1.5",
+                            }}
                           >
                             {job.name}
                           </Title>
                           {job.is_urgent && (
-                            <Tag color="red" className="mt-1">
+                            <Tag
+                              color="red"
+                              className="mt-1"
+                              style={{ fontSize: isMobile ? "10px" : "12px" }}
+                            >
                               急聘
                             </Tag>
                           )}
                         </div>
-                        <div className="mt-3 flex flex-wrap gap-2">
+                        <div className="mt-2 flex flex-wrap gap-1">
                           <Tag
                             bordered={false}
                             className="border-blue-200 bg-blue-50 text-blue-700"
+                            style={{
+                              fontSize: isMobile ? "10px" : "12px",
+                              padding: isMobile ? "0 4px" : "0 7px",
+                            }}
                           >
                             {job.seniority}
                           </Tag>
                           <Tag
                             bordered={false}
                             className="border-purple-200 bg-purple-50 text-purple-700"
+                            style={{
+                              fontSize: isMobile ? "10px" : "12px",
+                              padding: isMobile ? "0 4px" : "0 7px",
+                            }}
                           >
                             {job.education_requirement}
                           </Tag>
@@ -339,6 +470,10 @@ export default function JobPage({
                             <Tag
                               bordered={false}
                               className="border-green-200 bg-green-50 text-green-700"
+                              style={{
+                                fontSize: isMobile ? "10px" : "12px",
+                                padding: isMobile ? "0 4px" : "0 7px",
+                              }}
                             >
                               {job.recruitment}
                             </Tag>
@@ -347,6 +482,10 @@ export default function JobPage({
                             <Tag
                               bordered={false}
                               className="border-yellow-200 bg-yellow-50 text-yellow-700"
+                              style={{
+                                fontSize: isMobile ? "10px" : "12px",
+                                padding: isMobile ? "0 4px" : "0 7px",
+                              }}
                             >
                               {job.political_status}
                             </Tag>
@@ -355,18 +494,23 @@ export default function JobPage({
                             <Tag
                               bordered={false}
                               className="border-pink-200 bg-pink-50 text-pink-700"
+                              style={{
+                                fontSize: isMobile ? "10px" : "12px",
+                                padding: isMobile ? "0 4px" : "0 7px",
+                              }}
                             >
                               {job.major_requirement.split("，")[0] ?? ""}
                             </Tag>
                           )}
                         </div>
                       </div>
-                      <div className="ml-4 text-right">
+                      <div className="ml-2">
                         <Progress
-                          size="small"
+                          size={isMobile ? "small" : "small"}
                           type="dashboard"
                           percent={93}
                           strokeColor={conicColors}
+                          width={isMobile ? 40 : 50}
                           format={() => (
                             <span className="text-xs font-bold text-gray-600">
                               93%
@@ -376,12 +520,23 @@ export default function JobPage({
                       </div>
                     </div>
 
-                    <div className="mt-4 -mb-2 flex justify-between text-sm">
-                      <div className="flex items-center text-gray-600">
+                    <div className="mt-3 -mb-1 flex justify-between text-sm">
+                      <div
+                        className="flex items-center text-gray-600"
+                        style={{ fontSize: isMobile ? "11px" : "12px" }}
+                      >
                         <TeamOutlined className="mr-1" />
-                        <span>{job.sponsor}</span>
+                        <span
+                          className="truncate"
+                          style={{ maxWidth: isMobile ? 80 : 120 }}
+                        >
+                          {job.sponsor}
+                        </span>
                       </div>
-                      <div className="flex items-center text-gray-600">
+                      <div
+                        className="flex items-center text-gray-600"
+                        style={{ fontSize: isMobile ? "11px" : "12px" }}
+                      >
                         <EnvironmentOutlined className="mr-1" />
                         <span>{job.city}</span>
                       </div>
@@ -393,36 +548,64 @@ export default function JobPage({
           </Col>
 
           {/* 右侧职位详情 */}
-          <Col span={14}>
+          <Col
+            span={isMobile ? 24 : 14}
+            id="job-detail"
+            className={isMobile && !selectedJob ? "hidden" : ""}
+          >
             <div
-              className="rounded-xl bg-white/50 p-2 shadow-inner backdrop-blur-sm hide-scrollbar"
+              className="hide-scrollbar rounded-xl bg-white/50 p-2 shadow-inner backdrop-blur-sm"
               style={{
-                height: "calc(100vh - 180px)",
-                overflowY: "auto",
-                paddingLeft: 10
+                height: isMobile ? "auto" : "calc(100vh - 180px)",
+                maxHeight: isMobile ? "none" : "calc(100vh - 180px)",
+                overflowY: isMobile ? "visible" : "auto",
+                paddingLeft: isMobile ? 0 : 10,
               }}
             >
               {selectedJob ? (
                 <Card
                   className="rounded-xl border border-gray-200 shadow-md"
-                  style={{ borderRadius: 12 }}
+                  style={{
+                    borderRadius: 12,
+                    marginBottom: isMobile ? 60 : 0,
+                  }}
                 >
+                  {/* 移动端返回按钮 */}
+                  {isMobile && (
+                    <Button
+                      type="link"
+                      onClick={() => setSelectedJob(null)}
+                      className="mb-4 p-0"
+                      style={{ fontSize: "14px" }}
+                    >
+                      ← 返回职位列表
+                    </Button>
+                  )}
+
                   <div className="mb-6">
                     <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
                       <div>
-                        <Title level={4} className="m-0 text-gray-800">
+                        <Title
+                          level={isMobile ? 5 : 4}
+                          className="m-0 text-gray-800"
+                          style={{ fontSize: isMobile ? "18px" : "20px" }}
+                        >
                           {selectedJob.name}
                         </Title>
-                        <div className="mt-3 flex flex-wrap gap-6">
+                        <div className="mt-3 flex flex-wrap gap-4">
                           <div className="flex items-center">
-                            <span className="text-gray-600">招聘人数:</span>
-                            <span className="ml-2 font-semibold text-blue-600">
+                            <span className="text-sm text-gray-600">
+                              招聘人数:
+                            </span>
+                            <span className="ml-2 text-sm font-semibold text-blue-600">
                               {selectedJob?.headcount}
                             </span>
                           </div>
                           <div className="flex items-center">
-                            <span className="text-gray-600">匹配度:</span>
-                            <span className="ml-2 font-semibold text-green-600">
+                            <span className="text-sm text-gray-600">
+                              匹配度:
+                            </span>
+                            <span className="ml-2 text-sm font-semibold text-green-600">
                               93%
                             </span>
                           </div>
@@ -432,39 +615,66 @@ export default function JobPage({
                         <Button
                           color="primary"
                           variant="outlined"
-                          size="middle"
-                          icon={<StarOutlined />}
+                          size={isMobile ? "small" : "middle"}
+                          icon={
+                            collectedJobs.includes(selectedJob.id) ? (
+                              <StarOutlined style={{ color: "gray" }} />
+                            ) : (
+                              <StarFilled style={{ color: "orange" }} />
+                            )
+                          }
                           className="flex items-center"
+                          onClick={() => handleCollect(selectedJob.id)}
                         >
-                          收藏
+                          {isMobile
+                            ? ""
+                            : collectedJobs.includes(selectedJob.id)
+                              ? "不感兴趣"
+                              : "感兴趣"}
                         </Button>
                         <Button
                           color="primary"
                           variant="filled"
-                          size="middle"
-                          icon={<PlusOutlined />}
+                          size={isMobile ? "small" : "middle"}
+                          icon={
+                            comparedJobs.includes(selectedJob.id) ? (
+                              <DeleteOutlined style={{ color: "gray" }} />
+                            ) : (
+                              <PlusOutlined style={{ color: "green" }} />
+                            )
+                          }
+                          className="flex items-center"
+                          onClick={() => handleCompare(selectedJob.id)}
                         >
-                          添加对比
+                          {
+                            isMobile
+                              ? ""
+                              : comparedJobs.includes(selectedJob.id)
+                                ? "取消对比"
+                                : "对比职位"
+                          }
                         </Button>
                         <Button
-                          size="middle"
+                          size={isMobile ? "small" : "middle"}
                           color="primary"
                           variant="solid"
                           icon={<ShareAltOutlined />}
+                          className="flex items-center"
+                          onClick={() => handleShare(selectedJob.id)}
                         >
-                          分享
+                          {isMobile ? "" : "分享"}
                         </Button>
                       </div>
                     </div>
 
-                    <div className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-2">
+                    <div className="mt-6 grid grid-cols-1 gap-3 md:grid-cols-2">
                       <div className="flex items-center rounded-lg bg-blue-50 p-3">
                         <EnvironmentOutlined className="mr-3 text-lg text-blue-500" />
                         <div>
                           <Text type="secondary" className="block text-xs">
                             工作地点
                           </Text>
-                          <Text className="font-medium">
+                          <Text className="text-sm font-medium">
                             {selectedJob.city}
                           </Text>
                         </div>
@@ -475,7 +685,7 @@ export default function JobPage({
                           <Text type="secondary" className="block text-xs">
                             经验要求
                           </Text>
-                          <Text className="font-medium">
+                          <Text className="text-sm font-medium">
                             {selectedJob.seniority}
                           </Text>
                         </div>
@@ -486,7 +696,7 @@ export default function JobPage({
                           <Text type="secondary" className="block text-xs">
                             学历要求
                           </Text>
-                          <Text className="font-medium">
+                          <Text className="text-sm font-medium">
                             {selectedJob.education_requirement}
                           </Text>
                         </div>
@@ -497,7 +707,7 @@ export default function JobPage({
                           <Text type="secondary" className="block text-xs">
                             发布时间
                           </Text>
-                          <Text className="font-medium">
+                          <Text className="text-sm font-medium">
                             {selectedJob.publish_time}
                           </Text>
                         </div>
@@ -512,35 +722,43 @@ export default function JobPage({
                       职位描述
                     </Title>
                     <div className="space-y-3">
-                      <div className="flex">
-                        <Text className="w-24 flex-shrink-0 text-gray-600">
+                      <div className="flex flex-col sm:flex-row">
+                        <Text className="w-24 flex-shrink-0 text-sm text-gray-600">
                           岗位类别:
                         </Text>
-                        <Text type="secondary">{selectedJob.category}</Text>
+                        <Text type="secondary" className="text-sm">
+                          {selectedJob.category}
+                        </Text>
                       </div>
-                      <div className="flex">
-                        <Text className="w-24 flex-shrink-0 text-gray-600">
+                      <div className="flex flex-col sm:flex-row">
+                        <Text className="w-24 flex-shrink-0 text-sm text-gray-600">
                           岗位编号:
                         </Text>
-                        <Text type="secondary">{selectedJob.No}</Text>
+                        <Text type="secondary" className="text-sm">
+                          {selectedJob.No}
+                        </Text>
                       </div>
-                      <div className="flex">
-                        <Text className="w-24 flex-shrink-0 text-gray-600">
+                      <div className="flex flex-col sm:flex-row">
+                        <Text className="w-24 flex-shrink-0 text-sm text-gray-600">
                           主管单位:
                         </Text>
-                        <Text type="secondary">{selectedJob.sponsor}</Text>
+                        <Text type="secondary" className="text-sm">
+                          {selectedJob.sponsor}
+                        </Text>
                       </div>
-                      <div className="flex">
-                        <Text className="w-24 flex-shrink-0 text-gray-600">
+                      <div className="flex flex-col sm:flex-row">
+                        <Text className="w-24 flex-shrink-0 text-sm text-gray-600">
                           用人单位:
                         </Text>
-                        <Text type="secondary">{selectedJob.employer}</Text>
+                        <Text type="secondary" className="text-sm">
+                          {selectedJob.employer}
+                        </Text>
                       </div>
-                      <div className="flex">
-                        <Text className="w-24 flex-shrink-0 text-gray-600">
+                      <div className="flex flex-col sm:flex-row">
+                        <Text className="w-24 flex-shrink-0 text-sm text-gray-600">
                           岗位职责:
                         </Text>
-                        <Text type="secondary" className="flex-1">
+                        <Text type="secondary" className="flex-1 text-sm">
                           {selectedJob.duty}
                         </Text>
                       </div>
@@ -554,71 +772,77 @@ export default function JobPage({
                       任职要求
                     </Title>
                     <div className="space-y-3">
-                      <div className="flex">
-                        <Text className="w-24 flex-shrink-0 text-gray-600">
+                      <div className="flex flex-col sm:flex-row">
+                        <Text className="w-24 flex-shrink-0 text-sm text-gray-600">
                           学位:
                         </Text>
-                        <Text type="secondary">
+                        <Text type="secondary" className="text-sm">
                           {selectedJob.degree_requirement}
                         </Text>
                       </div>
-                      <div className="flex">
-                        <Text className="w-24 flex-shrink-0 text-gray-600">
+                      <div className="flex flex-col sm:flex-row">
+                        <Text className="w-24 flex-shrink-0 text-sm text-gray-600">
                           学历:
                         </Text>
-                        <Text type="secondary">
+                        <Text type="secondary" className="text-sm">
                           {selectedJob.education_requirement}
                         </Text>
                       </div>
-                      <div className="flex">
-                        <Text className="w-24 flex-shrink-0 text-gray-600">
+                      <div className="flex flex-col sm:flex-row">
+                        <Text className="w-24 flex-shrink-0 text-sm text-gray-600">
                           经验:
                         </Text>
-                        <Text type="secondary">{selectedJob.seniority}</Text>
+                        <Text type="secondary" className="text-sm">
+                          {selectedJob.seniority}
+                        </Text>
                       </div>
-                      <div className="flex">
-                        <Text className="w-24 flex-shrink-0 text-gray-600">
+                      <div className="flex flex-col sm:flex-row">
+                        <Text className="w-24 flex-shrink-0 text-sm text-gray-600">
                           专业:
                         </Text>
-                        <Text type="secondary">
+                        <Text type="secondary" className="text-sm">
                           {selectedJob.major_requirement}
                         </Text>
                       </div>
-                      <div className="flex">
-                        <Text className="w-24 flex-shrink-0 text-gray-600">
+                      <div className="flex flex-col sm:flex-row">
+                        <Text className="w-24 flex-shrink-0 text-sm text-gray-600">
                           是否应届:
                         </Text>
-                        <Text type="secondary">{selectedJob.recruitment}</Text>
+                        <Text type="secondary" className="text-sm">
+                          {selectedJob.recruitment}
+                        </Text>
                       </div>
-                      <div className="flex">
-                        <Text className="w-24 flex-shrink-0 text-gray-600">
+                      <div className="flex flex-col sm:flex-row">
+                        <Text className="w-24 flex-shrink-0 text-sm text-gray-600">
                           政治面貌:
                         </Text>
-                        <Text type="secondary">
+                        <Text type="secondary" className="text-sm">
                           {selectedJob.political_status}
                         </Text>
                       </div>
-                      <div className="flex">
-                        <Text className="w-24 flex-shrink-0 text-gray-600">
+                      <div className="flex flex-col sm:flex-row">
+                        <Text className="w-24 flex-shrink-0 text-sm text-gray-600">
                           最低合格分数线:
                         </Text>
-                        <Text type="secondary">
+                        <Text type="secondary" className="text-sm">
                           {selectedJob.qualified_score}
                         </Text>
                       </div>
-                      <div className="flex">
-                        <Text className="w-24 flex-shrink-0 text-gray-600">
+                      <div className="flex flex-col sm:flex-row">
+                        <Text className="w-24 flex-shrink-0 text-sm text-gray-600">
                           户籍要求:
                         </Text>
-                        <Text type="secondary">
+                        <Text type="secondary" className="text-sm">
                           {selectedJob.residency_requirement}
                         </Text>
                       </div>
-                      <div className="flex">
-                        <Text className="w-24 flex-shrink-0 text-gray-600">
+                      <div className="flex flex-col sm:flex-row">
+                        <Text className="w-24 flex-shrink-0 text-sm text-gray-600">
                           年龄上限:
                         </Text>
-                        <Text type="secondary">{selectedJob.age_limit}</Text>
+                        <Text type="secondary" className="text-sm">
+                          {selectedJob.age_limit}
+                        </Text>
                       </div>
                     </div>
                   </div>
@@ -630,33 +854,35 @@ export default function JobPage({
                       其他信息
                     </Title>
                     <div className="space-y-3">
-                      <div className="flex">
-                        <Text className="w-24 flex-shrink-0 text-gray-600">
+                      <div className="flex flex-col sm:flex-row">
+                        <Text className="w-24 flex-shrink-0 text-sm text-gray-600">
                           面试比例:
                         </Text>
-                        <Text type="secondary">
+                        <Text type="secondary" className="text-sm">
                           {selectedJob.interview_ratio}
                         </Text>
                       </div>
-                      <div className="flex">
-                        <Text className="w-24 flex-shrink-0 text-gray-600">
+                      <div className="flex flex-col sm:flex-row">
+                        <Text className="w-24 flex-shrink-0 text-sm text-gray-600">
                           成绩比例:
                         </Text>
-                        <Text type="secondary">{selectedJob.score_ratio}</Text>
+                        <Text type="secondary" className="text-sm">
+                          {selectedJob.score_ratio}
+                        </Text>
                       </div>
-                      <div className="flex">
-                        <Text className="w-24 flex-shrink-0 text-gray-600">
+                      <div className="flex flex-col sm:flex-row">
+                        <Text className="w-24 flex-shrink-0 text-sm text-gray-600">
                           其他要求:
                         </Text>
-                        <Text type="secondary" className="flex-1">
+                        <Text type="secondary" className="flex-1 text-sm">
                           {selectedJob.other_requirement || "无"}
                         </Text>
                       </div>
-                      <div className="flex">
-                        <Text className="w-24 flex-shrink-0 text-gray-600">
+                      <div className="flex flex-col sm:flex-row">
+                        <Text className="w-24 flex-shrink-0 text-sm text-gray-600">
                           注意事项:
                         </Text>
-                        <Text type="secondary" className="flex-1">
+                        <Text type="secondary" className="flex-1 text-sm">
                           {selectedJob.notes || "无"}
                         </Text>
                       </div>

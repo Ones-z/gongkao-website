@@ -60,6 +60,16 @@ export interface JobFilter {
   education_level?: string;
 }
 
+export interface JobCollect {
+  uuid?: string;
+  job_id: number;
+}
+
+export interface JobCompare {
+  uuid?: string;
+  job_id: number;
+}
+
 export interface AlipayLoginCallbackData {
   app_id: string | null;
   auth_code: string | null;

@@ -38,12 +38,12 @@ const Header = ({ translations }: { translations: Translations }) => {
       label: <a href={getLocalizedPath("/profile")}>个人资料</a>
     },
     {
-      key: 'favorite',
-      label: <a href={getLocalizedPath("/favorite")}>感兴趣</a>
+      key: 'collect',
+      label: <a href={getLocalizedPath("/collect")}>感兴趣</a>
     },
     {
-      key: 'diff',
-      label: <a href={getLocalizedPath("/diff")}>职位对比</a>
+      key: 'compare',
+      label: <a href={getLocalizedPath("/compare")}>职位对比</a>
     },
     // {
     //   type: 'divider',

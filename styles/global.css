@@ -105,3 +105,34 @@ body {
   animation: explode 1s ease-in-out forwards;
 }
 
+.compare-table .ant-table-tbody > tr.category-row:hover > td {
+  background: #1890ff !important;
+}
+
+.compare-table .ant-table-tbody > tr.even-row > td {
+  background: #fafafa;
+}
+
+.compare-table .ant-table-tbody > tr.odd-row > td {
+  background: #ffffff;
+}
+
+.compare-table .ant-table-tbody > tr:hover > td {
+  background: #e6f7ff !important;
+}
+
+/* 移动端特殊样式 */
+@media (max-width: 767px) {
+  .compare-table .ant-table {
+    font-size: 12px;
+  }
+
+  .compare-table .ant-table-thead > tr > th,
+  .compare-table .ant-table-tbody > tr > td {
+    padding: 8px 6px;
+  }
+
+  .compare-table .ant-table-tbody > tr.category-row > td {
+    padding: 12px 8px;
+  }
+}
