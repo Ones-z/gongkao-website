@@ -71,6 +71,7 @@ export default function JobPage({
   const [collectedJobs, setCollectedJobs] = useState<number[]>([]);
   const [comparedJobs, setComparedJobs] = useState<number[]>([]);
   const [showLoginDialog, setShowLoginDialog] = useState(false);
+  const [isRecommending, setIsRecommending] = useState(false);
 
   // 检测是否为移动端
   useEffect(() => {
@@ -95,6 +96,40 @@ export default function JobPage({
         return v.toString(16);
       },
     );
+  };
+
+  const handleRecommendJobs = async () => {
+    if (!open_id) {
+      messageApi.warning("请先完成登录");
+      setShowLoginDialog(true);
+      return;
+    }
+
+    setIsRecommending(true);
+    try {
+      // 调用推荐接口（这里假设有一个推荐接口）
+      // 如果没有专门的推荐接口，可以使用默认筛选条件
+      const res = await jobService.getJobs({
+        city_code: filters.cityCode,
+        name: filters.jobName,
+        category: filters.category,
+        experience: filters.experience,
+        education_level: filters.educationLevel,
+      });
+
+      if (res.data.length > 0) {
+        setJobs(res.data);
+        setSelectedJob(res.data[0]); // 选择第一个推荐职位
+        messageApi.success("已为您推荐相关职位");
+      } else {
+        messageApi.info("暂无推荐职位");
+      }
+    } catch (error) {
+      messageApi.error("推荐失败，请稍后重试");
+      console.error("推荐职位失败:", error);
+    } finally {
+      setIsRecommending(false);
+    }
   };
 
   const checkLogin = async () => {
@@ -360,6 +395,27 @@ export default function JobPage({
               <Select.Option value="5-10年">5-10年</Select.Option>
               <Select.Option value="10年以上">10年以上</Select.Option>
             </Select>
+
+            <Button
+              type="primary"
+              loading={isRecommending}
+              className="flex items-center shadow-md"
+              style={{
+                height: isMobile ? 30 : 40,
+                borderRadius: 20,
+                background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                border: "none",
+              }}
+              onClick={handleRecommendJobs}
+            >
+              <StarOutlined />
+              <span
+                className="ml-2"
+                style={{ fontSize: isMobile ? "12px" : "14px" }}
+              >
+                一键推荐
+              </span>
+            </Button>
 
             <Button
               type="link"
@@ -946,9 +1002,7 @@ export default function JobPage({
                 </svg>
               </div>
 
-              <h3 className="mb-3 text-2xl font-bold text-gray-800">
-                请登录
-              </h3>
+              <h3 className="mb-3 text-2xl font-bold text-gray-800">请登录</h3>
               <p className="mb-6 text-gray-600">
                 登录后才能收藏、添加对比、分享职位哦！
               </p>
