@@ -1,8 +1,8 @@
 import bannerImage from "@/assets/images/backgrounds/banner/dark.svg";
 import logoImage from "@/assets/images/icons/favicon.svg";
-import Apple from "@/components/icon/Apple";
-import Linux from "@/components/icon/Linux";
-import Windows from "@/components/icon/Windows";
+// import Apple from "@/components/icon/Apple";
+// import Linux from "@/components/icon/Linux";
+// import Windows from "@/components/icon/Windows";
 import { Button, TransparentButton } from "@/components/ui/Button";
 import "aos/dist/aos.css";
 import { useEffect, useState, useRef } from "react";
@@ -10,8 +10,15 @@ import {detectPlatformFromUserAgent} from "plat.ts";
 import type { Translations } from "@gudupao/astro-i18n";
 import { createClientTranslator } from "@gudupao/astro-i18n/client";
 import { FileSearchOutlined, ProfileOutlined } from "@ant-design/icons";
+import {
+  getUserInfoSync,
+  isUserLoggedIn,
+  useUserActions,
+} from "@/store/userStore";
+import userService from "@/api/userService.ts";
 
 const Hero = ({ translations }: { translations: Translations }) => {
+  const { setUserInfo } = useUserActions();
   const [platform, setPlatform] = useState('');
   const [logoScale, setLogoScale] = useState(1);
   const [clickCount, setClickCount] = useState(0); // 添加点击计数器
@@ -47,6 +54,41 @@ const Hero = ({ translations }: { translations: Translations }) => {
       }
     }
   };
+
+  const generateUuid = () => {
+    return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(
+      /[xy]/g,
+      function (c) {
+        const r = (Math.random() * 16) | 0,
+          v = c == "x" ? r : (r & 0x3) | 0x8;
+        return v.toString(16);
+      },
+    );
+  };
+
+  const checkLogin = async () => {
+    const isLogin = isUserLoggedIn();
+    console.log("isLogin", isLogin);
+    if (!isLogin) {
+      const uuid = generateUuid();
+      setUserInfo({ uuid: uuid, status: "guest" });
+      await userService.createUuid({ status: "guest", uuid });
+    } else {
+      await getUserInfo();
+    }
+  };
+
+  const getUserInfo = async () => {
+    const { uuid, source } = getUserInfoSync();
+    const info = await userService.getUuidInfo(uuid, source);
+    if (info.code == 0) {
+      setUserInfo(info.data);
+    }
+  };
+
+  useEffect(() => {
+    checkLogin();
+  }, []);
 
   useEffect(() => {
     // 定义哈希值到平台ID的映射
@@ -139,7 +181,7 @@ const Hero = ({ translations }: { translations: Translations }) => {
                 {/*  <span className="text-lg lg:text-xl">{t("hero.job")}</span>*/}
                 {/*</Button>*/}
                 <TransparentButton
-                  href="/job"
+                  href="/exam-announcements"
                   className="flex w-fit flex-row items-center gap-2"
                   data-aos="fade-up"
                 >

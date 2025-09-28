@@ -2,11 +2,7 @@
 import jobService from "@/api/jobService";
 import userService from "@/api/userService";
 import type { Job, JobFilter } from "@/entity";
-import {
-  getUserInfoSync,
-  isUserLoggedIn,
-  useUserActions,
-} from "@/store/userStore";
+import { getUserInfoSync} from "@/store/userStore";
 import {
   ClockCircleOutlined,
   DeleteOutlined,
@@ -57,7 +53,6 @@ export default function JobPage({
   const [messageApi, contextHolder] = message.useMessage();
   const [loading, setLoading] = useState(false);
   const [jobs, setJobs] = useState<Job[]>([]);
-  const { setUserInfo } = useUserActions();
   const [selectedJob, setSelectedJob] = useState<Job | null>(null);
   const [filters, setFilters] = useState({
     cityCode: "SH",
@@ -71,7 +66,6 @@ export default function JobPage({
   const [collectedJobs, setCollectedJobs] = useState<number[]>([]);
   const [comparedJobs, setComparedJobs] = useState<number[]>([]);
   const [showLoginDialog, setShowLoginDialog] = useState(false);
-  const [isRecommending, setIsRecommending] = useState(false);
 
   // 检测是否为移动端
   useEffect(() => {
@@ -86,71 +80,6 @@ export default function JobPage({
       window.removeEventListener("resize", checkIsMobile);
     };
   }, []);
-
-  const generateUuid = () => {
-    return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(
-      /[xy]/g,
-      function (c) {
-        const r = (Math.random() * 16) | 0,
-          v = c == "x" ? r : (r & 0x3) | 0x8;
-        return v.toString(16);
-      },
-    );
-  };
-
-  const handleRecommendJobs = async () => {
-    if (!open_id) {
-      messageApi.warning("请先完成登录");
-      setShowLoginDialog(true);
-      return;
-    }
-
-    setIsRecommending(true);
-    try {
-      // 调用推荐接口（这里假设有一个推荐接口）
-      // 如果没有专门的推荐接口，可以使用默认筛选条件
-      const res = await jobService.getJobs({
-        city_code: filters.cityCode,
-        name: filters.jobName,
-        category: filters.category,
-        experience: filters.experience,
-        education_level: filters.educationLevel,
-      });
-
-      if (res.data.length > 0) {
-        setJobs(res.data);
-        setSelectedJob(res.data[0]); // 选择第一个推荐职位
-        messageApi.success("已为您推荐相关职位");
-      } else {
-        messageApi.info("暂无推荐职位");
-      }
-    } catch (error) {
-      messageApi.error("推荐失败，请稍后重试");
-      console.error("推荐职位失败:", error);
-    } finally {
-      setIsRecommending(false);
-    }
-  };
-
-  const checkLogin = async () => {
-    const isLogin = isUserLoggedIn();
-    console.log("isLogin", isLogin);
-    if (!isLogin) {
-      const uuid = generateUuid();
-      setUserInfo({ uuid: uuid, status: "guest" });
-      await userService.createUuid({ status: "guest", uuid });
-    } else {
-      await getUserInfo();
-    }
-  };
-
-  const getUserInfo = async () => {
-    const { uuid, source } = getUserInfoSync();
-    const info = await userService.getUuidInfo(uuid, source);
-    if (info.code == 0) {
-      setUserInfo(info.data);
-    }
-  };
 
   const onSearch = useCallback(async (params: JobFilter) => {
     setLoading(true);
@@ -169,7 +98,6 @@ export default function JobPage({
   }, []);
 
   useEffect(() => {
-    checkLogin();
     onSearch({
       city_code: filters.cityCode,
       name: filters.jobName,
@@ -395,28 +323,6 @@ export default function JobPage({
               <Select.Option value="5-10年">5-10年</Select.Option>
               <Select.Option value="10年以上">10年以上</Select.Option>
             </Select>
-
-            <Button
-              type="primary"
-              loading={isRecommending}
-              className="flex items-center shadow-md"
-              style={{
-                height: isMobile ? 30 : 40,
-                borderRadius: 20,
-                background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-                border: "none",
-              }}
-              onClick={handleRecommendJobs}
-            >
-              <StarOutlined />
-              <span
-                className="ml-2"
-                style={{ fontSize: isMobile ? "12px" : "14px" }}
-              >
-                一键推荐
-              </span>
-            </Button>
-
             <Button
               type="link"
               className="self-center p-0"

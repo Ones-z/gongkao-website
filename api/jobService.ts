@@ -1,6 +1,12 @@
-import type { Job, JobCollect, JobCompare, JobFilter } from "@/entity";
+import type { Job, JobCollect, JobCompare, JobFilter, Recruitment } from "@/entity";
+
+
 
 import client from "./client";
+
+
+
+
 
 export enum JobApi {
   Jobs = "/job/list",
@@ -11,9 +17,19 @@ export enum JobApi {
   CompareJob = "/job/compare",
   UnCompareJob = "/job/unCompare",
   CompareJobs = "/job/compares",
+  Recruitments = "/job/recruitments",
+  Recruitment = "/job/recruitment",
+  RecommendJobs = "/job/recommend",
 }
 
-const getJobs = (param: JobFilter) =>
+const getJobs = (param: {
+  city_code?: string;
+  name: string;
+  category?: string;
+  experience?: string;
+  education_level?: string;
+  recruitment_id: string | null;
+}) =>
   client.get<{ code: number; data: Job[]; total: number }>({
     url: JobApi.Jobs,
     params: param,
@@ -53,7 +69,28 @@ const getJobDetail = (id: number) =>
     url: JobApi.JobDetail,
     params: { id },
   });
-
+const getRecruitments = (param: {
+  category?: string;
+  year?: string;
+  province?: string;
+  name?: string;
+  pageSize: number;
+  current: number;
+}) =>
+  client.get<{ code: number; data: Recruitment[]; total: number }>({
+    url: JobApi.Recruitments,
+    params: param,
+  });
+const getRecruitment = (id: string | null) =>
+  client.get<{ code: number; data: Recruitment }>({
+    url: JobApi.Recruitment,
+    params: { id },
+  });
+const getRecommendJobs = (uuid: string | undefined) =>
+  client.get<{ code: number; data: Job[]; total: number }>({
+    url: JobApi.RecommendJobs,
+    params: {uuid},
+  });
 export default {
   getJobs,
   collectJob,
@@ -63,4 +100,7 @@ export default {
   unCompareJob,
   getCompareJobs,
   getJobDetail,
+  getRecruitments,
+  getRecruitment,
+  getRecommendJobs,
 };

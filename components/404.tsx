@@ -20,7 +20,7 @@ const NotFound = () => {
           </p></div>
           <div className="flex justify-center space-x-4">
             <a
-              href="/job"
+              href="/exam-announcements"
               className="inline-flex items-center rounded-md border border-transparent bg-white px-6 py-3 text-base font-medium text-black shadow-sm transition-colors duration-300 hover:bg-gray-100"
             >
               返回职位

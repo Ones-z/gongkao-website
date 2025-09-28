@@ -27,6 +27,12 @@ export interface Job {
   year: number;
   is_urgent: number;
   publish_time: string;
+  recruitment_id: number;
+}
+
+export interface RecommendJob extends  Job{
+  recommend_reason: string;
+  recommend_score: number;
 }
 
 export interface UserProfile {
@@ -58,6 +64,10 @@ export interface JobFilter {
   category?: string;
   experience?: string;
   education_level?: string;
+  recruitment_id?: string;
+  pageSize?: number;
+  current?: number;
+  year?: string;
 }
 
 export interface JobCollect {
@@ -114,4 +124,18 @@ export interface OrderInfo {
   send_pay_date: string;
   receipt_amount: number;
   ext_infos: string;
+}
+
+export interface Recruitment {
+  id: number;
+  name: string;
+  province: string;
+  year: number;
+  batch: number;
+  publish_date: string;
+  link: string;
+  content: string;
+  view_count: number;
+  headcounts: number;
+  category: string;
 }

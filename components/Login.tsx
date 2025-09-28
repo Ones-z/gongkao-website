@@ -86,7 +86,7 @@ export default function LoginPage({
         clearInterval(interval);
         // 可以在这里添加登录成功后的回调或跳转逻辑
         setTimeout(() => {
-          window.location.href = "/job";
+          window.location.href = "/exam-announcements";
         }, 1000);
       }
     }, 1000);

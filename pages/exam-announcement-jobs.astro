@@ -1,0 +1,13 @@
+---
+import Layout from "../layouts/Layout.astro";
+import ExamJobsPage from "../components/ExamJobs";
+import { getTranslator, getTranslations } from "@gudupao/astro-i18n";
+
+const lang = Astro.params.lang || "zh";
+const t = getTranslator(lang);
+---
+
+<Layout transition:animate="slide" title={t("download.page_title")}>
+  <br />
+  <ExamJobsPage client:load translations={getTranslations(lang)} />
+</Layout>

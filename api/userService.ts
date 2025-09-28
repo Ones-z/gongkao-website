@@ -1,6 +1,12 @@
 import type { AlipayLoginCallbackData, UserInfo, UserProfile } from "@/entity";
 
+
+
 import client from "./client";
+
+
+
+
 
 export enum UserApi {
   AlipayAuthCallback = "/user/auth/alipay/callback",
@@ -16,7 +22,7 @@ const loginByAlipay = (data: AlipayLoginCallbackData) =>
     url: UserApi.AlipayAuthCallback,
     data,
   });
-const getUuidInfo = (uuid: string | undefined, source: string | undefined) =>
+const getUuidInfo = (uuid: string | undefined | null, source: any) =>
   client.get<{ code: number; data: UserInfo; message: string }>({
     url: UserApi.UuidInfo,
     params: { uuid, source },

@@ -2,6 +2,10 @@ import userService from "@/api/userService";
 import type { Translations } from "@gudupao/astro-i18n";
 import { createClientTranslator } from "@gudupao/astro-i18n/client";
 import React, {useState, useEffect } from "react";
+import {
+  getUserInfoSync,
+  useUserActions,
+} from "@/store/userStore";
 
 export default function AlipayLoginCallbackPage({
   translations,
@@ -10,6 +14,7 @@ export default function AlipayLoginCallbackPage({
 }) {
   const t = createClientTranslator(translations);
   const [countdown, setCountdown] = useState(5);
+  const { setUserInfo } = useUserActions();
   const getQueryParams = () => {
     const params = new URLSearchParams(window.location.search);
     return {
@@ -18,6 +23,14 @@ export default function AlipayLoginCallbackPage({
       uuid: params.get("uuid"),
       scope: params.get("scope"),
     };
+  };
+
+  const getUserInfo = async () => {
+    const { uuid } = getQueryParams();
+    const info = await userService.getUuidInfo(uuid,null );
+    if (info.code == 0) {
+      setUserInfo(info.data);
+    }
   };
 
   const handleAlipayCallback = async () => {
@@ -31,6 +44,8 @@ export default function AlipayLoginCallbackPage({
       scope,
       uuid,
     });
+    await getUserInfo();
+
   };
 
   useEffect(() => {
@@ -47,7 +62,7 @@ export default function AlipayLoginCallbackPage({
       return () => clearTimeout(timer);
     } else {
       // 倒计时结束，跳转到职位页面
-      window.location.href = "/job";
+      window.location.href = "/exam-announcements";
     }
   }, [countdown]);
 
@@ -88,7 +103,7 @@ export default function AlipayLoginCallbackPage({
             页面将在 <span className="font-bold text-blue-600">{countdown}</span> 秒后自动跳转到职位页面...
           </p>
           <button
-            onClick={() => window.location.href = "/job"}
+            onClick={() => window.location.href = "/exam-announcements"}
             className="mt-6 px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white font-semibold rounded-lg shadow-md hover:from-blue-600 hover:to-purple-700 transition-all duration-300 transform hover:scale-105"
           >
             立即进入职位页面

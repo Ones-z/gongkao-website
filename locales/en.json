@@ -14,7 +14,9 @@
     "dev_docs": "Developer Docs",
     "download": "Download",
     "job": "Job",
-    "goods": "VIP"
+    "goods": "VIP",
+    "exam_announcement": "Exam Announcement",
+    "exam_mock": "Exam Mock"
   },
   "footer": {
     "desc": "Bring a new personalized experience to your desktop, supporting Windows, macOS, and Linux.",
