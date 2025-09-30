@@ -23,9 +23,7 @@ export default function VIPMembershipPage({
   const [paymentCheckTimer, setPaymentCheckTimer] =
     useState<NodeJS.Timeout | null>(null);
   const [outOrderNo, setOutOrderNo] = useState("");
-  const [userMembershipLevel, setUserMembershipLevel] = useState<number | 0>(
-    0,
-  );
+  const [userMembershipLevel, setUserMembershipLevel] = useState<number | 0>(0);
   const [showLoginDialog, setShowLoginDialog] = useState(false);
   const { uuid, open_id } = getUserInfoSync();
   // 免费会员特权
@@ -61,7 +59,7 @@ export default function VIPMembershipPage({
       id: "quarterly",
       goods_id: 2,
       name: "季卡",
-      price: 0.01,
+      price: 0.02,
       originalPrice: 147.0,
       period: "季度",
       description: "性价比优选",
@@ -72,7 +70,7 @@ export default function VIPMembershipPage({
       id: "yearly",
       goods_id: 3,
       name: "年卡",
-      price: 0.01,
+      price: 0.04,
       originalPrice: 588.0,
       period: "年",
       description: "全年备考无忧",
@@ -90,7 +88,16 @@ export default function VIPMembershipPage({
       return;
     }
     const selectedPlanData = plans.find((p) => p.id === planId);
-
+    if (!selectedPlanData) return;
+    // 检查是否是升级操作
+    if (
+      userMembershipLevel > 0 &&
+      userMembershipLevel < selectedPlanData.goods_id
+    ) {
+      // 这是升级操作，需要计算补差价
+      handleUpgrade(planId);
+      return;
+    }
     if (selectedPlanData) {
       // 生成支付宝商户订单号（精确到毫秒）
       const now = new Date();
@@ -136,17 +143,57 @@ export default function VIPMembershipPage({
     }
   };
 
-  const getUpgradePrice = (fromPlan: string, toPlan: string) => {
-    // 计算升级所需补差价的简单示例
-    const prices: Record<string, number> = {
-      monthly: 19.9,
-      quarterly: 49.9,
-      yearly: 179.9,
-    };
+  // 添加处理升级的函数
+  const handleUpgrade = async (targetPlanId: string) => {
+    const targetPlan = plans.find((p) => p.id === targetPlanId);
+    if (!targetPlan) return;
 
-    // 实际应用中应考虑已使用时间等因素
-    return Math.max(0, prices[toPlan] - prices[fromPlan]).toFixed(1);
+    // 计算需要补差价的金额
+    const currentPlan = plans.find((p) => p.goods_id === userMembershipLevel);
+    const priceDifference = targetPlan.price - (currentPlan?.price || 0);
+
+    // 生成支付宝商户订单号（精确到毫秒）
+    const now = new Date();
+    const dateStr = now.toISOString().slice(0, 10).replace(/-/g, ""); // YYYYMMDD
+    const timeStr = now.toTimeString().slice(0, 8).replace(/:/g, ""); // HHMMSS
+    const milliseconds = now.getTime().toString().slice(-3); // 毫秒(3位)
+    const randomStr = Math.random().toString(36).substring(2, 8).toUpperCase(); // 6位随机字符串
+
+    // 组合订单号: QY+日期+时间+毫秒+随机字符串
+    const outTradeNo = `QY${dateStr}${timeStr}${milliseconds}${randomStr}`;
+    setOutOrderNo(outTradeNo); // 保存已生成的订单号
+
+    // 创建升级订单（这里需要后端支持升级订单类型）
+    const res = await orderService.orderCreate({
+      uuid,
+      goods_id: targetPlan.goods_id,
+      out_trade_no: outTradeNo,
+      total_amount: priceDifference > 0 ? priceDifference : 0.01, // 如果差价小于等于0，设置最小金额
+      subject: `会员升级-${targetPlan.name}`,
+    });
+
+    // 处理支付宝表单提交
+    if (res.data) {
+      // 创建一个临时的div来存放表单
+      const div = document.createElement("div");
+      div.innerHTML = res.data; // 将返回的表单HTML插入到div中
+      document.body.appendChild(div);
+
+      // 获取表单
+      const form = div.querySelector("form");
+      if (form) {
+        // 修改表单target属性，使其在新窗口打开
+        form.target = "_blank";
+        form.submit();
+      }
+
+      // 清理临时元素
+      document.body.removeChild(div);
+      // 显示支付确认弹窗
+      setShowPaymentConfirm(true);
+    }
   };
+
   // 添加支付状态检查函数
   const checkPaymentStatus = async () => {
     if (!outOrderNo) return;
@@ -212,6 +259,8 @@ export default function VIPMembershipPage({
         setPaymentCheckTimer(null);
         if (!isPaid && showPaymentConfirm) {
           messageApi.warning("支付检查超时，请手动确认支付状态");
+          setShowPaymentConfirm(false);
+          setIsCheckingPayment(false);
         }
       }
     }, 3000); // 每3秒检查一次
@@ -267,83 +316,110 @@ export default function VIPMembershipPage({
 
         <div className="mx-auto max-w-6xl">
           <Row gutter={[32, 32]} justify="center">
-          {plans.map((plan) => (
-            <Col xs={24} sm={12} lg={6} key={plan.id}>
-              <Card
-                className={`h-full overflow-hidden rounded-2xl shadow-xl transition-all duration-300 ${
-                  plan.popular
-                    ? "relative scale-105 transform border-2 border-yellow-400"
-                    : "border border-gray-200 hover:shadow-2xl"
-                } ${selectedPlan === plan.id ? "ring-4 ring-blue-400" : ""} `}
-                style={{
-                  background: plan.popular
-                    ? "linear-gradient(135deg, #fef3c7 0%, #fde68a 100%)"
-                    : "rgba(255, 255, 255, 0.85)",
-                }}
-              >
-                {plan.popular && (
-                  <div className="absolute top-0 right-0 rounded-bl-lg bg-yellow-400 px-4 py-1 text-sm font-bold text-yellow-900">
-                    热门推荐
-                  </div>
-                )}
-
-                <div className="mb-3 text-center">
-                  <div className="mb-4 flex justify-center">
-                    <div
-                      className={`rounded-full p-3 ${plan.popular ? "bg-yellow-500 text-white" : "bg-blue-100 text-blue-500"}`}
-                    >
-                      {plan.icon}
-                    </div>
-                  </div>
-                  <Title level={4} className="mb-2 text-gray-800">
-                    {plan.name}
-                  </Title>
-                  <Text className="text-gray-600">{plan.description}</Text>
-                </div>
-
-                <div className="mb-4 text-center">
-                  <div className="flex items-baseline justify-center">
-                    <span className="text-3xl font-bold text-gray-800">¥</span>
-                    <span className="text-4xl font-bold text-gray-800">
-                      {plan.price}
-                    </span>
-                    <span className="ml-2 text-gray-500 line-through">
-                      ¥{plan.originalPrice}
-                    </span>
-                  </div>
-                  {plan.originalPrice && (
-                    <div className="mt-1">
-                      <Text className="font-medium text-red-500">
-                        省 ¥{(plan.originalPrice - plan.price).toFixed(1)}
-                      </Text>
-                    </div>
-                  )}
-                </div>
-
-                <Button
-                  type={plan.popular ? "primary" : "default"}
-                  size="large"
-                  className={`w-full rounded-lg font-semibold transition-all duration-300 ${
+            {plans.map((plan) => (
+              <Col xs={24} sm={12} lg={6} key={plan.id}>
+                <Card
+                  className={`h-full overflow-hidden rounded-2xl shadow-xl transition-all duration-300 ${
                     plan.popular
-                      ? "border-none bg-gradient-to-r from-yellow-400 to-yellow-500 hover:from-yellow-500 hover:to-yellow-600"
-                      : "hover:border-blue-500 hover:text-blue-500"
-                  }`}
-                  onClick={() => handlePurchase(plan.id)}
-                  disabled={userMembershipLevel> plan.goods_id}
+                      ? "relative scale-105 transform border-2 border-yellow-400"
+                      : "border border-gray-200 hover:shadow-2xl"
+                  } ${selectedPlan === plan.id ? "ring-4 ring-blue-400" : ""} `}
+                  style={{
+                    background: plan.popular
+                      ? "linear-gradient(135deg, #fef3c7 0%, #fde68a 100%)"
+                      : "rgba(255, 255, 255, 0.85)",
+                  }}
                 >
-                  {userMembershipLevel> plan.goods_id ? (
-                    "会员等级更高"
-                  ) : userMembershipLevel === plan.goods_id ? (
-                    "当前等级"
-                  ) : selectedPlan === plan.id ? (
-                    "已选择"
-                  ) : (
-                    "立即购买"
+                  {plan.popular && (
+                    <div className="absolute top-0 right-0 rounded-bl-lg bg-yellow-400 px-4 py-1 text-sm font-bold text-yellow-900">
+                      热门推荐
+                    </div>
                   )}
-                </Button>
-              </Card>
-            </Col>
-          ))}
+
+                  <div className="mb-3 text-center">
+                    <div className="mb-4 flex justify-center">
+                      <div
+                        className={`rounded-full p-3 ${plan.popular ? "bg-yellow-500 text-white" : "bg-blue-100 text-blue-500"}`}
+                      >
+                        {plan.icon}
+                      </div>
+                    </div>
+                    <Title level={4} className="mb-2 text-gray-800">
+                      {plan.name}
+                    </Title>
+                    <Text className="text-gray-600">{plan.description}</Text>
+                  </div>
+
+                  <div className="mb-4 text-center">
+                    <div className="flex items-baseline justify-center">
+                      <span className="text-3xl font-bold text-gray-800">
+                        ¥
+                      </span>
+                      <span className="text-4xl font-bold text-gray-800">
+                        {plan.price}
+                      </span>
+                      <span className="ml-2 text-gray-500 line-through">
+                        ¥{plan.originalPrice}
+                      </span>
+                    </div>
+                    {plan.originalPrice && (
+                      <div className="mt-1">
+                        <Text className="font-medium text-red-500">
+                          省 ¥{(plan.originalPrice - plan.price).toFixed(1)}
+                        </Text>
+                      </div>
+                    )}
+                  </div>
+                  <Button
+                    type={plan.popular ? "primary" : "default"}
+                    size="large"
+                    className={`w-full rounded-lg font-semibold transition-all duration-300 ${
+                      plan.popular
+                        ? "border-none bg-gradient-to-r from-yellow-400 to-yellow-500 hover:from-yellow-500 hover:to-yellow-600"
+                        : "hover:border-blue-500 hover:text-blue-500"
+                    } ${
+                      userMembershipLevel > 0 &&
+                      userMembershipLevel < plan.goods_id
+                        ? "animate-pulse bg-gradient-to-r from-green-400 to-blue-500 text-white shadow-lg hover:from-green-500 hover:to-blue-600"
+                        : ""
+                    }`}
+                    onClick={() => handlePurchase(plan.id)}
+                    disabled={userMembershipLevel >= plan.goods_id}
+                  >
+                    {userMembershipLevel > plan.goods_id ? (
+                      "会员等级更高"
+                    ) : userMembershipLevel === plan.goods_id ? (
+                      "当前等级"
+                    ) : userMembershipLevel > 0 &&
+                      userMembershipLevel < plan.goods_id ? (
+                      <span className="flex items-center justify-center text-red-400">
+                        <svg
+                          className="mr-1 h-4 w-4"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M13 7l5 5m0 0l-5 5m5-5H6"
+                          />
+                        </svg>
+                        升级仅需¥
+                        {(
+                          plan.price -
+                          (plans.find((p) => p.goods_id === userMembershipLevel)
+                            ?.price || 0)
+                        ).toFixed(2)}
+                      </span>
+                    ) : (
+                      `立即购买`
+                    )}
+                  </Button>
+                </Card>
+              </Col>
+            ))}
           </Row>
         </div>
       </section>
@@ -480,12 +556,8 @@ export default function VIPMembershipPage({
                 </svg>
               </div>
 
-              <h3 className="mb-3 text-2xl font-bold text-gray-800">
-                请登录
-              </h3>
-              <p className="mb-6 text-gray-600">
-                购买会员套餐需要先登录账户
-              </p>
+              <h3 className="mb-3 text-2xl font-bold text-gray-800">请登录</h3>
+              <p className="mb-6 text-gray-600">购买会员套餐需要先登录账户</p>
 
               <div className="flex flex-col justify-center gap-4 sm:flex-row">
                 <Button
