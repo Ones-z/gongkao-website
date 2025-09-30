@@ -6,6 +6,7 @@ import type { Translations } from "@gudupao/astro-i18n";
 import { createClientTranslator } from "@gudupao/astro-i18n/client";
 import { BackTop, message } from "antd";
 import React, { useEffect, useState } from "react";
+import userService from "@/api/userService.ts";
 
 export default function ExamAnnouncementPage({
   translations,
@@ -26,7 +27,7 @@ export default function ExamAnnouncementPage({
   const categories = ["全部", "国考", "省考", "事业单位"];
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showProfileModal, setShowProfileModal] = useState(false);
-  const { open_id,profile_finished,preference } = getUserInfoSync();
+  const { uuid,open_id,profile_finished,preference } = getUserInfoSync();
   const { setUserInfo} = useUserActions();
   const [pageSize, setPageSize] = useState(10);
   const [current, setCurrent] = useState(1);
@@ -34,6 +35,8 @@ export default function ExamAnnouncementPage({
   const [showPreferenceModal, setShowPreferenceModal] = useState(false);
   const [examType, setExamType] = useState("");
   const [workCity, setWorkCity] = useState("");
+  const [membershipLevel, setMembershipLevel]=useState(0);
+  const [showMembershipModal, setShowMembershipModal] = useState(false);
 
   const searchAnnouncements = async (
     name: string,
@@ -84,6 +87,13 @@ export default function ExamAnnouncementPage({
     if (!preference) {
       // 未填写考试偏好，显示填写偏好弹窗
       setShowPreferenceModal(true);
+      return;
+    }
+
+    // 检查用户会员等级
+    if (!membershipLevel){
+      messageApi.warning("请先购买会员");
+      setShowMembershipModal(true);
       return;
     }
 
@@ -145,6 +155,14 @@ export default function ExamAnnouncementPage({
     window.location.href = "/profile"; // 根据实际路径调整
   };
 
+  // 添加会员购买处理函数
+  const handlePurchaseMembership = () => {
+    // 关闭会员弹窗
+    setShowMembershipModal(false);
+    // 跳转到会员购买页面
+    window.location.href = "/goods"; // 根据实际路径调整
+  };
+
   const handlePrevPage = () => {
     if (current > 1) {
       setCurrent(current - 1);
@@ -159,6 +177,16 @@ export default function ExamAnnouncementPage({
   const handleAnnouncementClick = (id: number) => {
     window.location.href = `/exam-announcement-jobs?id=${id}`;
   };
+
+  const getMembershipLevel = async () => {
+    const res = await userService.purchasePlan(uuid);
+    if (res.code === 0) {
+      setMembershipLevel(res.data);
+    }
+  };
+  useEffect(() => {
+    getMembershipLevel();
+  }, []);
 
   useEffect(() => {
     searchAnnouncements(
@@ -468,6 +496,33 @@ export default function ExamAnnouncementPage({
                 className="flex-1 rounded-lg bg-gradient-to-r from-green-500 to-teal-500 px-4 py-2 text-white hover:from-green-600 hover:to-teal-600"
               >
                 去完善资料
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      {/* 会员购买引导弹窗 */}
+      {showMembershipModal && (
+        <div className="bg-opacity-50 fixed inset-0 z-50 flex items-center justify-center bg-black">
+          <div className="mx-4 w-full max-w-md rounded-xl bg-white p-6 shadow-xl">
+            <div className="mb-4 text-center">
+              <h3 className="text-xl font-bold text-gray-800">升级为VIP会员</h3>
+              <p className="mt-2 text-gray-600">
+                购买会员后可享受智能选岗等专属服务
+              </p>
+            </div>
+            <div className="flex flex-col gap-3 sm:flex-row">
+              <button
+                onClick={() => setShowMembershipModal(false)}
+                className="flex-1 rounded-lg border border-gray-300 px-4 py-2 text-gray-700 hover:bg-gray-50"
+              >
+                稍后购买
+              </button>
+              <button
+                onClick={handlePurchaseMembership}
+                className="flex-1 rounded-lg bg-gradient-to-r from-yellow-500 to-orange-500 px-4 py-2 text-white hover:from-yellow-600 hover:to-orange-600"
+              >
+                立即购买
               </button>
             </div>
           </div>
