@@ -4,8 +4,8 @@ import type { Recruitment } from "@/entity";
 import { getUserInfoSync } from "@/store/userStore";
 import type { Translations } from "@gudupao/astro-i18n";
 import { createClientTranslator } from "@gudupao/astro-i18n/client";
+import { BackTop, message } from "antd";
 import React, { useEffect, useState } from "react";
-import { BackTop } from "antd";
 
 export default function ExamAnnouncementPage({
   translations,
@@ -13,6 +13,7 @@ export default function ExamAnnouncementPage({
   translations: Translations;
 }) {
   const t = createClientTranslator(translations);
+  const [messageApi, contextHolder] = message.useMessage();
   const [announcements, setAnnouncements] = useState<Recruitment[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("全部");
@@ -22,13 +23,23 @@ export default function ExamAnnouncementPage({
   const years = ["全部", "2025", "2024", "2023"];
   // 动态获取地区选项
   const provinces = ["全部", "上海市"];
-  const categories = ["全部", "国考", "事业单位"];
+  const categories = ["全部", "国考", "省考", "事业单位"];
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showProfileModal, setShowProfileModal] = useState(false);
-  const { open_id } = getUserInfoSync();
+  const { open_id,profile_finished } = getUserInfoSync();
   const [pageSize, setPageSize] = useState(10);
   const [current, setCurrent] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [showPreferenceModal, setShowPreferenceModal] = useState(false);
+  const [preference, setPreference] = useState<{
+    exam_type: string;
+    work_city: string;
+  }>({
+    exam_type: "",
+    work_city: "",
+  });
+  const [examType, setExamType] = useState("");
+  const [workCity, setWorkCity] = useState("");
 
   const searchAnnouncements = async (
     name: string,
@@ -67,9 +78,16 @@ export default function ExamAnnouncementPage({
     }
 
     // 检查用户是否填写资料
-    if (!open_id) {
+    if (!profile_finished) {
       // 未完善资料，显示完善资料弹窗
       setShowProfileModal(true);
+      return;
+    }
+
+    // 检查用户是否已填写考试偏好
+    if (!preference.exam_type || !preference.work_city) {
+      // 未填写考试偏好，显示填写偏好弹窗
+      setShowPreferenceModal(true);
       return;
     }
 
@@ -77,6 +95,31 @@ export default function ExamAnnouncementPage({
     // 这里可以添加实际的推荐逻辑
     window.location.href = `/recommend-jobs`;
     console.log("执行智能推荐");
+  };
+
+  // 添加提交选岗意向的函数
+  const handleSubmitPreference = () => {
+    if (!examType) {
+      messageApi.warning("请选择考试类型");
+      return;
+    }
+
+    if (!workCity) {
+      messageApi.warning("请选择工作城市");
+      return;
+    }
+
+    if (workCity !== "上海") {
+      messageApi.warning("暂不支持其它城市");
+      return;
+    }
+
+    // 关闭弹窗
+    setShowPreferenceModal(false);
+
+    // 执行推荐逻辑，可以将选岗意向作为参数传递
+    window.location.href = `/recommend-jobs?examType=${examType}&city=${workCity}`;
+    console.log("执行智能推荐，考试类型:", examType, "工作城市:", workCity);
   };
 
   // 添加登录处理函数
@@ -130,6 +173,7 @@ export default function ExamAnnouncementPage({
 
   return (
     <div className="mt-10 min-h-screen bg-gradient-to-br from-purple-50 to-indigo-100 px-4 py-12">
+      {contextHolder}
       {/* 搜索和筛选区域 */}
       <div className="mx-auto mb-8 max-w-6xl rounded-xl bg-white p-4 shadow-lg sm:p-6">
         <div className="mb-6 flex flex-col gap-4 md:flex-row">
@@ -247,7 +291,7 @@ export default function ExamAnnouncementPage({
                 className={`rounded-full px-2 py-1 text-xs font-bold sm:px-3 sm:py-1 ${
                   item.category === "国考"
                     ? "bg-red-100 text-red-800"
-                    : item.category === "公务员"
+                    : item.category === "省考"
                       ? "bg-blue-100 text-blue-800"
                       : item.category === "事业单位"
                         ? "bg-green-100 text-green-800"
@@ -368,7 +412,7 @@ export default function ExamAnnouncementPage({
           下一页
         </button>
       </div>
-      <BackTop/>
+      <BackTop />
       {/* 登录引导弹窗 */}
       {showLoginModal && (
         <div className="bg-opacity-50 fixed inset-0 z-50 flex items-center justify-center bg-black">
@@ -417,6 +461,163 @@ export default function ExamAnnouncementPage({
                 className="flex-1 rounded-lg bg-gradient-to-r from-green-500 to-teal-500 px-4 py-2 text-white hover:from-green-600 hover:to-teal-600"
               >
                 去完善资料
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      {showPreferenceModal && (
+        <div className="bg-opacity-50 fixed inset-0 z-50 flex items-center justify-center bg-black p-4">
+          <div
+            className="w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="mb-6 text-center">
+              <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-orange-100">
+                <svg
+                  className="h-6 w-6 text-orange-500"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+                  />
+                </svg>
+              </div>
+              <h3 className="text-xl font-bold text-gray-800">选岗意向</h3>
+              <p className="mt-2 text-gray-600">
+                请填写您的选岗意向以获得更精准的推荐
+              </p>
+            </div>
+
+            {/* 考试类型选择 */}
+            <div className="mb-6">
+              <label className="mb-3 block text-sm font-semibold text-gray-700">
+                您关注的考试类型是？
+              </label>
+              <div className="space-y-3">
+                {["国考", "省考", "事业编"].map((type) => (
+                  <div
+                    key={type}
+                    className={`flex items-center rounded-xl border-2 p-4 transition-all duration-200 ${
+                      examType === type
+                        ? "border-orange-500 bg-orange-50"
+                        : "border-gray-200 hover:border-orange-300"
+                    }`}
+                  >
+                    <input
+                      type="radio"
+                      id={`exam-${type}`}
+                      name="examType"
+                      value={type}
+                      checked={examType === type}
+                      onChange={(e) => setExamType(e.target.value)}
+                      className="h-5 w-5 text-orange-500 focus:ring-orange-500"
+                    />
+                    <label
+                      htmlFor={`exam-${type}`}
+                      className="ml-3 block text-base font-medium text-gray-800"
+                    >
+                      {type}
+                    </label>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* 工作城市选择 */}
+            <div className="mb-8">
+              <label className="mb-3 block text-sm font-semibold text-gray-700">
+                您想在哪个城市工作？
+              </label>
+              <div className="space-y-3">
+                <div
+                  className={`flex items-center rounded-xl border-2 p-4 transition-all duration-200 ${
+                    workCity === "上海"
+                      ? "border-green-500 bg-green-50"
+                      : "border-gray-200 hover:border-green-300"
+                  }`}
+                >
+                  <input
+                    type="radio"
+                    id="city-shanghai"
+                    name="workCity"
+                    value="上海"
+                    checked={workCity === "上海"}
+                    onChange={(e) => setWorkCity(e.target.value)}
+                    className="h-5 w-5 text-green-500 focus:ring-green-500"
+                  />
+                  <label
+                    htmlFor="city-shanghai"
+                    className="ml-3 block text-base font-medium text-gray-800"
+                  >
+                    上海
+                  </label>
+                </div>
+                <div
+                  className={`flex items-center rounded-xl border-2 p-4 transition-all duration-200 ${
+                    workCity === "其他"
+                      ? "border-red-500 bg-red-50"
+                      : "border-gray-200 hover:border-red-300"
+                  }`}
+                >
+                  <input
+                    type="radio"
+                    id="city-other"
+                    name="workCity"
+                    value="其他"
+                    checked={workCity === "其他"}
+                    onChange={(e) => setWorkCity(e.target.value)}
+                    className="h-5 w-5 text-red-500 focus:ring-red-500"
+                  />
+                  <label
+                    htmlFor="city-other"
+                    className="ml-3 block text-base font-medium text-gray-800"
+                  >
+                    其他
+                  </label>
+                </div>
+              </div>
+              {workCity === "其他" && (
+                <div className="mt-3 rounded-lg bg-red-50 p-3">
+                  <div className="flex">
+                    <svg
+                      className="h-5 w-5 text-red-500"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                      />
+                    </svg>
+                    <p className="ml-2 text-sm text-red-700">
+                      暂不支持其它城市
+                    </p>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <div className="flex flex-col gap-3 sm:flex-row">
+              <button
+                onClick={() => setShowPreferenceModal(false)}
+                className="flex-1 rounded-xl border border-gray-300 px-5 py-3 text-base font-medium text-gray-700 transition-colors hover:bg-gray-50"
+              >
+                取消
+              </button>
+              <button
+                onClick={handleSubmitPreference}
+                className="flex-1 rounded-xl bg-gradient-to-r from-orange-500 to-red-500 px-5 py-3 text-base font-bold text-white shadow-md transition-all hover:from-orange-600 hover:to-red-600 hover:shadow-lg"
+              >
+                确认提交
               </button>
             </div>
           </div>

@@ -56,6 +56,7 @@ export interface UserProfile {
   address?: string;
   address_geo?: string;
   commute_way: string;
+  profile_finished?: boolean;
 }
 
 export interface JobFilter {
@@ -68,6 +69,11 @@ export interface JobFilter {
   pageSize?: number;
   current?: number;
   year?: string;
+  major?: string;
+  political_status?: string;
+  recruitment_target?: string;
+  order_by?: string;
+  sort_order?: string;
 }
 
 export interface JobCollect {
@@ -99,6 +105,18 @@ export interface UserInfo {
   city?: string;
   status: string;
   open_id?: string;
+  preference?: object;
+  profile_finished?: boolean;
+}
+
+export interface Preference {
+  exam_type: string;
+  work_city: string;
+}
+
+export interface Majors {
+  name: string;
+  children: Majors[];
 }
 
 export interface OrderCreate {

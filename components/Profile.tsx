@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { Button, Card, Col, Form, Input, Row, Select, Typography, message } from "antd";
 import { EditOutlined, SaveOutlined, CloseOutlined } from "@ant-design/icons";
 import userService from "@/api/userService";
-import { getUserInfoSync } from "@/store/userStore";
+import {useUserActions, getUserInfoSync } from "@/store/userStore";
 import type { UserProfile } from "@/entity";
 
 const { Title, Text } = Typography;
@@ -15,6 +15,7 @@ export default function ProfilePage() {
   const [isEditing, setIsEditing] = useState(false);
   const [loading, setLoading] = useState(true);
   const { uuid } = getUserInfoSync();
+  const { updateUserInfo } = useUserActions();
 
   // 获取用户详细信息
   const fetchUserDetail = async () => {
@@ -42,7 +43,7 @@ export default function ProfilePage() {
       const res = await userService.createUser({ ...userInfo, ...values, uuid } as UserProfile);
       if (res.code === 0) {
         message.success("保存成功");
-        setUserInfo({ ...userInfo, ...values } as UserProfile);
+        setUserInfo({ ...userInfo, profile_finished: true} as UserProfile);
         setIsEditing(false);
       } else {
         message.error("保存失败");

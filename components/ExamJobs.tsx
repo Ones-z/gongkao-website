@@ -1,6 +1,7 @@
 // ExamJobs.tsx
 import jobService from "@/api/jobService";
-import type { Job, JobFilter, Recruitment } from "@/entity";
+import queryService from "@/api/queryService";
+import type { Job, JobFilter, Majors, Recruitment } from "@/entity";
 import { getUserInfoSync } from "@/store/userStore";
 import {
   ClockCircleOutlined,
@@ -21,6 +22,7 @@ import {
   BackTop,
   Button,
   Card,
+  Cascader,
   Col,
   Divider,
   Input,
@@ -67,39 +69,70 @@ export default function ExamJobsPage({
     const params = new URLSearchParams(window.location.search);
     return { id: params.get("id") };
   };
+  const [majors, setMajors] = useState<Majors[]>([]);
+  const [sortBy, setSortBy] = useState<string>("default");
+  // 添加状态来控制下拉菜单的显示
+  const [showSortMenu, setShowSortMenu] = useState(false);
+  const politicalStatus = [
+    { value: "群众", label: "群众" },
+    { value: "共青团员", label: "共青团员" },
+    { value: "中共党员", label: "中共党员" },
+    { value: "民主党派", label: "民主党派" },
+    { value: "无党派人士", label: "无党派人士" },
+  ];
+  const experienceLevels = [
+    { value: "无经验", label: "无经验" },
+    { value: "1-3年", label: "1-3年" },
+    { value: "3-5年", label: "3-5年" },
+    { value: "5-10年", label: "5-10年" },
+    { value: "10年以上", label: "10年以上" },
+  ];
+  const recruitmentTargets = [
+    { value: "应届毕业生", label: "应届毕业生" },
+    { value: "非应届毕业生", label: "非应届毕业生" },
+  ];
   const [filters, setFilters] = useState({
     jobName: "",
-    category: undefined,
+    major: undefined,
+    political_status: undefined,
     experience: undefined,
-    educationLevel: undefined,
+    recruitment_target: undefined,
   });
-  const categories = [
-    { value: "专技岗位", label: "专技岗位" },
-    { value: "管理岗位", label: "管理岗位" },
-  ];
   const [showLoginDialog, setShowLoginDialog] = useState(false);
   const getRecruitment = async () => {
     const { id } = getQueryParams();
     const res = await jobService.getRecruitment(id);
     setRecruitment(res.data);
   };
-  const onSearch = useCallback(async (params: JobFilter) => {
-    setLoading(true);
-    try {
-      const { id } = getQueryParams();
-      const newParams = { ...params, recruitment_id: id };
-      const res = await jobService.getJobs(newParams);
-      setJobs(res.data);
-      // 默认选中第一个职位
-      if (res.data.length > 0) {
-        setSelectedJob(res.data[0]);
+  const onSearch = useCallback(
+    async (params: JobFilter) => {
+      setLoading(true);
+      try {
+        const { id } = getQueryParams();
+        const newParams = { ...params, recruitment_id: id };
+        // 添加排序参数
+        if (sortBy === "headcount_asc") {
+          newParams.order_by = "headcount";
+          newParams.sort_order = "asc";
+        } else if (sortBy === "headcount_desc") {
+          newParams.order_by = "headcount";
+          newParams.sort_order = "desc";
+        }
+
+        const res = await jobService.getJobs(newParams);
+        setJobs(res.data);
+        // 默认选中第一个职位
+        if (res.data.length > 0) {
+          setSelectedJob(res.data[0]);
+        }
+      } catch (error) {
+        console.error("获取职位列表失败:", error);
+      } finally {
+        setLoading(false);
       }
-    } catch (error) {
-      console.error("获取职位列表失败:", error);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+    },
+    [sortBy],
+  );
   const handleCollect = async (jobId: number) => {
     if (!open_id) {
       messageApi.warning("请先完成登录");
@@ -132,6 +165,11 @@ export default function ExamJobsPage({
     } catch (error) {
       messageApi.error("操作失败");
     }
+  };
+  // 获取专业列表
+  const getMajors = async () => {
+    const res = await queryService.queryMajors();
+    setMajors(res.data);
   };
   // 添加获取用户收藏和对比职位的函数
   const getUserJobStatus = async () => {
@@ -199,10 +237,19 @@ export default function ExamJobsPage({
   };
 
   const handleFilterChange = (field: string, value: any) => {
-    setFilters((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
+    if (field === "major") {
+      // 对于级联选择器，value是一个数组，取最后一个值作为筛选条件
+      const majorValue = Array.isArray(value) ? value[value.length - 1] : value;
+      setFilters((prev) => ({
+        ...prev,
+        [field]: majorValue,
+      }));
+    } else {
+      setFilters((prev) => ({
+        ...prev,
+        [field]: value,
+      }));
+    }
   };
 
   const handlePrevPage = () => {
@@ -211,9 +258,10 @@ export default function ExamJobsPage({
       // 可能需要重新获取数据
       onSearch({
         name: filters.jobName,
-        category: filters.category,
+        major: filters.major,
+        political_status: filters.political_status,
         experience: filters.experience,
-        education_level: filters.educationLevel,
+        recruitment_target: filters.recruitment_target,
         current: current - 1,
         pageSize: pageSize,
       });
@@ -226,9 +274,10 @@ export default function ExamJobsPage({
       // 可能需要重新获取数据
       onSearch({
         name: filters.jobName,
-        category: filters.category,
+        major: filters.major,
+        political_status: filters.political_status,
         experience: filters.experience,
-        education_level: filters.educationLevel,
+        recruitment_target: filters.recruitment_target,
         current: current + 1,
         pageSize: pageSize,
       });
@@ -252,9 +301,10 @@ export default function ExamJobsPage({
   useEffect(() => {
     onSearch({
       name: filters.jobName,
-      category: filters.category,
+      major: filters.major,
+      political_status: filters.political_status,
       experience: filters.experience,
-      education_level: filters.educationLevel,
+      recruitment_target: filters.recruitment_target,
       current: current,
       pageSize: pageSize,
     });
@@ -265,6 +315,7 @@ export default function ExamJobsPage({
 
   useEffect(() => {
     getRecruitment();
+    getMajors();
   }, []);
 
   return (
@@ -282,7 +333,7 @@ export default function ExamJobsPage({
                 className={`rounded-full px-3 py-1 text-sm font-bold ${
                   recruitment.category === "国考"
                     ? "bg-red-100 text-red-800"
-                    : recruitment.category === "公务员"
+                    : recruitment.category === "省考"
                       ? "bg-blue-100 text-blue-800"
                       : recruitment.category === "事业单位"
                         ? "bg-green-100 text-green-800"
@@ -433,9 +484,10 @@ export default function ExamJobsPage({
                   onPressEnter={() =>
                     onSearch({
                       name: filters.jobName,
-                      category: filters.category,
+                      major: filters.major,
+                      political_status: filters.political_status,
                       experience: filters.experience,
-                      education_level: filters.educationLevel,
+                      recruitment_target: filters.recruitment_target,
                       current: current,
                       pageSize: pageSize,
                     })
@@ -448,9 +500,10 @@ export default function ExamJobsPage({
                   onClick={() =>
                     onSearch({
                       name: filters.jobName,
-                      category: filters.category,
+                      major: filters.major,
+                      political_status: filters.political_status,
                       experience: filters.experience,
-                      education_level: filters.educationLevel,
+                      recruitment_target: filters.recruitment_target,
                       current: current,
                       pageSize: pageSize,
                     })
@@ -459,32 +512,167 @@ export default function ExamJobsPage({
                   搜索
                 </Button>
               </div>
-              // 优化移动端筛选器
-              <div className="mb-1 flex flex-wrap justify-center gap-2">
-                <Select
-                  className="min-w-[120px] flex-1 shadow-sm"
+              // 优化移动端筛选器 // 替换原来的筛选器区域代码
+              <div className="mb-4 flex flex-wrap items-center justify-center gap-2">
+                {/* 排序下拉菜单 */}
+                <div className="relative">
+                  <button
+                    className="flex items-center rounded-full bg-gray-100 px-3 py-2 text-xs font-medium text-gray-700 transition-all hover:bg-gray-200 sm:px-4 sm:py-2 sm:text-sm"
+                    onClick={() => setShowSortMenu(!showSortMenu)}
+                  >
+                    {sortBy === "default"
+                      ? "默认排序"
+                      : sortBy === "headcount_asc"
+                        ? "招录人数↑"
+                        : "招录人数↓"}
+                    <svg
+                      className={`ml-1 inline-block h-3 w-3 transition-transform sm:h-4 sm:w-4 ${showSortMenu ? "rotate-180" : ""}`}
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M19 9l-7 7-7-7"
+                      />
+                    </svg>
+                  </button>
+
+                  {showSortMenu && (
+                    <div className="absolute left-0 z-10 mt-2 w-32 rounded-md border border-gray-200 bg-white shadow-lg sm:w-36">
+                      <div className="py-1">
+                        <button
+                          className={`block w-full px-4 py-2 text-left text-xs sm:text-sm ${
+                            sortBy === "default"
+                              ? "bg-blue-500 text-white"
+                              : "text-gray-700 hover:bg-gray-100"
+                          }`}
+                          onClick={() => {
+                            setSortBy("default");
+                            setShowSortMenu(false);
+                          }}
+                        >
+                          默认排序
+                        </button>
+                        <button
+                          className={`block w-full px-4 py-2 text-left text-xs sm:text-sm ${
+                            sortBy === "headcount_asc"
+                              ? "bg-blue-500 text-white"
+                              : "text-gray-700 hover:bg-gray-100"
+                          }`}
+                          onClick={() => {
+                            setSortBy("headcount_asc");
+                            setShowSortMenu(false);
+                          }}
+                        >
+                          招录人数↑
+                        </button>
+                        <button
+                          className={`block w-full px-4 py-2 text-left text-xs sm:text-sm ${
+                            sortBy === "headcount_desc"
+                              ? "bg-blue-500 text-white"
+                              : "text-gray-700 hover:bg-gray-100"
+                          }`}
+                          onClick={() => {
+                            setSortBy("headcount_desc");
+                            setShowSortMenu(false);
+                          }}
+                        >
+                          招录人数↓
+                        </button>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* 点击其他区域关闭菜单 */}
+                  {showSortMenu && (
+                    <div
+                      className="fixed inset-0 z-0"
+                      onClick={() => setShowSortMenu(false)}
+                    />
+                  )}
+                </div>
+
+                {/* 专业筛选 */}
+                <Cascader
+                  className="min-w-[100px] flex-1 shadow-sm sm:min-w-[120px]"
                   style={{
-                    height: isMobile ? 36 : 40,
-                    borderRadius: isMobile ? 16 : 20,
+                    height: isMobile ? 32 : 36,
+                    borderRadius: isMobile ? 16 : 18,
                   }}
-                  value={filters.category}
-                  onChange={(value) => handleFilterChange("category", value)}
-                  placeholder="职位类别"
+                  value={filters.major}
+                  onChange={(value) => handleFilterChange("major", value)}
+                  placeholder="专业"
+                  options={majors}
+                  fieldNames={{
+                    label: "name",
+                    value: "name",
+                    children: "children",
+                  }}
+                  allowClear
+                  showSearch
+                  size={isMobile ? "middle" : "middle"}
+                  placement={isMobile ? "bottomRight" : "bottomLeft"}
+                />
+
+                {/* 政治面貌筛选 */}
+                <Select
+                  className="min-w-[100px] flex-1 shadow-sm sm:min-w-[120px]"
+                  style={{
+                    height: isMobile ? 32 : 36,
+                    borderRadius: isMobile ? 16 : 18,
+                  }}
+                  value={filters.political_status}
+                  onChange={(value) =>
+                    handleFilterChange("political_status", value)
+                  }
+                  placeholder="政治面貌"
                   allowClear
                   size={isMobile ? "middle" : "middle"}
                 >
-                  {categories.map((category) => (
-                    <Select.Option key={category.value} value={category.value}>
-                      {category.label}
+                  {politicalStatus.map((political_status) => (
+                    <Select.Option
+                      key={political_status.value}
+                      value={political_status.value}
+                    >
+                      {political_status.label}
                     </Select.Option>
                   ))}
                 </Select>
 
+                {/* 是否应届筛选 */}
                 <Select
-                  className="min-w-[120px] flex-1 shadow-sm"
+                  className="min-w-[100px] flex-1 shadow-sm sm:min-w-[120px]"
                   style={{
-                    height: isMobile ? 36 : 40,
-                    borderRadius: isMobile ? 16 : 20,
+                    height: isMobile ? 32 : 36,
+                    borderRadius: isMobile ? 16 : 18,
+                  }}
+                  value={filters.recruitment_target}
+                  onChange={(value) =>
+                    handleFilterChange("recruitment_target", value)
+                  }
+                  placeholder="是否应届"
+                  allowClear
+                  size={isMobile ? "middle" : "middle"}
+                >
+                  {recruitmentTargets.map((recruitment_target) => (
+                    <Select.Option
+                      key={recruitment_target.value}
+                      value={recruitment_target.value}
+                    >
+                      {recruitment_target.label}
+                    </Select.Option>
+                  ))}
+                </Select>
+
+                {/* 工作经验筛选 */}
+                <Select
+                  className="min-w-[100px] flex-1 shadow-sm sm:min-w-[120px]"
+                  style={{
+                    height: isMobile ? 32 : 36,
+                    borderRadius: isMobile ? 16 : 18,
                   }}
                   value={filters.experience}
                   onChange={(value) => handleFilterChange("experience", value)}
@@ -492,25 +680,29 @@ export default function ExamJobsPage({
                   allowClear
                   size={isMobile ? "middle" : "middle"}
                 >
-                  <Select.Option value="应届">应届毕业生</Select.Option>
-                  <Select.Option value="1年">1年以内</Select.Option>
-                  <Select.Option value="1-3年">1-3年</Select.Option>
-                  <Select.Option value="3-5年">3-5年</Select.Option>
-                  <Select.Option value="5-10年">5-10年</Select.Option>
-                  <Select.Option value="10年以上">10年以上</Select.Option>
+                  {experienceLevels.map((experience) => (
+                    <Select.Option
+                      key={experience.value}
+                      value={experience.value}
+                    >
+                      {experience.label}
+                    </Select.Option>
+                  ))}
                 </Select>
+
+                {/* 清除按钮 */}
                 <Button
                   type="link"
-                  className="self-center p-0"
+                  className="self-center p-0 text-xs sm:text-sm"
                   onClick={() =>
                     setFilters({
                       jobName: "",
-                      category: undefined,
+                      major: undefined,
+                      political_status: undefined,
                       experience: undefined,
-                      educationLevel: undefined,
+                      recruitment_target: undefined,
                     })
                   }
-                  style={{ fontSize: isMobile ? "12px" : "14px" }}
                 >
                   清除
                 </Button>

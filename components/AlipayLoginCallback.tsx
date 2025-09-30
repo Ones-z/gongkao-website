@@ -27,7 +27,7 @@ export default function AlipayLoginCallbackPage({
 
   const getUserInfo = async () => {
     const { uuid } = getQueryParams();
-    const info = await userService.getUuidInfo(uuid,null );
+    const info = await userService.getUuidInfo(uuid,"支付宝-WEB" );
     if (info.code == 0) {
       setUserInfo(info.data);
     }

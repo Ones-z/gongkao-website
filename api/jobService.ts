@@ -1,12 +1,5 @@
 import type { Job, JobCollect, JobCompare, JobFilter, Recruitment } from "@/entity";
-
-
-
 import client from "./client";
-
-
-
-
 
 export enum JobApi {
   Jobs = "/job/list",

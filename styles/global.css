@@ -136,3 +136,215 @@ body {
     padding: 12px 8px;
   }
 }
+
+.vip-membership-page {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    font-family: 'PingFang SC', sans-serif;
+}
+
+.page-header {
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.page-header h1 {
+    font-size: 32px;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.page-header p {
+    font-size: 18px;
+    color: #666;
+}
+
+.section-description {
+    text-align: center;
+    color: #666;
+    margin-bottom: 30px;
+}
+
+h2 {
+    font-size: 24px;
+    color: #333;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.benefits-section, .pro-benefits-section {
+    margin-bottom: 10px;
+    margin-top:20px;
+}
+
+.benefits-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 15px;
+}
+
+.benefit-item {
+    display: flex;
+    align-items: center;
+    padding: 12px;
+    background: #f8f9fa;
+    border-radius: 8px;
+}
+
+.benefit-item.pro {
+    background: #fff8e6;
+    border-left: 4px solid #ffc107;
+}
+
+.check-icon {
+    color: #4caf50;
+    font-weight: bold;
+    margin-right: 10px;
+    font-size: 18px;
+}
+
+.crown-icon {
+    margin-right: 10px;
+}
+
+.plans-section {
+    margin-bottom: 10px;
+}
+
+.plans-container {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 30px;
+}
+
+.plan-card {
+    position: relative;
+    width: 280px;
+    padding: 30px 20px;
+    border-radius: 12px;
+    border: 2px solid #eee;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.plan-card:hover, .plan-card.selected {
+    transform: translateY(-10px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    border-color: #ffc107;
+}
+
+.plan-card.popular {
+    border-color: #ffc107;
+}
+
+.popular-badge {
+    position: absolute;
+    top: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #ffc107;
+    color: #fff;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.plan-card h3 {
+    font-size: 20px;
+    margin-bottom: 15px;
+    color: #333;
+}
+
+.price {
+    margin-bottom: 15px;
+}
+
+.amount {
+    font-size: 28px;
+    font-weight: bold;
+    color: #ff6b35;
+}
+
+.period {
+    color: #666;
+}
+
+.save-tag {
+    background: #e3f2fd;
+    color: #1976d2;
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+    margin-bottom: 15px;
+}
+
+.description {
+    color: #666;
+    margin-bottom: 20px;
+    height: 40px;
+}
+
+.purchase-button {
+    width: 100%;
+    padding: 12px;
+    background: #ff6b35;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.purchase-button:hover {
+    background: #e55a2b;
+}
+
+.upgrade-section {
+    background: #f0f8ff;
+    padding: 30px;
+    border-radius: 12px;
+    margin-bottom: 50px;
+}
+
+.upgrade-info ul {
+    padding-left: 20px;
+    margin: 20px 0;
+}
+
+.upgrade-info li {
+    margin-bottom: 10px;
+    color: #333;
+}
+
+.upgrade-button {
+    background: #1976d2;
+    color: white;
+    border: none;
+    padding: 12px 30px;
+    border-radius: 6px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.upgrade-button:hover {
+    background: #1565c0;
+}
+
+@media (max-width: 768px) {
+    .plans-container {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .benefits-grid {
+        grid-template-columns: 1fr;
+    }
+}
