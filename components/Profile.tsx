@@ -1,16 +1,17 @@
 // components/Profile.tsx
-import { useEffect, useState } from "react";
-import { Button, Card, Col, Form, Input, Row, Select, Typography, message } from "antd";
-import { EditOutlined, SaveOutlined, CloseOutlined } from "@ant-design/icons";
 import userService from "@/api/userService";
-import {useUserActions, getUserInfoSync } from "@/store/userStore";
 import type { UserProfile } from "@/entity";
+import { getUserInfoSync, useUserActions } from "@/store/userStore";
+import { CloseOutlined, EditOutlined, SaveOutlined } from "@ant-design/icons";
+import { Button, Card, Col, Form, Input, Row, Select, Typography, message } from "antd";
+import { useEffect, useState } from "react";
 
 const { Title, Text } = Typography;
 const { Option } = Select;
 
 export default function ProfilePage() {
   const [form] = Form.useForm();
+  const [messageApi, contextHolder] = message.useMessage();
   const [userInfo, setUserInfo] = useState<UserProfile | null>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -42,14 +43,18 @@ export default function ProfilePage() {
     try {
       const res = await userService.createUser({ ...userInfo, ...values, uuid } as UserProfile);
       if (res.code === 0) {
-        message.success("保存成功");
-        setUserInfo({ ...userInfo, profile_finished: true} as UserProfile);
+        messageApi.success("保存成功");
+        console.log("profile_finished");
+        const info = { ...userInfo, profile_finished: true } as UserProfile;
+        setUserInfo(info);
+        // 更新全局状态
+        updateUserInfo(info);
         setIsEditing(false);
       } else {
-        message.error("保存失败");
+        messageApi.error("保存失败");
       }
     } catch (error) {
-      message.error("保存失败");
+      messageApi.error("保存失败");
     }
   };
 
@@ -69,6 +74,7 @@ export default function ProfilePage() {
 
   return (
     <div className="mt-10 min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-12 px-4">
+      {contextHolder}
       <div className="max-w-6xl mx-auto">
         <div className="mb-10 text-center">
           <Title level={2} className="text-gray-800 mb-2">

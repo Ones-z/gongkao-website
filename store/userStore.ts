@@ -1,4 +1,4 @@
-import type { UserInfo } from "@/entity";
+import type { UserInfo, UserProfile } from "@/entity";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 
@@ -7,7 +7,7 @@ type UserState = {
 };
 type UserActions = {
   setUserInfo: (userInfo: Partial<UserInfo> | UserInfo) => void;
-  updateUserInfo: (userInfo: Partial<UserInfo>) => void;
+  updateUserInfo: (userInfo: UserProfile) => void;
   clearUserInfo: () => void;
   getUserInfo: () => Partial<UserInfo>;
 };

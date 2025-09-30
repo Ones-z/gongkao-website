@@ -37,25 +37,30 @@ export interface RecommendJob extends  Job{
 
 export interface UserProfile {
   id?: number;
-  uuid: string;
+  uuid?: string;
   username?: string;
-  birth_date: string;
-  gender: string;
+  birth_date?: string;
+  source?: string;
+  avatar?: string;
+  nick_name?: string;
+  open_id?: string;
+  status?: string;
+  gender?: string;
   political_status?: string;
   city?: string;
-  education_level: string;
-  degeree_level: string;
-  undergraduate_major: string;
-  undergraduate_major_name: string;
+  education_level?: string;
+  degree_level?: string;
+  undergraduate_major?: string;
+  undergraduate_major_name?: string;
   postgraduate_major?: string;
   postgraduate_major_name?: string;
-  fresh_graduate: string;
-  grassroots_experience: string;
-  seniority: number;
+  fresh_graduate?: string;
+  grassroots_experience?: string;
+  seniority?: number;
   work_experience?: string;
   address?: string;
   address_geo?: string;
-  commute_way: string;
+  commute_way?: string;
   profile_finished?: boolean;
 }
 
@@ -94,7 +99,7 @@ export interface AlipayLoginCallbackData {
 }
 
 export interface UserInfo {
-  id?: string;
+  id?: number;
   uuid: string;
   source?: string;
   user_name?: string;
@@ -105,7 +110,7 @@ export interface UserInfo {
   city?: string;
   status: string;
   open_id?: string;
-  preference?: object;
+  preference?: Preference;
   profile_finished?: boolean;
 }
 

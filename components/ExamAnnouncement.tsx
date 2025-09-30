@@ -1,7 +1,7 @@
 // ExamAnnouncement.tsx
 import jobService from "@/api/jobService";
 import type { Recruitment } from "@/entity";
-import { getUserInfoSync } from "@/store/userStore";
+import { getUserInfoSync, useUserActions } from "@/store/userStore";
 import type { Translations } from "@gudupao/astro-i18n";
 import { createClientTranslator } from "@gudupao/astro-i18n/client";
 import { BackTop, message } from "antd";
@@ -26,18 +26,12 @@ export default function ExamAnnouncementPage({
   const categories = ["全部", "国考", "省考", "事业单位"];
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showProfileModal, setShowProfileModal] = useState(false);
-  const { open_id,profile_finished } = getUserInfoSync();
+  const { open_id,profile_finished,preference } = getUserInfoSync();
+  const { setUserInfo} = useUserActions();
   const [pageSize, setPageSize] = useState(10);
   const [current, setCurrent] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [showPreferenceModal, setShowPreferenceModal] = useState(false);
-  const [preference, setPreference] = useState<{
-    exam_type: string;
-    work_city: string;
-  }>({
-    exam_type: "",
-    work_city: "",
-  });
   const [examType, setExamType] = useState("");
   const [workCity, setWorkCity] = useState("");
 
@@ -84,8 +78,10 @@ export default function ExamAnnouncementPage({
       return;
     }
 
+    console.log("preference:", preference);
+
     // 检查用户是否已填写考试偏好
-    if (!preference.exam_type || !preference.work_city) {
+    if (!preference) {
       // 未填写考试偏好，显示填写偏好弹窗
       setShowPreferenceModal(true);
       return;
@@ -114,6 +110,17 @@ export default function ExamAnnouncementPage({
       return;
     }
 
+    const userInfo = getUserInfoSync();
+    const updatedInfo = {
+      ...userInfo,
+      preference: {
+        exam_type: examType,
+        work_city: workCity,
+      }
+    };
+
+    // 使用 setUserInfo 更新全局状态
+    setUserInfo(updatedInfo);
     // 关闭弹窗
     setShowPreferenceModal(false);
 

@@ -7,6 +7,10 @@ import { createClientTranslator } from "@gudupao/astro-i18n/client";
 import { Button, Card, QRCode, Result, Spin, Typography, message } from "antd";
 import { useEffect, useState } from "react";
 
+
+
+
+
 const { Title, Text } = Typography;
 
 export default function LoginPage({
