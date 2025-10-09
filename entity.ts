@@ -121,7 +121,8 @@ export interface Preference {
 
 export interface Majors {
   name: string;
-  children: Majors[];
+  code: string;
+  children?: Majors[];
 }
 
 export interface OrderCreate {
@@ -161,4 +162,15 @@ export interface Recruitment {
   view_count: number;
   headcounts: number;
   category: string;
+}
+
+export interface Goods {
+  id: number;
+  name: string;
+  code: string;
+  price: number;
+  origin_price: number;
+  period: number;
+  description: string;
+  popular: number;
 }

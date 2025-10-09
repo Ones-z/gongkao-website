@@ -1,7 +1,6 @@
 // ExamJobs.tsx
 import jobService from "@/api/jobService";
-import queryService from "@/api/queryService";
-import type { Job, JobFilter, Majors, Recruitment } from "@/entity";
+import type { Job, JobFilter, Recruitment } from "@/entity";
 import { getUserInfoSync } from "@/store/userStore";
 import {
   ClockCircleOutlined,
@@ -22,7 +21,6 @@ import {
   BackTop,
   Button,
   Card,
-  Cascader,
   Col,
   Divider,
   Input,
@@ -53,6 +51,9 @@ export default function ExamJobsPage({
     "100%": "#ffccc7",
   };
   const [recruitment, setRecruitment] = useState<Recruitment | null>(null);
+  const [activeTab, setActiveTab] = useState<"announcement" | "jobs">(
+    "announcement",
+  );
   const [jobs, setJobs] = useState<Job[]>([]);
   const [messageApi, contextHolder] = message.useMessage();
   const [collectedJobs, setCollectedJobs] = useState<number[]>([]);
@@ -69,7 +70,6 @@ export default function ExamJobsPage({
     const params = new URLSearchParams(window.location.search);
     return { id: params.get("id") };
   };
-  const [majors, setMajors] = useState<Majors[]>([]);
   const [sortBy, setSortBy] = useState<string>("default");
   // 添加状态来控制下拉菜单的显示
   const [showSortMenu, setShowSortMenu] = useState(false);
@@ -165,11 +165,6 @@ export default function ExamJobsPage({
     } catch (error) {
       messageApi.error("操作失败");
     }
-  };
-  // 获取专业列表
-  const getMajors = async () => {
-    const res = await queryService.queryMajors();
-    setMajors(res.data);
   };
   // 添加获取用户收藏和对比职位的函数
   const getUserJobStatus = async () => {
@@ -315,7 +310,6 @@ export default function ExamJobsPage({
 
   useEffect(() => {
     getRecruitment();
-    getMajors();
   }, []);
 
   return (
@@ -324,148 +318,200 @@ export default function ExamJobsPage({
       {/* 考试公告详情 */}
       {recruitment && (
         <div className="mx-auto mb-8 max-w-6xl rounded-xl bg-white p-6 shadow-lg">
-          <div className="mb-6 border-b border-gray-200 pb-4">
-            <h1 className="text-2xl font-bold text-gray-800">
-              {recruitment.name}
-            </h1>
-            <div className="mt-2 flex flex-wrap items-center gap-2">
-              <span
-                className={`rounded-full px-3 py-1 text-sm font-bold ${
-                  recruitment.category === "国考"
-                    ? "bg-red-100 text-red-800"
-                    : recruitment.category === "省考"
-                      ? "bg-blue-100 text-blue-800"
-                      : recruitment.category === "事业单位"
-                        ? "bg-green-100 text-green-800"
-                        : "bg-gray-100 text-gray-800"
-                }`}
-              >
-                {recruitment.category}
-              </span>
-              <span className="rounded-full bg-amber-100 px-3 py-1 text-sm font-medium text-amber-800">
-                {recruitment.province}
-              </span>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
-            <div className="flex items-center rounded-lg bg-blue-50 p-4">
-              <ClockCircleOutlined
-                className="mr-3 text-lg"
-                style={{ fontSize: "1.5rem", color: "#0070f3" }}
-              />
-              <div>
-                <p className="text-xs text-gray-600">发布日期</p>
-                <p className="font-medium text-black">
-                  {recruitment.publish_date.replace(/T.*/, "")}
-                </p>
-              </div>
-            </div>
-            <div className="flex items-center rounded-lg bg-purple-50 p-4">
-              <UserOutlined
-                className="mr-3 text-lg"
-                style={{ fontSize: "1.5rem", color: "#5a67d8" }}
-              />
-              <div>
-                <p className="text-xs text-gray-600">批次</p>
-                <p className="font-medium text-black">
-                  第{recruitment.batch || 1}批
-                </p>
-              </div>
-            </div>
-            <div className="flex items-center rounded-lg bg-green-50 p-4">
-              <TeamOutlined
-                className="mr-3 text-lg"
-                style={{ fontSize: "1.5rem", color: "#10b981" }}
-              />
-              <div>
-                <p className="text-xs text-gray-600">招聘人数</p>
-                <p className="font-medium text-black">
-                  共 {recruitment.headcounts} 人
-                </p>
-              </div>
-            </div>
-            <div className="flex items-center rounded-lg bg-gray-50 p-4">
-              <EnvironmentOutlined
-                className="mr-3 text-lg"
-                style={{ fontSize: "1.5rem", color: "#6b7280" }}
-              />
-              <div>
-                <p className="text-xs text-gray-600">浏览量</p>
-                <p className="font-medium text-black">
-                  {recruitment.view_count}
-                </p>
-              </div>
-            </div>
-          </div>
-          <div className="mt-6">
-            <h2 className="mb-3 text-lg font-semibold text-gray-800">
-              公告详情
-            </h2>
-            <div
-              className="relative rounded-lg border border-gray-200 bg-gradient-to-br from-gray-50 to-gray-100 p-4"
-              style={{
-                maxHeight: isContentExpanded ? "none" : "80px",
-                overflow: "hidden",
-              }}
+          {/* Tab 导航栏 */}
+          <div className="mb-6 flex border-b border-gray-200">
+            <button
+              className={`px-4 py-2 text-sm font-medium sm:text-base ${
+                activeTab === "announcement"
+                  ? "border-b-2 border-blue-500 text-blue-600"
+                  : "text-gray-500 hover:text-gray-700"
+              }`}
+              onClick={() => setActiveTab("announcement")}
             >
-              <p className="text-sm leading-relaxed whitespace-pre-line text-gray-700">
-                {recruitment.content || "暂无详细描述"}
-              </p>
-              {!isContentExpanded &&
-                recruitment?.content &&
-                recruitment.content.length > 100 && (
-                  <div className="absolute right-0 bottom-0 left-0 h-8 bg-gradient-to-t from-gray-50 to-transparent"></div>
-                )}
-            </div>
-            {recruitment?.content && recruitment.content.length > 100 && (
-              <button
-                onClick={() => setIsContentExpanded(!isContentExpanded)}
-                className="mt-2 flex items-center text-sm font-medium text-indigo-600 hover:text-indigo-800"
-              >
-                {isContentExpanded ? (
-                  <>
-                    <span>收起详情</span>
-                    <svg
-                      className="ml-1 h-4 w-4"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M5 15l7-7 7 7"
-                      />
-                    </svg>
-                  </>
-                ) : (
-                  <>
-                    <span className="mt-2">展开详情</span>
-                    <svg
-                      className="ml-1 h-4 w-4"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M19 9l-7 7-7-7"
-                      />
-                    </svg>
-                  </>
-                )}
-              </button>
-            )}
+              公告详情
+            </button>
+            <button
+              className={`px-4 py-2 text-sm font-medium sm:text-base ${
+                activeTab === "jobs"
+                  ? "border-b-2 border-blue-500 text-blue-600"
+                  : "text-gray-500 hover:text-gray-700"
+              }`}
+              onClick={() => setActiveTab("jobs")}
+            >
+              招聘职位
+            </button>
           </div>
 
-          {/* 职位列表 */}
-          <div className="mx-auto mt-6 max-w-6xl">
-            <h2 className="text-lg font-semibold text-gray-800">招聘职位</h2>
-            <div className="mx-auto max-w-7xl">
+          {/* 公告详情 Tab 内容 */}
+          {activeTab === "announcement" && (
+            <div>
+              <div className="mb-6 border-b border-gray-200 pb-4">
+                <h1 className="text-2xl font-bold text-gray-800">
+                  {recruitment.name}
+                </h1>
+                <div className="mt-2 flex flex-wrap items-center gap-2">
+                  <span
+                    className={`rounded-full px-3 py-1 text-sm font-bold ${
+                      recruitment.category === "国考"
+                        ? "bg-red-100 text-red-800"
+                        : recruitment.category === "省考"
+                          ? "bg-blue-100 text-blue-800"
+                          : recruitment.category === "事业单位"
+                            ? "bg-green-100 text-green-800"
+                            : "bg-gray-100 text-gray-800"
+                    }`}
+                  >
+                    {recruitment.category}
+                  </span>
+                  <span className="rounded-full bg-amber-100 px-3 py-1 text-sm font-medium text-amber-800">
+                    {recruitment.province}
+                  </span>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
+                <div className="flex items-center rounded-lg bg-blue-50 p-4">
+                  <ClockCircleOutlined
+                    className="mr-3 text-lg"
+                    style={{ fontSize: "1.5rem", color: "#0070f3" }}
+                  />
+                  <div>
+                    <p className="text-xs text-gray-600">发布日期</p>
+                    <p className="font-medium text-black">
+                      {recruitment.publish_date.replace(/T.*/, "")}
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center rounded-lg bg-purple-50 p-4">
+                  <UserOutlined
+                    className="mr-3 text-lg"
+                    style={{ fontSize: "1.5rem", color: "#5a67d8" }}
+                  />
+                  <div>
+                    <p className="text-xs text-gray-600">批次</p>
+                    <p className="font-medium text-black">
+                      第{recruitment.batch || 1}批
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center rounded-lg bg-green-50 p-4">
+                  <TeamOutlined
+                    className="mr-3 text-lg"
+                    style={{ fontSize: "1.5rem", color: "#10b981" }}
+                  />
+                  <div>
+                    <p className="text-xs text-gray-600">招聘人数</p>
+                    <p className="font-medium text-black">
+                      共 {recruitment.headcounts} 人
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center rounded-lg bg-gray-50 p-4">
+                  <EnvironmentOutlined
+                    className="mr-3 text-lg"
+                    style={{ fontSize: "1.5rem", color: "#6b7280" }}
+                  />
+                  <div>
+                    <p className="text-xs text-gray-600">浏览量</p>
+                    <p className="font-medium text-black">
+                      {recruitment.view_count}
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <div className="mt-6">
+                <h2 className="mb-3 text-lg font-semibold text-gray-800">
+                  公告详情
+                </h2>
+                <div
+                  className="relative rounded-lg border border-gray-200 bg-gradient-to-br from-gray-50 to-gray-100 p-4"
+                  style={{
+                    maxHeight: isContentExpanded ? "none" : "80px",
+                    overflow: "hidden",
+                  }}
+                >
+                  <p className="text-sm leading-relaxed whitespace-pre-line text-gray-700">
+                    {recruitment.content || "暂无详细描述"}
+                  </p>
+                  {!isContentExpanded &&
+                    recruitment?.content &&
+                    recruitment.content.length > 100 && (
+                      <div className="absolute right-0 bottom-0 left-0 h-8 bg-gradient-to-t from-gray-50 to-transparent"></div>
+                    )}
+                </div>
+                {recruitment?.content && recruitment.content.length > 100 && (
+                  <button
+                    onClick={() => setIsContentExpanded(!isContentExpanded)}
+                    className="mt-2 flex items-center text-sm font-medium text-indigo-600 hover:text-indigo-800"
+                  >
+                    {isContentExpanded ? (
+                      <>
+                        <span>收起详情</span>
+                        <svg
+                          className="ml-1 h-4 w-4"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M5 15l7-7 7 7"
+                          />
+                        </svg>
+                      </>
+                    ) : (
+                      <>
+                        <span className="mt-2">展开详情</span>
+                        <svg
+                          className="ml-1 h-4 w-4"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M19 9l-7 7-7-7"
+                          />
+                        </svg>
+                      </>
+                    )}
+                  </button>
+                )}
+              </div>
+              <div className="mt-8 flex justify-center">
+                <Button
+                  color="cyan"
+                  variant="filled"
+                  size="large"
+                  className="px-8 py-5 text-base font-bold"
+                  onClick={() => setActiveTab("jobs")}
+                >
+                  查看招聘职位
+                  <svg
+                    className="ml-2 inline-block h-5 w-5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M14 5l7 7m0 0l-7 7m7-7H3"
+                    />
+                  </svg>
+                </Button>
+              </div>
+            </div>
+          )}
+
+          {/* 招聘职位 Tab 内容 */}
+          {activeTab === "jobs" && (
+            <div>
               // 优化移动端的搜索区域
               <div className="flex flex-col gap-3 sm:flex-row">
                 <Input
@@ -596,26 +642,38 @@ export default function ExamJobsPage({
                 </div>
 
                 {/* 专业筛选 */}
-                <Cascader
-                  className="min-w-[100px] flex-1 shadow-sm sm:min-w-[120px]"
+                <Button
+                  className="max-w-[100px] min-w-[60px] flex-1 shadow-sm sm:min-w-[80px]"
                   style={{
                     height: isMobile ? 32 : 36,
                     borderRadius: isMobile ? 16 : 18,
+                    borderColor: "orange",
                   }}
-                  value={filters.major}
-                  onChange={(value) => handleFilterChange("major", value)}
-                  placeholder="专业"
-                  options={majors}
-                  fieldNames={{
-                    label: "name",
-                    value: "name",
-                    children: "children",
-                  }}
-                  allowClear
-                  showSearch
                   size={isMobile ? "middle" : "middle"}
-                  placement={isMobile ? "bottomRight" : "bottomLeft"}
-                />
+                  onClick={() => handleFilterChange("major", "1")}
+                >
+                  专业可报
+                </Button>
+                {/*<Cascader*/}
+                {/*  className="min-w-[100px] flex-1 shadow-sm sm:min-w-[120px]"*/}
+                {/*  style={{*/}
+                {/*    height: isMobile ? 32 : 36,*/}
+                {/*    borderRadius: isMobile ? 16 : 18,*/}
+                {/*  }}*/}
+                {/*  value={filters.major}*/}
+                {/*  onChange={(value) => handleFilterChange("major", value)}*/}
+                {/*  placeholder="专业"*/}
+                {/*  options={majors}*/}
+                {/*  fieldNames={{*/}
+                {/*    label: "name",*/}
+                {/*    value: "name",*/}
+                {/*    children: "children",*/}
+                {/*  }}*/}
+                {/*  allowClear*/}
+                {/*  showSearch*/}
+                {/*  size={isMobile ? "middle" : "middle"}*/}
+                {/*  placement={isMobile ? "bottomRight" : "bottomLeft"}*/}
+                {/*/>*/}
 
                 {/* 政治面貌筛选 */}
                 <Select
@@ -1351,7 +1409,7 @@ export default function ExamJobsPage({
               )}
               <BackTop />
             </div>
-          </div>
+          )}
         </div>
       )}
     </div>

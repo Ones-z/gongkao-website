@@ -1,11 +1,22 @@
 // components/Profile.tsx
 import userService from "@/api/userService";
-import type { UserProfile } from "@/entity";
+import type { UserProfile,Majors } from "@/entity";
 import { getUserInfoSync, useUserActions } from "@/store/userStore";
 import { CloseOutlined, EditOutlined, SaveOutlined } from "@ant-design/icons";
-import { Button, Card, Col, Form, Input, Row, Select, Typography, message } from "antd";
+import {
+  Button,
+  Card,
+  Cascader,
+  Col,
+  Form,
+  Input,
+  Row,
+  Select,
+  Typography,
+  message,
+} from "antd";
 import { useEffect, useState } from "react";
-
+import queryService from "@/api/queryService.ts";
 const { Title, Text } = Typography;
 const { Option } = Select;
 
@@ -17,6 +28,8 @@ export default function ProfilePage() {
   const [loading, setLoading] = useState(true);
   const { uuid } = getUserInfoSync();
   const { updateUserInfo } = useUserActions();
+  const [undergraduateMajors, setUndergraduateMajors] = useState<Majors[]>([]);
+  const [postgraduateMajors, setPostgraduateMajors] = useState<Majors[]>([]);
 
   // 获取用户详细信息
   const fetchUserDetail = async () => {
@@ -34,8 +47,31 @@ export default function ProfilePage() {
     }
   };
 
+  const processMajorsData = (majors: Majors[]): Majors[] => {
+    return majors.map(major => ({
+      ...major,
+      name: `${major.code} ${major.name}`,
+      code: major.code,
+      children: major.children ? processMajorsData(major.children) : undefined
+    }));
+  };
+
+  const fetchUndergraduateMajors = async () => {
+    const res = await queryService.queryMajors("bachelor");
+    const processedMajors = processMajorsData(res.data);
+    setUndergraduateMajors(processedMajors);
+  };
+
+  const fetchPostgraduateMajors = async () => {
+    const res = await queryService.queryMajors("master");
+    const processedMajors = processMajorsData(res.data);
+    setPostgraduateMajors(processedMajors);
+  };
+
   useEffect(() => {
     fetchUserDetail();
+    fetchUndergraduateMajors();
+    fetchPostgraduateMajors();
   }, [uuid]);
 
   // 保存用户信息
@@ -253,47 +289,41 @@ export default function ProfilePage() {
                   </Form.Item>
 
                   <Form.Item
-                    label="本科专业代码"
+                    label="本科专业"
                     name="undergraduate_major"
-                    rules={[{ required: true, message: '请输入本科专业代码' }]}
                   >
-                    <Input
-                      placeholder="请输入本科专业代码"
+                    <Cascader
+                      options={undergraduateMajors}
+                      placeholder="请选择本科专业"
                       disabled={!isEditing}
-                      className={isEditing ? "border-blue-300" : ""}
-                    />
-                  </Form.Item>
-
-                  <Form.Item
-                    label="本科专业名称"
-                    name="undergraduate_major_name"
-                    rules={[{ required: true, message: '请输入本科专业名称' }]}
-                  >
-                    <Input
-                      placeholder="请输入本科专业名称"
-                      disabled={!isEditing}
-                      className={isEditing ? "border-blue-300" : ""}
+                      showSearch
+                      fieldNames={{ label: 'name', value: 'code', children: 'children' }}
+                      displayRender={(label) => label.join(' - ')}
+                      onChange={(value) => {
+                        form.setFieldsValue({
+                          education_level: "大学本科",
+                          degree_level: "学士"
+                        });
+                      }}
                     />
                   </Form.Item>
                   <Form.Item
-                    label="研究生专业代码"
+                    label="研究生专业"
                     name="postgraduate_major"
                   >
-                    <Input
-                      placeholder="请输入研究生专业代码"
+                    <Cascader
+                      options={postgraduateMajors}
+                      placeholder="请选择研究生专业"
                       disabled={!isEditing}
-                      className={isEditing ? "border-blue-300" : ""}
-                    />
-                  </Form.Item>
-
-                  <Form.Item
-                    label="研究生专业名称"
-                    name="postgraduate_major_name"
-                  >
-                    <Input
-                      placeholder="请输入研究生专业名称"
-                      disabled={!isEditing}
-                      className={isEditing ? "border-blue-300" : ""}
+                      showSearch
+                      fieldNames={{ label: 'name', value: 'code', children: 'children' }}
+                      displayRender={(label) => label.join(' - ')}
+                      onChange={(value) => {
+                        form.setFieldsValue({
+                          education_level: "研究生" ,
+                          degree_level: "硕士"
+                        });
+                      }}
                     />
                   </Form.Item>
                 </div>

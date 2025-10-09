@@ -217,7 +217,7 @@ export default function ExamAnnouncementPage({
             placeholder="搜索城市、地区、招考类型"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="flex-1 rounded-lg border-2 border-gray-200 px-4 py-3 placeholder-gray-500 shadow-md transition-shadow hover:shadow-lg focus:border-blue-500 focus:outline-none"
+            className="flex-1 rounded-lg border-2 border-gray-200 px-4 py-3 placeholder-gray-500 shadow-md transition-shadow hover:shadow-lg focus:border-blue-500 focus:outline-none text-gray-600"
           />
           <button className="rounded-lg bg-gradient-to-r from-blue-500 to-indigo-600 px-6 py-3 text-white shadow-md transition-all hover:from-blue-600 hover:to-indigo-700">
             搜索
@@ -450,7 +450,7 @@ export default function ExamAnnouncementPage({
       <BackTop />
       {/* 登录引导弹窗 */}
       {showLoginModal && (
-        <div className="bg-opacity-50 fixed inset-0 z-50 flex items-center justify-center bg-black">
+        <div className="bg-opacity-50 fixed inset-0 z-50 flex items-center justify-center ">
           <div className="mx-4 w-full max-w-md rounded-xl bg-white p-6 shadow-xl">
             <div className="mb-4 text-center">
               <h3 className="text-xl font-bold text-gray-800">请先登录</h3>
@@ -476,7 +476,7 @@ export default function ExamAnnouncementPage({
 
       {/* 完善资料引导弹窗 */}
       {showProfileModal && (
-        <div className="bg-opacity-50 fixed inset-0 z-50 flex items-center justify-center bg-black">
+        <div className="bg-opacity-50 fixed inset-0 z-50 flex items-center justify-center">
           <div className="mx-4 w-full max-w-md rounded-xl bg-white p-6 shadow-xl">
             <div className="mb-4 text-center">
               <h3 className="text-xl font-bold text-gray-800">完善个人资料</h3>
@@ -503,7 +503,7 @@ export default function ExamAnnouncementPage({
       )}
       {/* 会员购买引导弹窗 */}
       {showMembershipModal && (
-        <div className="bg-opacity-50 fixed inset-0 z-50 flex items-center justify-center bg-black">
+        <div className="bg-opacity-50 fixed inset-0 z-50 flex items-center justify-center">
           <div className="mx-4 w-full max-w-md rounded-xl bg-white p-6 shadow-xl">
             <div className="mb-4 text-center">
               <h3 className="text-xl font-bold text-gray-800">升级为VIP会员</h3>
@@ -529,7 +529,7 @@ export default function ExamAnnouncementPage({
         </div>
       )}
       {showPreferenceModal && (
-        <div className="bg-opacity-50 fixed inset-0 z-50 flex items-center justify-center bg-black p-4">
+        <div className="bg-opacity-50 fixed inset-0 z-50 flex items-center justify-center p-4">
           <div
             className="w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl"
             onClick={(e) => e.stopPropagation()}
