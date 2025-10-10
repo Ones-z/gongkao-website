@@ -18,6 +18,10 @@ const t = getTranslator(lang);
     <link rel="icon" type="image/ico" href="/logo.ico" />
     <meta name="generator" content={Astro.generator} />
     <title>青云选岗</title>
+    <script>
+      import { initGA } from "../utils/analytics";
+      initGA();
+    </script>
     <ClientRouter />
   </head>
   <body>

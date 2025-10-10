@@ -1,12 +1,13 @@
 // ExamAnnouncement.tsx
 import jobService from "@/api/jobService";
+import userService from "@/api/userService";
 import type { Recruitment } from "@/entity";
 import { getUserInfoSync, useUserActions } from "@/store/userStore";
+import { trackEvent } from "@/utils/analytics";
 import type { Translations } from "@gudupao/astro-i18n";
 import { createClientTranslator } from "@gudupao/astro-i18n/client";
 import { BackTop, message } from "antd";
 import React, { useEffect, useState } from "react";
-import userService from "@/api/userService.ts";
 
 export default function ExamAnnouncementPage({
   translations,
@@ -14,6 +15,7 @@ export default function ExamAnnouncementPage({
   translations: Translations;
 }) {
   const t = createClientTranslator(translations);
+  const [loading, setLoading] = useState(false);
   const [messageApi, contextHolder] = message.useMessage();
   const [announcements, setAnnouncements] = useState<Recruitment[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
@@ -27,15 +29,15 @@ export default function ExamAnnouncementPage({
   const categories = ["全部", "国考", "省考", "事业单位"];
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showProfileModal, setShowProfileModal] = useState(false);
-  const { uuid,open_id,profile_finished,preference } = getUserInfoSync();
-  const { setUserInfo} = useUserActions();
+  const { uuid, open_id, profile_finished, preference } = getUserInfoSync();
+  const { setUserInfo } = useUserActions();
   const [pageSize, setPageSize] = useState(10);
   const [current, setCurrent] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [showPreferenceModal, setShowPreferenceModal] = useState(false);
   const [examType, setExamType] = useState("");
   const [workCity, setWorkCity] = useState("");
-  const [membershipLevel, setMembershipLevel]=useState(0);
+  const [membershipLevel, setMembershipLevel] = useState(0);
   const [showMembershipModal, setShowMembershipModal] = useState(false);
 
   const searchAnnouncements = async (
@@ -46,6 +48,7 @@ export default function ExamAnnouncementPage({
     pageSize: number,
     current: number,
   ) => {
+    setLoading(true);
     const params: any = {};
     params.pageSize = pageSize;
     params.current = current;
@@ -64,6 +67,7 @@ export default function ExamAnnouncementPage({
     const res = await jobService.getRecruitments(params);
     setAnnouncements(res.data);
     setTotalPages(Math.ceil(res.total / pageSize));
+    setLoading(false);
   };
 
   // 添加处理一键推荐的函数
@@ -91,7 +95,7 @@ export default function ExamAnnouncementPage({
     }
 
     // 检查用户会员等级
-    if (!membershipLevel){
+    if (!membershipLevel) {
       messageApi.warning("请先购买会员");
       setShowMembershipModal(true);
       return;
@@ -126,7 +130,7 @@ export default function ExamAnnouncementPage({
       preference: {
         exam_type: examType,
         work_city: workCity,
-      }
+      },
     };
 
     // 使用 setUserInfo 更新全局状态
@@ -184,6 +188,25 @@ export default function ExamAnnouncementPage({
       setMembershipLevel(res.data);
     }
   };
+  const handleSearch = () => {
+    // 执行原有的搜索逻辑
+    searchAnnouncements(
+      searchTerm,
+      selectedCategory,
+      selectedYear,
+      selectedRegion,
+      pageSize,
+      current,
+    );
+
+    // 发送 GA4 自定义事件
+    trackEvent("search_announcements", {
+      search_term: searchTerm,
+      category: selectedCategory,
+      year: selectedYear,
+      region: selectedRegion,
+    });
+  };
   useEffect(() => {
     getMembershipLevel();
   }, []);
@@ -217,10 +240,40 @@ export default function ExamAnnouncementPage({
             placeholder="搜索城市、地区、招考类型"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="flex-1 rounded-lg border-2 border-gray-200 px-4 py-3 placeholder-gray-500 shadow-md transition-shadow hover:shadow-lg focus:border-blue-500 focus:outline-none text-gray-600"
+            className="flex-1 rounded-lg border-2 border-gray-200 px-4 py-3 text-gray-600 placeholder-gray-500 shadow-md transition-shadow hover:shadow-lg focus:border-blue-500 focus:outline-none"
           />
-          <button className="rounded-lg bg-gradient-to-r from-blue-500 to-indigo-600 px-6 py-3 text-white shadow-md transition-all hover:from-blue-600 hover:to-indigo-700">
-            搜索
+          <button
+            className="flex items-center justify-center rounded-lg bg-gradient-to-r from-blue-500 to-indigo-600 px-6 py-3 text-white shadow-md transition-all hover:from-blue-600 hover:to-indigo-700"
+            onClick={handleSearch}
+            disabled={loading}
+          >
+            {loading ? (
+              <>
+                <svg
+                  className="mr-2 -ml-1 h-4 w-4 animate-spin text-white"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  ></circle>
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                  ></path>
+                </svg>
+                搜索中...
+              </>
+            ) : (
+              "搜索"
+            )}
           </button>
         </div>
 
@@ -315,118 +368,149 @@ export default function ExamAnnouncementPage({
       </div>
       {/* 公告列表 */}
       <div className="mx-auto max-w-6xl space-y-4">
-        {announcements.map((item) => (
-          <div
-            key={item.id}
-            className="cursor-pointer rounded-xl border-l-4 border-blue-500 bg-white p-4 shadow-md transition-shadow hover:border-indigo-500 hover:shadow-xl sm:p-6"
-            onClick={() => handleAnnouncementClick(item.id)}
-          >
-            <div className="mb-3 flex flex-wrap items-center gap-2 sm:gap-3">
-              <span
-                className={`rounded-full px-2 py-1 text-xs font-bold sm:px-3 sm:py-1 ${
-                  item.category === "国考"
-                    ? "bg-red-100 text-red-800"
-                    : item.category === "省考"
-                      ? "bg-blue-100 text-blue-800"
-                      : item.category === "事业单位"
-                        ? "bg-green-100 text-green-800"
-                        : "bg-gray-100 text-gray-800"
-                }`}
+        {loading ? (
+          // 显示加载状态
+          <div className="flex items-center justify-center py-12">
+            <div className="flex flex-col items-center">
+              <svg
+                className="h-8 w-8 animate-spin text-blue-500"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
               >
-                {item.category}
-              </span>
-              <span className="rounded-full bg-amber-100 px-2 py-1 text-xs font-medium text-amber-800 sm:px-3 sm:py-1">
-                {item.province}
-              </span>
-            </div>
-            <h3 className="mb-3 text-base font-semibold text-gray-800 transition-colors hover:text-blue-600 sm:text-lg">
-              {item.name}
-            </h3>
-            <div className="flex flex-wrap items-center justify-between gap-2 text-sm text-gray-500">
-              <div className="flex flex-wrap items-center gap-2 sm:gap-4">
-                <span className="flex min-w-[120px] items-center rounded px-2 py-1 sm:min-w-[140px]">
-                  <svg
-                    className="mr-1 h-4 w-4 flex-shrink-0 text-blue-900"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                    ></path>
-                  </svg>
-                  <span className="text-xs whitespace-nowrap sm:text-sm">
-                    发布日期：{item.publish_date.replace(/T.*/, "")}
-                  </span>
-                </span>
-                <span className="flex min-w-[40px] items-center rounded px-2 py-1 sm:min-w-[50px]">
-                  <svg
-                    className="mr-1 h-4 w-4 flex-shrink-0 text-purple-900"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M4 6h16M4 10h16M4 14h16M4 18h16"
-                    ></path>
-                  </svg>
-                  <span className="text-xs whitespace-nowrap sm:text-sm">
-                    {item.batch || 1}批
-                  </span>
-                </span>
-                <span className="flex min-w-[80px] items-center rounded px-2 py-1 sm:min-w-[100px]">
-                  <svg
-                    className="mr-1 h-4 w-4 flex-shrink-0 text-green-900"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
-                    ></path>
-                  </svg>
-                  <span className="text-xs whitespace-nowrap sm:text-sm">
-                    招聘 {item.headcounts} 人
-                  </span>
-                </span>
-              </div>
-              <div className="flex items-center rounded bg-gray-100 px-2 py-1">
-                <svg
-                  className="mr-1 h-4 w-4 flex-shrink-0"
-                  fill="none"
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
                   stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                  ></path>
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
-                  ></path>
-                </svg>
-                <span className="whitespace-nowrap">
-                  浏览量: {item.view_count}
-                </span>
-              </div>
+                  strokeWidth="4"
+                ></circle>
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                ></path>
+              </svg>
+              <p className="mt-2 text-gray-600">加载中...</p>
             </div>
           </div>
-        ))}
+        ) : (
+          // 显示公告列表
+          announcements.map((item) => (
+            <div
+              key={item.id}
+              className="cursor-pointer rounded-xl border-l-4 border-blue-500 bg-white p-4 shadow-md transition-shadow hover:border-indigo-500 hover:shadow-xl sm:p-6"
+              onClick={() => handleAnnouncementClick(item.id)}
+            >
+              <div className="mb-3 flex flex-wrap items-center gap-2 sm:gap-3">
+                <span
+                  className={`rounded-full px-2 py-1 text-xs font-bold sm:px-3 sm:py-1 ${
+                    item.category === "国考"
+                      ? "bg-red-100 text-red-800"
+                      : item.category === "省考"
+                        ? "bg-blue-100 text-blue-800"
+                        : item.category === "事业单位"
+                          ? "bg-green-100 text-green-800"
+                          : "bg-gray-100 text-gray-800"
+                  }`}
+                >
+                  {item.category}
+                </span>
+                <span className="rounded-full bg-amber-100 px-2 py-1 text-xs font-medium text-amber-800 sm:px-3 sm:py-1">
+                  {item.province}
+                </span>
+              </div>
+              <h3 className="mb-3 text-base font-semibold text-gray-800 transition-colors hover:text-blue-600 sm:text-lg">
+                {item.name}
+              </h3>
+              <div className="flex flex-wrap items-center justify-between gap-2 text-sm text-gray-500">
+                <div className="flex flex-wrap items-center gap-2 sm:gap-4">
+                  <span className="flex min-w-[120px] items-center rounded px-2 py-1 sm:min-w-[140px]">
+                    <svg
+                      className="mr-1 h-4 w-4 flex-shrink-0 text-blue-900"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                      ></path>
+                    </svg>
+                    <span className="text-xs whitespace-nowrap sm:text-sm">
+                      发布日期：{item.publish_date.replace(/T.*/, "")}
+                    </span>
+                  </span>
+                  <span className="flex min-w-[40px] items-center rounded px-2 py-1 sm:min-w-[50px]">
+                    <svg
+                      className="mr-1 h-4 w-4 flex-shrink-0 text-purple-900"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M4 6h16M4 10h16M4 14h16M4 18h16"
+                      ></path>
+                    </svg>
+                    <span className="text-xs whitespace-nowrap sm:text-sm">
+                      {item.batch || 1}批
+                    </span>
+                  </span>
+                  <span className="flex min-w-[80px] items-center rounded px-2 py-1 sm:min-w-[100px]">
+                    <svg
+                      className="mr-1 h-4 w-4 flex-shrink-0 text-green-900"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
+                      ></path>
+                    </svg>
+                    <span className="text-xs whitespace-nowrap sm:text-sm">
+                      招聘 {item.headcounts} 人
+                    </span>
+                  </span>
+                </div>
+                <div className="flex items-center rounded bg-gray-100 px-2 py-1">
+                  <svg
+                    className="mr-1 h-4 w-4 flex-shrink-0"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                    ></path>
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                    ></path>
+                  </svg>
+                  <span className="whitespace-nowrap">
+                    浏览量: {item.view_count}
+                  </span>
+                </div>
+              </div>
+            </div>
+          ))
+        )}
       </div>
+
       {/* 分页组件 */}
       <div className="mx-auto mt-8 flex max-w-6xl items-center justify-center space-x-2 sm:space-x-4">
         <button
@@ -450,7 +534,7 @@ export default function ExamAnnouncementPage({
       <BackTop />
       {/* 登录引导弹窗 */}
       {showLoginModal && (
-        <div className="bg-opacity-50 fixed inset-0 z-50 flex items-center justify-center ">
+        <div className="bg-opacity-50 fixed inset-0 z-50 flex items-center justify-center">
           <div className="mx-4 w-full max-w-md rounded-xl bg-white p-6 shadow-xl">
             <div className="mb-4 text-center">
               <h3 className="text-xl font-bold text-gray-800">请先登录</h3>

@@ -4,6 +4,8 @@ import userService from "@/api/userService";
 import type { Majors, UserProfile } from "@/entity";
 import { getUserInfoSync, useUserActions } from "@/store/userStore";
 import { CloseOutlined, EditOutlined, SaveOutlined } from "@ant-design/icons";
+import type { Translations } from "@gudupao/astro-i18n";
+import { createClientTranslator } from "@gudupao/astro-i18n/client";
 import {
   Button,
   Card,
@@ -28,7 +30,12 @@ dayjs.locale("zh-cn");
 const { Title, Text } = Typography;
 const { Option } = Select;
 
-export default function ProfilePage() {
+export default function ProfilePage({
+  translations,
+}: {
+  translations: Translations;
+}) {
+  const t = createClientTranslator(translations);
   const [form] = Form.useForm();
   const [messageApi, contextHolder] = message.useMessage();
   const [userInfo, setUserInfo] = useState<UserProfile | null>(null);

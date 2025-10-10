@@ -9,6 +9,7 @@ import type { Translations } from "@gudupao/astro-i18n";
 import { createClientTranslator } from "@gudupao/astro-i18n/client";
 import { Button, Card, Col, Row, Typography, message } from "antd";
 import { useEffect, useState } from "react";
+import {trackEvent} from "@/utils/analytics";
 
 const { Title, Text } = Typography;
 
@@ -82,6 +83,10 @@ export default function VIPMembershipPage({
 
       document.body.removeChild(div);
       setShowPaymentConfirm(true);
+      trackEvent("会员购买", {
+        planId,
+        uuid,
+      });
     }
   };
 
@@ -123,6 +128,11 @@ export default function VIPMembershipPage({
       document.body.removeChild(div);
       setShowPaymentConfirm(true);
     }
+    trackEvent("会员升级", {
+      currentPlanId: userMembershipLevel,
+      targetPlanId,
+      uuid,
+    });
   };
 
   const checkPaymentStatus = async () => {
@@ -145,6 +155,10 @@ export default function VIPMembershipPage({
 
           if (res.data.trade_status === "TRADE_SUCCESS") {
             messageApi.success("支付成功，会员已生效！");
+            trackEvent("会员生效", {
+              planId: selectedPlan,
+              uuid,
+            });
             setTimeout(() => {
               window.location.reload();
             }, 1500);
@@ -185,6 +199,10 @@ export default function VIPMembershipPage({
     }, 3000);
 
     setPaymentCheckTimer(timer);
+    trackEvent("会员支付确认", {
+      planId: selectedPlan,
+      uuid,
+    })
   };
 
   const handleConfirmPayment = async () => {

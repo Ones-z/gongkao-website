@@ -24,6 +24,7 @@
     "moment": "^2.30.1",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
+    "react-ga4": "^2.1.0",
     "react-router-dom": "^7.8.2",
     "sharp": "^0.34.2",
     "sharp-ico": "^0.1.5",
