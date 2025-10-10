@@ -91,10 +91,13 @@ export default function ProfilePage() {
   const handleSave = async (values: UserProfile) => {
     try {
       const formattedValues = { ...values };
-      if (formattedValues.birth_date &&
-        typeof formattedValues.birth_date === 'object' &&
-        'format' in formattedValues.birth_date) {
-        formattedValues.birth_date = formattedValues.birth_date.format("YYYY-MM-DD");
+      if (
+        formattedValues.birth_date &&
+        typeof formattedValues.birth_date === "object" &&
+        "format" in formattedValues.birth_date
+      ) {
+        formattedValues.birth_date =
+          formattedValues.birth_date.format("YYYY-MM-DD");
       }
 
       const res = await userService.createUser({
@@ -330,7 +333,6 @@ export default function ProfilePage() {
                         displayRender={(label) => label.join(" - ")}
                         onChange={(value) => {
                           form.setFieldsValue({
-                            undergraduate_major: value[value.length - 1],
                             education_level: "大学本科",
                             degree_level: "学士",
                           });
@@ -351,7 +353,6 @@ export default function ProfilePage() {
                         displayRender={(label) => label.join(" - ")}
                         onChange={(value) => {
                           form.setFieldsValue({
-                            postgraduate_major: value[value.length - 1],
                             education_level: "研究生",
                             degree_level: "硕士",
                           });
