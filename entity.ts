@@ -1,3 +1,5 @@
+import dayjs from "dayjs";
+
 export interface Job {
   id: number;
   name: string;
@@ -39,7 +41,7 @@ export interface UserProfile {
   id?: number;
   uuid?: string;
   username?: string;
-  birth_date?: string;
+  birth_date?: string | dayjs.Dayjs;
   source?: string;
   avatar?: string;
   nick_name?: string;
