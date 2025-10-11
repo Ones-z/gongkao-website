@@ -1,9 +1,10 @@
 // ExamAnnouncement.tsx
 import jobService from "@/api/jobService";
 import userService from "@/api/userService";
+import OptimizedEventService from "@/api/eventService";
 import type { Recruitment } from "@/entity";
 import { getUserInfoSync, useUserActions } from "@/store/userStore";
-import { trackEvent } from "@/utils/analytics";
+// import { trackEvent } from "@/utils/analytics";
 import type { Translations } from "@gudupao/astro-i18n";
 import { createClientTranslator } from "@gudupao/astro-i18n/client";
 import { BackTop, message } from "antd";
@@ -200,12 +201,24 @@ export default function ExamAnnouncementPage({
     );
 
     // 发送 GA4 自定义事件
-    trackEvent("search_announcements", {
-      search_term: searchTerm,
-      category: selectedCategory,
-      year: selectedYear,
-      region: selectedRegion,
-    });
+    // trackEvent("search_announcements", {
+    //   search_term: searchTerm,
+    //   category: selectedCategory,
+    //   year: selectedYear,
+    //   region: selectedRegion,
+    // });
+    OptimizedEventService.createEvent({
+      uuid,
+      open_id,
+      event_name: "search_announcements",
+      properties: {
+        search_term: searchTerm,
+        category: selectedCategory,
+        year: selectedYear,
+        region: selectedRegion,
+      },
+      platform: "web",
+    })
   };
   useEffect(() => {
     getMembershipLevel();

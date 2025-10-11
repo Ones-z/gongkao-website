@@ -176,3 +176,11 @@ export interface Goods {
   description: string;
   popular: number;
 }
+
+export interface Event {
+  uuid: string | undefined;
+  open_id?: string | undefined;
+  event_name: string;
+  properties: Record<string, string>;
+  platform: string;
+}
