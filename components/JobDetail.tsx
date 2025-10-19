@@ -74,7 +74,7 @@ export default function JobDetailPage({
   useEffect(() => {
     const { id } = getQueryParams();
     if (id) {
-      fetchJobDetail(Number(id));
+      fetchJobDetail(id);
     }
     if (uuid) {
       getUserJobStatus();
@@ -101,7 +101,7 @@ export default function JobDetailPage({
     }
   };
 
-  const fetchJobDetail = async (jobId: number) => {
+  const fetchJobDetail = async (jobId: string) => {
     try {
       setLoading(true);
       const response = await jobService.getJobDetail(jobId);

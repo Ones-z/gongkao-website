@@ -192,8 +192,16 @@ export default function ExamJobsPage({
       setShowLoginDialog(true); // 打开登录弹窗
       return;
     }
-    const url = `${window.location.origin}/job-detail?id=${jobId}`;
+    const urlSafeBase64Encode = (str: string) => {
+      return btoa(str)
+        .replace(/\+/g, '-')
+        .replace(/\//g, '_')
+        .replace(/=/g, '');
+    };
+    const encodedId = urlSafeBase64Encode(jobId.toString()+uuid);
+    const url = `${window.location.origin}/job-detail?id=${encodedId}`;
     // 使用 Clipboard API 复制链接到剪贴板
+    console.log(url);
     await navigator.clipboard.writeText(url);
     messageApi.success("链接已复制到剪贴板");
   };

@@ -57,7 +57,7 @@ const getCompareJobs = (uuid: string | undefined) =>
     url: JobApi.CompareJobs,
     params: { uuid },
   });
-const getJobDetail = (id: number) =>
+const getJobDetail = (id: string) =>
   client.get<{ code: number; data: Job }>({
     url: JobApi.JobDetail,
     params: { id },
