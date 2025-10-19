@@ -2,14 +2,14 @@
 import goodsService from "@/api/goodsService";
 import orderService from "@/api/orderService";
 import userService from "@/api/userService";
-import type { Goods } from "@/entity";
+import type { Coupon, Goods } from "@/entity";
 import { getUserInfoSync } from "@/store/userStore";
+import { trackEvent } from "@/utils/analytics";
 import { CheckOutlined, CrownOutlined, StarOutlined } from "@ant-design/icons";
 import type { Translations } from "@gudupao/astro-i18n";
 import { createClientTranslator } from "@gudupao/astro-i18n/client";
 import { Button, Card, Col, Row, Typography, message } from "antd";
 import { useEffect, useState } from "react";
-import {trackEvent} from "@/utils/analytics";
 
 const { Title, Text } = Typography;
 
@@ -19,7 +19,15 @@ export default function VIPMembershipPage({
   translations: Translations;
 }) {
   const t = createClientTranslator(translations);
-  const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
+  const [selectedPlan, setSelectedPlan] = useState<Goods>({
+    id: 2,
+    name: "季卡",
+    code: "quarterly",
+    price: 79.9,
+    origin_price: 147,
+    description: "性价比优选",
+    popular: 1,
+  });
   const [messageApi, contextHolder] = message.useMessage();
   const [showPaymentConfirm, setShowPaymentConfirm] = useState(false);
   const [isCheckingPayment, setIsCheckingPayment] = useState(false);
@@ -28,7 +36,12 @@ export default function VIPMembershipPage({
   const [outOrderNo, setOutOrderNo] = useState("");
   const [userMembershipLevel, setUserMembershipLevel] = useState<number | 0>(0);
   const [showLoginDialog, setShowLoginDialog] = useState(false);
+  const [coupons, setCoupons] = useState<Coupon[]>([]);
+  const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
+  const [showCouponModal, setShowCouponModal] = useState(false);
   const [plans, setPlans] = useState<Goods[]>([]);
+  const hasAvailableCoupons = coupons.length > 0;
+  const showRedDot = hasAvailableCoupons && !selectedCoupon;
   const { uuid, open_id } = getUserInfoSync();
 
   // 会员套餐选项
@@ -37,7 +50,6 @@ export default function VIPMembershipPage({
     setPlans(res.data);
   };
   const handlePurchase = async (planId: string) => {
-    setSelectedPlan(planId);
     if (!open_id) {
       messageApi.warning("请先完成登录");
       setShowLoginDialog(true);
@@ -66,8 +78,11 @@ export default function VIPMembershipPage({
       uuid,
       goods_id: selectedPlanData.id,
       out_trade_no: outTradeNo,
-      total_amount: selectedPlanData.price,
+      total_amount: selectedCoupon
+        ? Math.max(0.01, selectedPlanData.price - selectedCoupon.amount)
+        : selectedPlanData.price,
       subject: selectedPlanData.name,
+      coupon_id: selectedCoupon?.id || undefined,
     });
 
     if (res.data) {
@@ -156,7 +171,7 @@ export default function VIPMembershipPage({
           if (res.data.trade_status === "TRADE_SUCCESS") {
             messageApi.success("支付成功，会员已生效！");
             trackEvent("会员生效", {
-              planId: selectedPlan,
+              planId: selectedPlan?.id,
               uuid,
             });
             setTimeout(() => {
@@ -200,9 +215,9 @@ export default function VIPMembershipPage({
 
     setPaymentCheckTimer(timer);
     trackEvent("会员支付确认", {
-      planId: selectedPlan,
+      planId: selectedPlan?.id,
       uuid,
-    })
+    });
   };
 
   const handleConfirmPayment = async () => {
@@ -217,15 +232,27 @@ export default function VIPMembershipPage({
     }
   };
 
+  const handleSearchCoupons = async () => {
+    const res = await userService.getUserCoupon(uuid);
+    if (res.code === 0) {
+      setCoupons(
+        res.data.filter(
+          (coupon) =>
+            coupon.status === 1 && new Date(coupon.expire_time) > new Date(),
+        ),
+      );
+    }
+  };
+
   useEffect(() => {
     getMembershipLevel();
     handleSearchGoods();
+    handleSearchCoupons();
   }, []);
 
   return (
     <div className="mt-10 min-h-screen bg-gradient-to-b from-gray-900 to-black px-4 py-8 text-white sm:py-12">
       {contextHolder}
-
       {/* 页面标题 */}
       <div className="mb-8 text-center">
         <h1 className="text-2xl font-bold text-yellow-400 sm:text-3xl">
@@ -235,7 +262,6 @@ export default function VIPMembershipPage({
           选择最适合您的会员方案，享受专属权益
         </p>
       </div>
-
       {/* 会员套餐区域 */}
       <section className="mb-12">
         <div className="mx-auto max-w-6xl">
@@ -247,16 +273,23 @@ export default function VIPMembershipPage({
                     plan.popular
                       ? "relative scale-105 transform border-2 border-yellow-400"
                       : "border border-gray-200 hover:shadow-2xl"
-                  } ${selectedPlan === plan.code ? "ring-4 ring-blue-400" : ""} `}
+                  } ${selectedPlan?.code === plan.code ? "ring-4 ring-blue-400" : ""} `}
                   style={{
                     background: plan.popular
                       ? "linear-gradient(135deg, #fef3c7 0%, #fde68a 100%)"
                       : "rgba(255, 255, 255, 0.85)",
                   }}
+                  onClick={() => setSelectedPlan(plan)}
                 >
-                  {plan.popular!==0 && (
+                  {plan.popular !== 0 && (
                     <div className="absolute top-0 right-0 rounded-bl-lg bg-yellow-400 px-4 py-1 text-sm font-bold text-yellow-900">
                       热门推荐
+                    </div>
+                  )}
+                  {/* 新增标签显示 */}
+                  {(plan.code === "quarterly" || plan.code === "yearly") && (
+                    <div className="absolute top-0 left-0 rounded-br-lg bg-red-500 px-4 py-1 text-sm font-bold text-white">
+                      {plan.code === "quarterly" ? "最多人选择" : "最具性价比"}
                     </div>
                   )}
 
@@ -288,72 +321,123 @@ export default function VIPMembershipPage({
                       <span className="text-4xl font-bold text-gray-800">
                         {plan.price}
                       </span>
-                      <span className="ml-2 text-gray-500 line-through">
-                        ¥{plan.origin_price}
+                      <span className="ml-2 text-xl text-gray-500 line-through">
+                        ¥
+                        <span className="font-medium">{plan.origin_price}</span>
                       </span>
                     </div>
+                    {/* 月均价格提示 */}
+                    {(plan.code === "quarterly" || plan.code === "yearly") && (
+                      <div className="mt-1">
+                        <Text className="text-sm">
+                          月均
+                          <span className="mr-1 ml-1 text-xl font-bold text-green-600">
+                            ¥{plan.code === "quarterly" ? "26.6" : "16.7"}
+                          </span>
+                          元
+                        </Text>
+                      </div>
+                    )}
                     {plan.origin_price && (
                       <div className="mt-1">
-                        <Text className="font-medium text-red-500">
-                          省 ¥{(plan.origin_price - plan.price).toFixed(1)}
+                        <Text className="text-lg font-bold">
+                          省 <span className="text-xl">¥</span>
+                          <span className="text-xl text-red-400">
+                            {(plan.origin_price - plan.price).toFixed(1)}
+                          </span>
                         </Text>
                       </div>
                     )}
                   </div>
-
-                  <Button
-                    type={plan.popular ? "primary" : "default"}
-                    size="large"
-                    className={`w-full rounded-lg font-semibold transition-all duration-300 ${
-                      plan.popular
-                        ? "border-none bg-gradient-to-r from-yellow-400 to-yellow-500 hover:from-yellow-500 hover:to-yellow-600"
-                        : "hover:border-blue-500 hover:text-blue-500"
-                    } ${
-                      userMembershipLevel > 0 && userMembershipLevel < plan.id
-                        ? "animate-pulse bg-gradient-to-r from-green-400 to-blue-500 text-white shadow-lg hover:from-green-500 hover:to-blue-600"
-                        : ""
-                    }`}
-                    onClick={() => handlePurchase(plan.code)}
-                    disabled={userMembershipLevel >= plan.id}
-                  >
-                    {userMembershipLevel > plan.id ? (
-                      "会员等级更高"
-                    ) : userMembershipLevel === plan.id ? (
-                      "当前等级"
-                    ) : userMembershipLevel > 0 &&
-                      userMembershipLevel < plan.id ? (
-                      <span className="flex items-center justify-center text-red-400">
-                        <svg
-                          className="mr-1 h-4 w-4"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M13 7l5 5m0 0l-5 5m5-5H6"
-                          />
-                        </svg>
-                        升级仅需¥
-                        {(
-                          plan.price -
-                          (plans.find((p) => p.id === userMembershipLevel)
-                            ?.price || 0)
-                        ).toFixed(2)}
-                      </span>
-                    ) : (
-                      `立即购买`
-                    )}
-                  </Button>
                 </Card>
               </Col>
             ))}
           </Row>
         </div>
       </section>
-
+      {/* 优惠券区域 */}
+      <section className="mb-12 px-2">
+        <div className="mx-auto max-w-6xl">
+          <div className="relative mb-3">
+            <Button
+              type="dashed"
+              className="w-full border-dashed border-yellow-500 text-yellow-600"
+              onClick={() => setShowCouponModal(true)}
+            >
+              <span className="flex items-center justify-center">
+                <svg
+                  className="mr-1 h-4 w-4"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"
+                  />
+                </svg>
+                {selectedCoupon
+                  ? `已选择: ${selectedCoupon.name}`
+                  : hasAvailableCoupons
+                    ? "选择优惠券"
+                    : "暂无可用优惠券"}
+              </span>
+            </Button>
+            {showRedDot && (
+              <span className="absolute top-0 right-0 inline-flex h-3 w-3 rounded-full bg-red-500"></span>
+            )}
+          </div>
+          {/* 独立的购买按钮 */}
+          <Button
+            type={selectedPlan.popular ? "primary" : "default"}
+            size="large"
+            className={`w-full rounded-lg font-semibold transition-all duration-300 ${
+              selectedPlan.popular
+                ? "border-none bg-gradient-to-r from-yellow-400 to-yellow-500 hover:from-yellow-500 hover:to-yellow-600"
+                : "hover:border-blue-500 hover:text-blue-500"
+            } ${
+              userMembershipLevel > 0 && userMembershipLevel < selectedPlan.id
+                ? "animate-pulse bg-gradient-to-r from-green-400 to-blue-500 text-white shadow-lg hover:from-green-500 hover:to-blue-600"
+                : ""
+            }`}
+            onClick={() => handlePurchase(selectedPlan.code)}
+            disabled={userMembershipLevel >= selectedPlan.id}
+            style={{ height: "48px" }}
+          >
+            {userMembershipLevel > selectedPlan.id ? (
+              "会员等级更高"
+            ) : userMembershipLevel === selectedPlan.id ? (
+              "当前等级"
+            ) : userMembershipLevel > 0 &&
+              userMembershipLevel < selectedPlan.id ? (
+              <span className="flex items-center justify-center">
+                <svg
+                  className="mr-1 h-4 w-4"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M13 7l5 5m0 0l-5 5m5-5H6"
+                  />
+                </svg>
+                升级仅需¥
+                {(
+                  selectedPlan.price -
+                  (plans.find((p) => p.id === userMembershipLevel)?.price || 0)
+                ).toFixed(2)}
+              </span>
+            ) : (
+              `立即购买`
+            )}
+          </Button>
+        </div>
+      </section>
       {/* VIP对比区域 */}
       <section className="mb-12 px-2">
         <h2 className="mb-6 flex items-center justify-center text-center text-xl font-bold sm:text-2xl">
@@ -524,13 +608,11 @@ export default function VIPMembershipPage({
           </div>
         </div>
       </section>
-
       {/* 底部说明 */}
       <section className="mb-8 px-4 text-center text-sm text-gray-500">
         <p>所有会员服务均为虚拟商品，购买后不支持退款</p>
         <p className="mt-1">如有疑问请联系客服</p>
       </section>
-
       {/* 支付确认弹窗 */}
       {showPaymentConfirm && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
@@ -604,7 +686,6 @@ export default function VIPMembershipPage({
           </div>
         </div>
       )}
-
       {/* 登录提示弹窗 */}
       {showLoginDialog && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
@@ -663,6 +744,123 @@ export default function VIPMembershipPage({
                 </Button>
               </div>
             </div>
+          </div>
+        </div>
+      )}
+      {showCouponModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div
+            className="absolute inset-0 bg-black transition-opacity duration-300"
+            style={{ opacity: 0.6 }}
+            onClick={() => setShowCouponModal(false)}
+          ></div>
+
+          <div className="relative w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl sm:p-8">
+            <div className="mb-4 flex items-center justify-between">
+              <h3 className="text-xl font-bold text-gray-800">可用优惠券</h3>
+              <button
+                onClick={() => setShowCouponModal(false)}
+                className="text-gray-500 hover:text-gray-700"
+              >
+                <svg
+                  className="h-6 w-6"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
+              </button>
+            </div>
+
+            <div className="max-h-96 space-y-3 overflow-y-auto">
+              {coupons.length > 0 ? (
+                coupons.map((coupon) => (
+                  <div
+                    key={coupon.id}
+                    className={`cursor-pointer rounded-lg border p-4 transition-all ${
+                      selectedCoupon?.id === coupon.id
+                        ? "border-yellow-500 bg-yellow-50 ring-2 ring-yellow-200"
+                        : "border-gray-200 hover:border-yellow-300"
+                    }`}
+                    onClick={() => {
+                      setSelectedCoupon(coupon);
+                      setShowCouponModal(false);
+                    }}
+                  >
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1">
+                        <h4 className="font-bold text-gray-800">
+                          {coupon.name}
+                        </h4>
+                        <p className="mt-1 text-sm text-gray-600">
+                          {coupon.description}
+                        </p>
+                        <p className="mt-2 text-xs text-gray-500">
+                          有效期至{" "}
+                          {new Date(coupon.expire_time).toLocaleDateString()}
+                        </p>
+                      </div>
+                      <div className="ml-2 text-right">
+                        <div className="text-lg font-bold text-yellow-600">
+                          ¥{coupon.amount}
+                        </div>
+                        <div className="text-xs text-gray-500">
+                          满{coupon.min_amount}可用
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <div className="py-8 text-center text-gray-500">
+                  暂无可用优惠券
+                </div>
+              )}
+            </div>
+
+            {selectedCoupon && (
+              <div className="mt-4 border-t border-gray-200 pt-4">
+                <Button
+                  type="link"
+                  className="p-0"
+                  onClick={() => {
+                    setSelectedCoupon(null);
+                    setShowCouponModal(false);
+                  }}
+                >
+                  不使用优惠券
+                </Button>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+      {selectedCoupon && (
+        <div className="mt-2">
+          <div className="flex items-baseline justify-center">
+            <span className="text-lg text-gray-600 line-through">
+              ¥{selectedPlan?.price}
+            </span>
+            <span className="mx-2 text-gray-500">-</span>
+            <span className="text-xl font-bold text-red-500">
+              ¥{selectedCoupon.amount}
+            </span>
+            <span className="mx-2 text-gray-500">=</span>
+            <span className="text-2xl font-bold text-green-600">
+              ¥
+              {Math.max(0, selectedPlan?.price - selectedCoupon.amount).toFixed(
+                2,
+              )}
+            </span>
+          </div>
+          <div className="mt-1 text-center text-sm text-green-600">
+            已为您节省 ¥{selectedCoupon.amount}
           </div>
         </div>
       )}

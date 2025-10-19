@@ -52,10 +52,10 @@ export interface UserProfile {
   city?: string;
   education_level?: string;
   degree_level?: string;
-  undergraduate_major?: string;
-  undergraduate_major_name?: string;
-  postgraduate_major?: string;
-  postgraduate_major_name?: string;
+  bachelor_major?: string;
+  bachelor_major_name?: string;
+  master_major?: string;
+  master_major_name?: string;
   fresh_graduate?: string;
   grassroots_experience?: string;
   seniority?: number;
@@ -133,6 +133,7 @@ export interface OrderCreate {
   out_trade_no: string;
   total_amount: number;
   subject: string;
+  coupon_id?: number;
 }
 
 export interface OrderInfo {
@@ -172,9 +173,19 @@ export interface Goods {
   code: string;
   price: number;
   origin_price: number;
-  period: number;
+  period?: number;
   description: string;
   popular: number;
+}
+
+export interface Coupon {
+  id: number;
+  name: string;
+  description: string;
+  expire_time: string;
+  amount: number;
+  min_amount: number;
+  status: number;
 }
 
 export interface Event {

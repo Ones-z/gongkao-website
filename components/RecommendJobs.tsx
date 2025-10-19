@@ -26,9 +26,10 @@ import {
   Progress,
   Row,
   Select,
+  Tabs,
   Tag,
   Typography,
-  message, Tabs,
+  message,
 } from "antd";
 import type { ProgressProps } from "antd";
 import React, { useCallback, useEffect, useState } from "react";
@@ -63,28 +64,26 @@ export default function RecommendJobsPage({
     { value: "2023", label: "2023年" },
   ];
   const [showLoginDialog, setShowLoginDialog] = useState(false);
-  const recommendReason ="分别在您的专业、所在省市、学历程度、竞聘趋势几个维度分析出匹配度最高的职位"
+  const recommendReason =
+    "分别在您的专业、所在省市、学历程度、竞聘趋势几个维度分析出匹配度最高的职位";
 
-  const onSearch = useCallback(
-    async () => {
-      setLoading(true);
-      try {
-        // 调用推荐接口获取推荐职位
-        const res = await jobService.getRecommendJobs(uuid);
-        setJobs(res.data);
-        // 默认选中第一个职位
-        if (res.data.length > 0) {
-          setSelectedJob(res.data[0]);
-        }
-      } catch (error) {
-        console.error("获取推荐职位失败:", error);
-        messageApi.error("获取推荐职位失败");
-      } finally {
-        setLoading(false);
+  const onSearch = useCallback(async () => {
+    setLoading(true);
+    try {
+      // 调用推荐接口获取推荐职位
+      const res = await jobService.getRecommendJobs(uuid);
+      setJobs(res.data);
+      // 默认选中第一个职位
+      if (res.data.length > 0) {
+        setSelectedJob(res.data[0]);
       }
-    },
-    [uuid],
-  );
+    } catch (error) {
+      console.error("获取推荐职位失败:", error);
+      messageApi.error("获取推荐职位失败");
+    } finally {
+      setLoading(false);
+    }
+  }, [uuid]);
 
   const handleCollect = async (jobId: number) => {
     if (!open_id) {
@@ -506,19 +505,15 @@ export default function RecommendJobsPage({
                             size={isMobile ? "small" : "middle"}
                             icon={
                               collectedJobs.includes(selectedJob.id) ? (
-                                <StarOutlined style={{ color: "#6b7280" }} />
-                              ) : (
                                 <StarFilled style={{ color: "#f59e0b" }} />
+                              ) : (
+                                <StarOutlined style={{ color: "#6b7280" }} />
                               )
                             }
                             className="flex items-center border-indigo-200 text-indigo-700 hover:border-indigo-300 hover:text-indigo-800"
                             onClick={() => handleCollect(selectedJob.id)}
                           >
-                            {isMobile
-                              ? ""
-                              : collectedJobs.includes(selectedJob.id)
-                                ? "不感兴趣"
-                                : "感兴趣"}
+                            {isMobile ? "" : "感兴趣"}
                           </Button>
                           <Button
                             color="primary"

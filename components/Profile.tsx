@@ -45,6 +45,7 @@ export default function ProfilePage({
   const { updateUserInfo } = useUserActions();
   const [undergraduateMajors, setUndergraduateMajors] = useState<Majors[]>([]);
   const [postgraduateMajors, setPostgraduateMajors] = useState<Majors[]>([]);
+  const [showRecommendModal, setShowRecommendModal] = useState(false);
 
   // 获取用户详细信息
   const fetchUserDetail = async () => {
@@ -120,6 +121,7 @@ export default function ProfilePage({
         // 更新全局状态
         updateUserInfo(info);
         setIsEditing(false);
+        setShowRecommendModal(true);
       } else {
         messageApi.error("保存失败");
       }
@@ -304,8 +306,10 @@ export default function ProfilePage({
                         disabled={!isEditing}
                         className={isEditing ? "border-blue-300" : ""}
                       >
-                        <Option value="大学本科">大学本科</Option>
-                        <Option value="研究生">研究生</Option>
+                        <Option value="大专">大专</Option>
+                        <Option value="本科">本科</Option>
+                        <Option value="硕士研究生">硕士研究生</Option>
+                        <Option value="博士研究生">博士研究生</Option>
                       </Select>
                     </Form.Item>
 
@@ -325,7 +329,7 @@ export default function ProfilePage({
                       </Select>
                     </Form.Item>
 
-                    <Form.Item label="本科专业" name="undergraduate_major">
+                    <Form.Item label="本科专业" name="bachelor_major">
                       <Cascader
                         allowClear
                         options={undergraduateMajors}
@@ -346,7 +350,7 @@ export default function ProfilePage({
                         }}
                       />
                     </Form.Item>
-                    <Form.Item label="研究生专业" name="postgraduate_major">
+                    <Form.Item label="研究生专业" name="master_major">
                       <Cascader
                         options={postgraduateMajors}
                         placeholder="请选择研究生专业"
@@ -508,6 +512,64 @@ export default function ProfilePage({
             <Text>© 2025 - 青云选岗平台. 保护您的个人信息安全</Text>
           </div>
         </div>
+        {showRecommendModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <div
+              className="absolute inset-0 bg-black transition-opacity duration-300"
+              style={{ opacity: 0.6 }}
+              onClick={() => setShowRecommendModal(false)}
+            ></div>
+
+            <div className="relative w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl sm:p-8">
+              <div className="text-center">
+                <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-blue-100 sm:mb-6 sm:h-16 sm:w-16">
+                  <svg
+                    className="h-7 w-7 text-blue-500 sm:h-8 sm:w-8"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"
+                    />
+                  </svg>
+                </div>
+
+                <h3 className="mb-2 text-xl font-bold text-gray-800 sm:mb-3 sm:text-2xl">
+                  一键智能推荐
+                </h3>
+                <p className="mb-4 text-gray-600 sm:mb-6">
+                  您的资料已保存成功！是否立即体验我们的智能岗位推荐功能？
+                </p>
+
+                <div className="flex flex-col gap-3 sm:flex-row sm:justify-center sm:gap-4">
+                  <Button
+                    size="large"
+                    block
+                    className="px-6 sm:w-auto"
+                    onClick={() => setShowRecommendModal(false)}
+                  >
+                    稍后再说
+                  </Button>
+                  <Button
+                    type="primary"
+                    size="large"
+                    block
+                    className="bg-gradient-to-r from-blue-500 to-indigo-600 px-6 sm:w-auto"
+                    onClick={() => {
+                      window.location.href = "/recommend-jobs";
+                    }}
+                  >
+                    一键推荐
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </ConfigProvider>
     </div>
   );

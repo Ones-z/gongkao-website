@@ -16,7 +16,15 @@ import {
 } from "@ant-design/icons";
 import type { Translations } from "@gudupao/astro-i18n";
 import { createClientTranslator } from "@gudupao/astro-i18n/client";
-import { Button, Card, Divider, Progress, Tag, Typography,message } from "antd";
+import {
+  Button,
+  Card,
+  Divider,
+  Progress,
+  Tag,
+  Typography,
+  message,
+} from "antd";
 import type { ProgressProps } from "antd";
 import React, { useEffect, useState } from "react";
 
@@ -239,19 +247,15 @@ export default function JobDetailPage({
                   size={isMobile ? "small" : "middle"}
                   icon={
                     collectedJobs.includes(job.id) ? (
-                      <StarOutlined style={{ color: "gray" }} />
-                    ) : (
                       <StarFilled style={{ color: "orange" }} />
+                    ) : (
+                      <StarOutlined style={{ color: "gray" }} />
                     )
                   }
                   className="flex items-center"
                   onClick={() => handleCollect(job.id)}
                 >
-                  {isMobile
-                    ? ""
-                    : collectedJobs.includes(job.id)
-                      ? "不感兴趣"
-                      : "感兴趣"}
+                  {isMobile ? "" : "感兴趣"}
                 </Button>
                 <Button
                   color="primary"

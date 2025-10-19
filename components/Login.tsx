@@ -1,15 +1,23 @@
 // Login.tsx
 import userService from "@/api/userService";
+import PRIVACY_POLICY from "@/assets/docs/privacy-policy.md?raw";
+import USER_AGREEMENT from "@/assets/docs/user-agreement.md?raw";
 import { getUserInfoSync, useUserActions } from "@/store/userStore";
 import { AlipayOutlined } from "@ant-design/icons";
 import type { Translations } from "@gudupao/astro-i18n";
 import { createClientTranslator } from "@gudupao/astro-i18n/client";
-import { Button, Card, QRCode, Result, Spin, Typography, message } from "antd";
+import {
+  Button,
+  Card,
+  Modal,
+  QRCode,
+  Result,
+  Spin,
+  Typography,
+  message,
+} from "antd";
+import Markdown from "markdown-to-jsx";
 import { useEffect, useState } from "react";
-
-
-
-
 
 const { Title, Text } = Typography;
 
@@ -24,6 +32,10 @@ export default function LoginPage({
   const [loginStatus, setLoginStatus] = useState<
     "pending" | "scanned" | "success" | "expired"
   >("pending");
+  const [modalVisible, setModalVisible] = useState<boolean>(false);
+  const [modalContent, setModalContent] = useState<string>("");
+  const [modalTitle, setModalTitle] = useState<string>("");
+  const [agreed, setAgreed] = useState<boolean>(true);
   const { updateUserInfo } = useUserActions();
 
   const checkLoginStatus = async () => {
@@ -41,6 +53,11 @@ export default function LoginPage({
       const { uuid } = getUserInfoSync();
       try {
         setLoading(true);
+        if (!agreed) {
+          message.error("请先同意用户服务协议和隐私政策");
+          setLoading(false);
+          return;
+        }
         // 模拟API调用
         // await new Promise((resolve) => setTimeout(resolve, 1000));
         // 实际项目中这里应该是真实的支付宝登录二维码URL
@@ -96,7 +113,7 @@ export default function LoginPage({
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [qrCodeValue,updateUserInfo]);
+  }, [qrCodeValue, updateUserInfo]);
 
   const handleRefresh = () => {
     setLoginStatus("pending");
@@ -108,6 +125,18 @@ export default function LoginPage({
       setQrCodeValue("https://auth.alipay.com/login/index.htm");
       setLoading(false);
     }, 500);
+  };
+  // 显示用户协议弹窗
+  const showUserAgreement = () => {
+    setModalTitle("用户服务协议");
+    setModalContent(USER_AGREEMENT);
+    setModalVisible(true);
+  };
+  // 显示隐私政策弹窗
+  const showPrivacyPolicy = () => {
+    setModalTitle("隐私政策");
+    setModalContent(PRIVACY_POLICY);
+    setModalVisible(true);
   };
 
   return (
@@ -143,15 +172,19 @@ export default function LoginPage({
             <Title level={3} className="mb-2">
               支付宝扫码登录
             </Title>
-            <Text type="secondary" className="mb-8 block">
-              请使用支付宝APP扫描二维码登录
-            </Text>
+            {/*<Text type="secondary" className="mb-8 block">*/}
+            {/*  请使用支付宝APP扫描二维码登录*/}
+            {/*</Text>*/}
 
             <div className="mb-6 flex justify-center">
               <div className="relative rounded-lg border bg-white p-4">
                 {loading ? (
                   <div className="flex h-48 w-48 items-center justify-center">
                     <Spin size="large" />
+                  </div>
+                ) : !agreed ? (
+                  <div className="flex h-48 w-48 items-center justify-center rounded-lg bg-gray-100">
+                    <Text type="secondary">请先同意协议</Text>
                   </div>
                 ) : (
                   <>
@@ -185,9 +218,9 @@ export default function LoginPage({
                 </Button>
               ) : (
                 <div className="space-y-3">
-                  <Text type="secondary" className="block">
-                    二维码有效期10分钟
-                  </Text>
+                  {/*<Text type="secondary" className="block">*/}
+                  {/*  二维码有效期10分钟*/}
+                  {/*</Text>*/}
                   <div className="flex items-center justify-center space-x-2 text-sm text-gray-500">
                     <AlipayOutlined />
                     <span>打开支付宝APP扫码登录</span>
@@ -196,14 +229,93 @@ export default function LoginPage({
               )}
             </div>
 
-            <div className="text-xs text-gray-500">
-              <Text type="secondary">
-                登录即表示您同意相关服务条款和隐私政策
-              </Text>
+            <div className="mb-4 flex items-center justify-center">
+              <input
+                type="checkbox"
+                id="agreement-checkbox"
+                checked={agreed}
+                onChange={(e) => setAgreed(e.target.checked)}
+                className="mr-1 h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+              />
+              <label
+                htmlFor="agreement-checkbox"
+                className="text-sm text-gray-600"
+              >
+                我已阅读并同意
+                <Button
+                  type="link"
+                  className="inline-flex items-center p-0 text-xs"
+                  onClick={showUserAgreement}
+                >
+                  《用户服务协议》
+                </Button>
+                和
+                <Button
+                  type="link"
+                  className="inline-flex items-center p-0 text-xs"
+                  onClick={showPrivacyPolicy}
+                >
+                  《隐私政策》
+                </Button>
+              </label>
             </div>
           </div>
         </Card>
       )}
+      {/* 协议和隐私政策弹窗 */}
+      <Modal
+        title={modalTitle}
+        open={modalVisible}
+        onCancel={() => setModalVisible(false)}
+        footer={[
+          <Button key="close" onClick={() => setModalVisible(false)}>
+            关闭
+          </Button>,
+        ]}
+        width="90%"
+        styles={{
+          body: {
+            maxHeight: "70vh",
+            overflowY: "auto",
+          },
+        }}
+      >
+        <div className="prose max-w-none">
+          <Markdown
+            options={{
+              overrides: {
+                h1: {
+                  props: {
+                    className: "text-2xl font-bold mb-4",
+                  },
+                },
+                p: {
+                  props: {
+                    className: "mb-2 text-sm leading-relaxed",
+                  },
+                },
+                ul: {
+                  props: {
+                    className: "list-disc pl-5 mb-4",
+                  },
+                },
+                ol: {
+                  props: {
+                    className: "list-decimal pl-5 mb-4",
+                  },
+                },
+                li: {
+                  props: {
+                    className: "mb-1",
+                  },
+                },
+              },
+            }}
+          >
+            {modalContent}
+          </Markdown>
+        </div>
+      </Modal>
     </div>
   );
 }

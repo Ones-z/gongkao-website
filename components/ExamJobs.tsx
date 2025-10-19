@@ -1036,23 +1036,19 @@ export default function ExamJobsPage({
                                   size={isMobile ? "small" : "middle"}
                                   icon={
                                     collectedJobs.includes(selectedJob.id) ? (
-                                      <StarOutlined
-                                        style={{ color: "#6b7280" }}
-                                      />
-                                    ) : (
                                       <StarFilled
                                         style={{ color: "#f59e0b" }}
+                                      />
+                                    ) : (
+                                      <StarOutlined
+                                        style={{ color: "#6b7280" }}
                                       />
                                     )
                                   }
                                   className="flex items-center border-indigo-200 text-indigo-700 hover:border-indigo-300 hover:text-indigo-800"
                                   onClick={() => handleCollect(selectedJob.id)}
                                 >
-                                  {isMobile
-                                    ? ""
-                                    : collectedJobs.includes(selectedJob.id)
-                                      ? "不感兴趣"
-                                      : "感兴趣"}
+                                  {isMobile ? "" : "感兴趣"}
                                 </Button>
                                 <Button
                                   color="primary"

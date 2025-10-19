@@ -437,11 +437,11 @@ export default function CollectJobPage({
                             color="primary"
                             variant="outlined"
                             size={isMobile ? "small" : "middle"}
-                            icon={<StarOutlined style={{ color:'gray' }} />}
+                            icon={<StarFilled style={{ color:'orange' }} />}
                             className="flex items-center border-red-500 text-red-500 hover:border-red-700 hover:text-red-700"
                             onClick={() => handleUnCollect(selectedJob.id)}
                           >
-                            {isMobile ? "" : "不感兴趣"}
+                            {isMobile ? "" : "感兴趣"}
                           </Button>
                           <Button
                             color="primary"
