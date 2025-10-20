@@ -30,6 +30,23 @@ export interface Job {
   is_urgent: number;
   publish_time: string;
   recruitment_id: number;
+  settlement_place?: string;
+  department_code?: string;
+  department_website?: string;
+  position_type?: string;
+  bachelor_major_name?: string;
+  bachelor_major?: string;
+  telephone?: string;
+  employer_type?: string;
+  employer_website?: string;
+  employer_level?: string;
+  region?: string;
+  master_major_name?: string;
+  competition_ratio?: string;
+  exam_type?: string;
+  major_mode?: string;
+  professional_competence_test?: string;
+  participants_number?: number;
 }
 
 export interface RecommendJob extends  Job{

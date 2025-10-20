@@ -6,6 +6,7 @@ import {
   ClockCircleOutlined,
   DeleteOutlined,
   EnvironmentOutlined,
+  PhoneOutlined,
   PlusOutlined,
   ReadOutlined,
   ShareAltOutlined,
@@ -179,7 +180,14 @@ export default function JobDetailPage({
   };
 
   const handleShare = async (jobId: number) => {
-    const url = `${window.location.origin}/job-detail?id=${jobId}`;
+    const urlSafeBase64Encode = (str: string) => {
+      return btoa(str)
+        .replace(/\+/g, "-")
+        .replace(/\//g, "_")
+        .replace(/=/g, "");
+    };
+    const encodedId = urlSafeBase64Encode(jobId.toString() + "#" + uuid);
+    const url = `${window.location.origin}/job-detail?id=${encodedId}`;
     // 使用 Clipboard API 复制链接到剪贴板
     await navigator.clipboard.writeText(url);
     messageApi.success("链接已复制到剪贴板");
@@ -321,16 +329,27 @@ export default function JobDetailPage({
                 </div>
               </div>
               <div className="flex items-center rounded-lg bg-amber-50 p-3">
-                <ClockCircleOutlined className="mr-3 text-lg text-amber-500" />
+                <PhoneOutlined className="mr-3 text-lg text-amber-500" />
                 <div>
                   <Text type="secondary" className="block text-xs">
-                    发布时间
+                    联系方式
                   </Text>
                   <Text className="text-sm font-medium">
-                    {job.publish_time}
+                    {job.telephone || "暂无"}
                   </Text>
                 </div>
               </div>
+              {/*<div className="flex items-center rounded-lg bg-amber-50 p-3">*/}
+              {/*  <ClockCircleOutlined className="mr-3 text-lg text-amber-500" />*/}
+              {/*  <div>*/}
+              {/*    <Text type="secondary" className="block text-xs">*/}
+              {/*      发布时间*/}
+              {/*    </Text>*/}
+              {/*    <Text className="text-sm font-medium">*/}
+              {/*      {job.publish_time}*/}
+              {/*    </Text>*/}
+              {/*  </div>*/}
+              {/*</div>*/}
             </div>
           </div>
 
@@ -346,7 +365,7 @@ export default function JobDetailPage({
                   岗位类别:
                 </Text>
                 <Text type="secondary" className="text-sm">
-                  {job.category}
+                  {job.position_type}
                 </Text>
               </div>
               <div className="flex flex-col sm:flex-row">
@@ -359,6 +378,14 @@ export default function JobDetailPage({
               </div>
               <div className="flex flex-col sm:flex-row">
                 <Text className="w-24 flex-shrink-0 text-sm text-gray-600">
+                  主管部门代码:
+                </Text>
+                <Text type="secondary" className="text-sm">
+                  {job.department_code}
+                </Text>
+              </div>
+              <div className="flex flex-col sm:flex-row">
+                <Text className="w-24 flex-shrink-0 text-sm text-gray-600">
                   主管单位:
                 </Text>
                 <Text type="secondary" className="text-sm">
@@ -367,10 +394,36 @@ export default function JobDetailPage({
               </div>
               <div className="flex flex-col sm:flex-row">
                 <Text className="w-24 flex-shrink-0 text-sm text-gray-600">
+                  主管单位官网:
+                </Text>
+                {job.department_website !== "无" && (
+                  <a href={job.department_website} className="text-sm">
+                    {job.department_website}
+                  </a>
+                )}
+              </div>
+              <div className="flex flex-col sm:flex-row">
+                <Text className="w-24 flex-shrink-0 text-sm text-gray-600">
                   用人单位:
                 </Text>
                 <Text type="secondary" className="text-sm">
                   {job.employer}
+                </Text>
+              </div>
+              <div className="flex flex-col sm:flex-row">
+                <Text className="w-24 flex-shrink-0 text-sm text-gray-600">
+                  用人单位性质:
+                </Text>
+                <Text type="secondary" className="text-sm">
+                  {job.employer_type}
+                </Text>
+              </div>
+              <div className="flex flex-col sm:flex-row">
+                <Text className="w-24 flex-shrink-0 text-sm text-gray-600">
+                  用人单位层级:
+                </Text>
+                <Text type="secondary" className="text-sm">
+                  {job.employer_level}
                 </Text>
               </div>
               <div className="flex flex-col sm:flex-row">
@@ -391,6 +444,14 @@ export default function JobDetailPage({
               任职要求
             </Title>
             <div className="space-y-3">
+              <div className="flex flex-col sm:flex-row">
+                <Text className="w-24 flex-shrink-0 text-sm text-gray-600">
+                  性别:
+                </Text>
+                <Text type="secondary" className="text-sm">
+                  {job.gender}
+                </Text>
+              </div>
               <div className="flex flex-col sm:flex-row">
                 <Text className="w-24 flex-shrink-0 text-sm text-gray-600">
                   学位:
@@ -423,14 +484,14 @@ export default function JobDetailPage({
                   {job.major_requirement}
                 </Text>
               </div>
-              <div className="flex flex-col sm:flex-row">
-                <Text className="w-24 flex-shrink-0 text-sm text-gray-600">
-                  是否应届:
-                </Text>
-                <Text type="secondary" className="text-sm">
-                  {job.recruitment}
-                </Text>
-              </div>
+              {/*<div className="flex flex-col sm:flex-row">*/}
+              {/*  <Text className="w-24 flex-shrink-0 text-sm text-gray-600">*/}
+              {/*    是否应届:*/}
+              {/*  </Text>*/}
+              {/*  <Text type="secondary" className="text-sm">*/}
+              {/*    {job.recruitment}*/}
+              {/*  </Text>*/}
+              {/*</div>*/}
               <div className="flex flex-col sm:flex-row">
                 <Text className="w-24 flex-shrink-0 text-sm text-gray-600">
                   政治面貌:
@@ -447,14 +508,14 @@ export default function JobDetailPage({
                   {job.qualified_score}
                 </Text>
               </div>
-              <div className="flex flex-col sm:flex-row">
-                <Text className="w-24 flex-shrink-0 text-sm text-gray-600">
-                  户籍要求:
-                </Text>
-                <Text type="secondary" className="text-sm">
-                  {job.residency_requirement}
-                </Text>
-              </div>
+              {/*<div className="flex flex-col sm:flex-row">*/}
+              {/*  <Text className="w-24 flex-shrink-0 text-sm text-gray-600">*/}
+              {/*    户籍要求:*/}
+              {/*  </Text>*/}
+              {/*  <Text type="secondary" className="text-sm">*/}
+              {/*    {job.residency_requirement}*/}
+              {/*  </Text>*/}
+              {/*</div>*/}
               <div className="flex flex-col sm:flex-row">
                 <Text className="w-24 flex-shrink-0 text-sm text-gray-600">
                   年龄上限:
@@ -472,6 +533,22 @@ export default function JobDetailPage({
             <Title level={5} className="mb-4 text-gray-800">
               其他信息
             </Title>
+            <div className="flex flex-col sm:flex-row">
+              <Text className="w-24 flex-shrink-0 text-sm text-gray-600">
+                岗位性质:
+              </Text>
+              <Text type="secondary" className="text-sm">
+                {job.position_type}
+              </Text>
+            </div>
+            <div className="flex flex-col sm:flex-row">
+              <Text className="w-24 flex-shrink-0 text-sm text-gray-600">
+                岗位地区:
+              </Text>
+              <Text type="secondary" className="text-sm">
+                {job.region}
+              </Text>
+            </div>
             <div className="space-y-3">
               <div className="flex flex-col sm:flex-row">
                 <Text className="w-24 flex-shrink-0 text-sm text-gray-600">
@@ -481,12 +558,20 @@ export default function JobDetailPage({
                   {job.interview_ratio}
                 </Text>
               </div>
+              {/*<div className="flex flex-col sm:flex-row">*/}
+              {/*  <Text className="w-24 flex-shrink-0 text-sm text-gray-600">*/}
+              {/*    成绩比例:*/}
+              {/*  </Text>*/}
+              {/*  <Text type="secondary" className="text-sm">*/}
+              {/*    {job.score_ratio}*/}
+              {/*  </Text>*/}
+              {/*</div>*/}
               <div className="flex flex-col sm:flex-row">
                 <Text className="w-24 flex-shrink-0 text-sm text-gray-600">
-                  成绩比例:
+                  考试类别:
                 </Text>
                 <Text type="secondary" className="text-sm">
-                  {job.score_ratio}
+                  {job.exam_type}
                 </Text>
               </div>
               <div className="flex flex-col sm:flex-row">
@@ -503,6 +588,14 @@ export default function JobDetailPage({
                 </Text>
                 <Text type="secondary" className="flex-1 text-sm">
                   {job.notes || "无"}
+                </Text>
+              </div>
+              <div className="flex flex-col sm:flex-row">
+                <Text className="w-24 flex-shrink-0 text-sm text-gray-600">
+                  联系方式:
+                </Text>
+                <Text type="secondary" className="text-sm">
+                  {job.telephone}
                 </Text>
               </div>
             </div>

@@ -306,7 +306,6 @@ export default function ProfilePage({
                         disabled={!isEditing}
                         className={isEditing ? "border-blue-300" : ""}
                       >
-                        <Option value="大专">大专</Option>
                         <Option value="本科">本科</Option>
                         <Option value="硕士研究生">硕士研究生</Option>
                         <Option value="博士研究生">博士研究生</Option>
@@ -344,7 +343,7 @@ export default function ProfilePage({
                         displayRender={(label) => label.join(" - ")}
                         onChange={(value) => {
                           form.setFieldsValue({
-                            education_level: "大学本科",
+                            education_level: "本科",
                             degree_level: "学士",
                           });
                         }}
@@ -364,7 +363,7 @@ export default function ProfilePage({
                         displayRender={(label) => label.join(" - ")}
                         onChange={(value) => {
                           form.setFieldsValue({
-                            education_level: "研究生",
+                            education_level: "硕士研究生",
                             degree_level: "硕士",
                           });
                         }}
